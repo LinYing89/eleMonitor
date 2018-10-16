@@ -1,0 +1,98 @@
+#nav-station{
+	width: 200px;
+	height: 100%;
+	padding-right: 0px;
+	color: white;
+}
+
+#nav-station a{
+	color: white;
+}
+
+#station-info{
+	margin-top: 8px;
+}
+
+#p-address-name{
+	background-color: black;
+	color: white;
+	width: 100%;
+	padding-left: 10px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+#img-alarm-horn{
+	width: 20px;
+	height: 20px;
+}
+
+.ele-card{
+	width: 80%;
+	min-width: 200px;
+	height: 120px;
+	background-color: white;
+	border: 1.5px solid #BFBFBF;
+	/* Add box-shadow */
+	box-shadow: 2px 2px 3px #dddddd;
+	border-radius:6px;
+	padding: 8px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.ele-card.clickable:hover {
+	background-color: #228B22;
+	color: white;
+	cursor: pointer;
+}
+
+.img-dev{
+	width: 36px;
+	height: 36px;
+}
+.img-alarm{
+	width: 32px;
+	height: 32px;
+	margin-top: 16px;
+}
+
+.dev-name{
+	margin-top: 26px;
+}
+
+.btn-group-dev{
+	margin-top: 20px;
+}
+
+.event-card{
+	width: 90%;
+	height: 560px;
+	border: 1.5px solid #BFBFBF;
+	border-radius:2px;
+	padding: 2px;
+}
+
+.list-group-item{
+	padding: 2px;
+	background-color: transparent;
+}
+
+#div-other-card{
+	margin-left: 0px;
+	margin-top: 8px;
+}
+
+.other-card{
+	width: 90px;
+	height: 70px;
+	border: 1.5px solid #BFBFBF;
+	box-shadow: 2px 2px 3px #dddddd;
+	border-radius:6px;
+	padding: 2px;
+}
+
+.img-other-card{
+	width: 32px;
+	height: 32px;
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/root.css" />
+<link rel="stylesheet" href="/css/sysset.css" />
+<title></title>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href="#">首页<span
+						class="sr-only">(current)</span></a></li>
+			</ul>
+			<div class="nav-item">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> admin </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人资料</a> <a
+								class="dropdown-item" href="#">退出</a>
+						</div></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div id="container" class="row">
+		<div id="nav-station" class="col-auto bg-dark">
+			<p id="p-address-name">设置</p>
+			<div class="nav flex-column nav-pills" id="v-pills-tab"
+				role="tablist" aria-orientation="vertical">
+				<a class="nav-link nav-classes" disabled><img src="/img/站点.svg" />
+					站点管理</a> <a class="nav-link nav-settings-item"
+					id="v-pills-my-station-tab" href="/station/mystations" role="tab"
+					aria-selected="true">我的站点</a> <a
+					class="nav-link nav-settings-item active"
+					id="v-pills-add-station-tab" data-toggle="pill"
+					href="#v-pills-stations" role="tab" aria-selected="true">添加站点</a> <a
+					class="nav-link nav-classes" disabled><img
+					src="/img/user_white.svg" /> 账号管理</a> <a
+					class="nav-link nav-settings-item" id="v-pills-users-tab"
+					data-toggle="pill" href="#v-pills-users" role="tab"
+					aria-controls="v-pills-users" aria-selected="true">系统用户管理</a> <a
+					class="nav-link nav-settings-item" id="v-pills-stations-tab"
+					data-toggle="pill" href="#v-pills-stations" role="tab"
+					aria-controls="v-pills-stations" aria-selected="true">自定义系统组</a> <a
+					class="nav-link nav-settings-item" id="v-pills-users-tab"
+					data-toggle="pill" href="#v-pills-users" role="tab"
+					aria-controls="v-pills-users" aria-selected="true">自定义个人组</a> <a
+					class="nav-link nav-settings-item" id="v-pills-stations-tab"
+					data-toggle="pill" href="#v-pills-stations" role="tab"
+					aria-controls="v-pills-stations" aria-selected="true">组织机构</a> <a
+					class="nav-link nav-classes" disabled><img
+					src="/img/psd_white.svg" /> 权限管理</a> <a
+					class="nav-link nav-settings-item" id="v-pills-users-tab"
+					data-toggle="pill" href="#v-pills-users" role="tab"
+					aria-controls="v-pills-users" aria-selected="true">设置办公室人员</a> <a
+					class="nav-link nav-settings-item" id="v-pills-stations-tab"
+					data-toggle="pill" href="#v-pills-stations" role="tab"
+					aria-controls="v-pills-stations" aria-selected="true">角色管理</a>
+			</div>
+		</div>
+		<div class="col">
+			<div class="tab-content" id="v-pills-tabContent">
+				<div class="tab-pane fade show active" id="v-pills-my-station"
+					role="tabpanel">
+					<div class="row">
+						<p>添加站点</p>
+					</div>
+					<form action="/station/add" method="post">
+						<div class="form-group row">
+							<label for="inputEmail3" class="col-sm-2 col-form-label">站点名称</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="name" name="name"
+									placeholder="站点名称" required>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="inputEmail3" class="col-sm-2 col-form-label">站点地址</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="address" name="address"
+									placeholder="站点地址">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="inputEmail3" class="col-sm-2 col-form-label">联系电话</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="tel" name="tel"
+									placeholder="联系电话">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="inputPassword3" class="col-sm-2 col-form-label">坐标</label>
+							<div class="col-sm-10">
+								<div class="form-row">
+									<div class="col-5">
+										<input type="number" step="0.000001" class="form-control" id="lat" name="lat"
+											placeholder="经度" required>
+									</div>
+									<div class="col-5">
+										<input type="number" step="0.000001" class="form-control" id="lng" name="lng"
+											placeholder="纬度" required>
+									</div>
+									<div class="col-2">
+										<button class="form-control">
+											<img class="title-icon" src="/img/地图.svg" /> 地图拾取
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="inputEmail3" class="col-sm-2 col-form-label">备注</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" id="remark" name="reamrk" rows="3"></textarea>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-10">
+								<button type="submit" class="btn btn-primary">提交</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	
+</body>
+
+</html>

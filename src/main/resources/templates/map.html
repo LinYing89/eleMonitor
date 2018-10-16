@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="css/root.css" />
+<link rel="stylesheet" href="css/map.css" />
+
+<title>地图</title>
+
+</head>
+
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href="#">首页<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> 电力数据 </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">电站数据</a> <a
+							class="dropdown-item" href="#">数据分析</a>
+					</div></li>
+			</ul>
+			<div class="nav-item">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="Settings.html">系统设置</a>
+					</li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> admin </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人资料</a> <a
+								class="dropdown-item" href="#">退出</a>
+						</div></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div id="container"></div>
+	<div id="nav"
+		style="position: absolute; left: 0; top: 0; margin-top: 60px;">
+
+		<div class="list-group list-group-flush">
+			<button th:each="station : ${listStation}" type="button"
+				class="list-group-item list-group-item-action btn-station"
+				th:text="${station.name}"
+				th:data-addr='|{"lng":"${station.lng}","lat":"${station.lat}"}|'>淮海工学院</button>
+		</div>
+	</div>
+
+	<script type="text/javascript"
+		src="http://api.map.baidu.com/api?v=2.0&ak=NKchMp8WcewEGsfQTk904IR4ndH917r4"></script>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+
+	<script src="js/map.js"></script>
+</body>
+
+</html>

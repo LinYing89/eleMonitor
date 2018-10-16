@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="css/root.css" />
+<link rel="stylesheet" href="css/ele.css" />
+<title></title>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href="#">首页<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> 电力数据 </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">电站数据</a> <a
+							class="dropdown-item" href="dataAnalysis.html">数据分析</a>
+					</div></li>
+				<li class="nav-item"><a class="nav-link" href="#"> 设备管理 </a></li>
+			</ul>
+			<div class="nav-item">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="station/add">系统设置</a>
+					</li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> admin </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人资料</a> <a
+								class="dropdown-item" href="#">退出</a>
+						</div></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div id="container" class="row">
+		<div id="nav-station" class="col-auto bg-dark">
+			<p id="p-address-name">淮海工学院</p>
+			<div class="nav flex-column nav-pills" id="v-pills-tab"
+				role="tablist" aria-orientation="vertical">
+				<a class="nav-link active" id="v-pills-home-tab" data-toggle="pill"
+					href="#v-pills-home" role="tab" aria-controls="v-pills-home"
+					aria-selected="true">1号变电站</a> <a class="nav-link"
+					id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-home"
+					role="tab" aria-controls="v-pills-profile" aria-selected="false">2号变电站</a>
+				<a class="nav-link" id="v-pills-messages-tab" data-toggle="pill"
+					href="#v-pills-home" role="tab" aria-controls="v-pills-messages"
+					aria-selected="false">3号变电站</a> <a class="nav-link"
+					id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-home"
+					role="tab" aria-controls="v-pills-settings" aria-selected="false">4号变电站</a>
+			</div>
+		</div>
+		<div class="col">
+			<div class="tab-content" id="v-pills-tabContent">
+
+				<div class="tab-pane fade show active" id="v-pills-home"
+					role="tabpanel" aria-labelledby="v-pills-home-tab">
+					<div class="row">
+						<div id="station-info" class="col-9">
+							<div class="row">
+								<span class="col-auto" id="station-name">1号变电站</span>
+								<div class="col row offset-1">
+									<img id="img-alarm-horn" src="img/喇叭.svg" />&emsp; <span>人体红外报警</span>
+								</div>
+							</div>
+							<h6>环境</h6>
+							<div class="row">
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/温度计.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">站房温度</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>26.5℃</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" hidden
+														src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/湿度.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">站房湿度</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>
+													65%</span>
+												</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" hidden
+														src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center clickable">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/光纤测温.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">电缆测温</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center clickable">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/光纤测温.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">母排测温</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div id="dev-coding" class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/红外.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">红外双鉴</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>有人</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div id="dev-coding" class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/门禁.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">门禁探测</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>关闭</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" hidden
+														src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/gas.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">烟雾探测</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>正常</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" hidden
+														src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/水位计.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">水浸探测</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>正常</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" hidden
+														src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<br />
+							<h6>控制</h6>
+							<div class="row">
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/空调.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">空调</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>关</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button" class="btn btn-outline-secondary">打开</button>
+													<button type="button"
+														class="btn btn-outline-secondary active">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/除湿.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">除湿机</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>开</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button"
+														class="btn btn-outline-secondary active">打开</button>
+													<button type="button" class="btn btn-outline-secondary">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/水泵.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">水泵</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>开</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button"
+														class="btn btn-outline-secondary active">打开</button>
+													<button type="button" class="btn btn-outline-secondary">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/灯.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">照明灯</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>开</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button"
+														class="btn btn-outline-secondary active">打开</button>
+													<button type="button" class="btn btn-outline-secondary">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/风机.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">风机</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>开</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button"
+														class="btn btn-outline-secondary active">打开</button>
+													<button type="button" class="btn btn-outline-secondary">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/alarm.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">报警器</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>开</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button"
+														class="btn btn-outline-secondary active">打开</button>
+													<button type="button" class="btn btn-outline-secondary">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="img/智能门控.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">门控</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>开</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button"
+														class="btn btn-outline-secondary active">打开</button>
+													<button type="button" class="btn btn-outline-secondary">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="col-3">
+							<p>事件信息</p>
+							<div class="event-card">
+								<ul class="list-group list-group-flush small">
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+								</ul>
+							</div>
+							<div id="div-other-card" class="row">
+								<div class="col-auto other-card">
+									<div class="row">
+										<img class="col-12 img-other-card" src="img/摄像头.svg" />
+									</div>
+									<div class="row align-item-end">
+										<span class="col-12 text-center">摄像头</span>
+									</div>
+								</div>
+								<div class="col-auto other-card offset-1">
+									<div class="row">
+										<img class="col-12 img-other-card" src="img/操作记录.svg" />
+									</div>
+									<div class="row align-item-end">
+										<span class="col-12 text-center">操作记录</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="temModal" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">电缆测温</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">机柜名称</th>
+								<th scope="col">线号</th>
+								<th scope="col">温度值</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>12#入线</td>
+								<td>1-A</td>
+								<td>30.5℃</td>
+								<td>A相</td>
+							</tr>
+							<tr>
+								<td>12#入线</td>
+								<td>1-B</td>
+								<td>32.0℃</td>
+								<td>B相</td>
+							</tr>
+							<tr>
+								<td>12#入线</td>
+								<td>1-C</td>
+								<td>31.0℃</td>
+								<td>C相</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	
+	<script type="text/javascript" src="js/ele.js"></script>
+</body>
+
+</html>

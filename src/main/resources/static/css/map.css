@@ -1,0 +1,16 @@
+#nav {
+	background-color: rgba(240, 240, 240, 0.9);
+	border-bottom-right-radius: 10px;
+	border-top-right-radius: 10px;
+	color: white;
+	padding: 10px;
+	border: 1px solid #BFBFBF;
+	/* Add box-shadow */
+	box-shadow: 2px 2px 3px #aaaaaa;
+	min-width: 220px;
+}
+
+#nav button{
+	background-color: transparent;
+	color: black;
+}

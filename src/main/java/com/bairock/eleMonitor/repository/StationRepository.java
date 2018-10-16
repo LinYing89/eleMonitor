@@ -1,0 +1,14 @@
+package com.bairock.eleMonitor.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.bairock.eleMonitor.data.Station;
+
+/**
+ * 站点
+ * @author 44489
+ *
+ */
+public interface StationRepository extends JpaRepository<Station, Long> {
+
+}

@@ -1,0 +1,26 @@
+#logo{
+	margin: 30px;
+}
+
+#company-name{
+	margin-left: 30px;
+	color: white;
+}
+
+#login{
+	background-color: rgba(6, 6, 6, 0.6);
+	border-radius:10px;
+	color: white;
+	padding: 30px;
+}
+
+#login img{
+	max-height: 38px;
+	width: auto;
+	height: 100%;
+}
+
+#footer a{
+	font-size: x-small;
+	color: gainsboro;
+}
