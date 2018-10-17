@@ -9,7 +9,8 @@ $(document).ready(function() {
 		$(this).dblclick(function() {
 			console.log($(this).text());
 			//$(location).prop('href', 'ele/ele.html');
-			window.location.href = "ele"
+			var stationId = $(this).data("id");
+			window.location.href = "substation/" + stationId;
 		});
 		$(this).click(function() {
 			console.log($(this).text());

@@ -1,11 +1,11 @@
 package com.bairock.eleMonitor.data;
 
 /**
- * 设备值类型
+ * 采集终端数据类型
  * @author 44489
  *
  */
-public enum DeviceValueType {
+public enum DataType {
 
 	/**
 	 * 数字量

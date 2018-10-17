@@ -37,7 +37,7 @@
 			</ul>
 			<div class="nav-item">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="Settings.html">系统设置</a>
+					<li class="nav-item"><a class="nav-link" href="station/add">系统设置</a>
 					</li>
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
@@ -61,6 +61,7 @@
 			<button th:each="station : ${listStation}" type="button"
 				class="list-group-item list-group-item-action btn-station"
 				th:text="${station.name}"
+				th:data-id="${station.id}"
 				th:data-addr='|{"lng":"${station.lng}","lat":"${station.lat}"}|'>淮海工学院</button>
 		</div>
 	</div>

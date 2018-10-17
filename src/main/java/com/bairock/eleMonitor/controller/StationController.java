@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bairock.eleMonitor.data.Station;
-import com.bairock.eleMonitor.repository.StationRepository;
+import com.bairock.eleMonitor.service.StationService;
 
 @Controller
 @RequestMapping("/station")
 public class StationController {
-
+	
 	@Autowired
-	private StationRepository stationRepository;
+	private StationService stationService;
 	
 	@GetMapping("mystations")
 	public String myStations(Model model) {
-		List<Station> list = stationRepository.findAll();
+		List<Station> list = stationService.findAll();
 		model.addAttribute("listStation", list);
 		return "sysset/mystations";
 	}
@@ -37,13 +37,13 @@ public class StationController {
 	@PostMapping("/add")
 	public String addStationSubmit(Model model, @ModelAttribute Station station) {
 		station.setRegisterTime(new Date());
-		stationRepository.saveAndFlush(station);
+		stationService.save(station);
 		return "redirect:/station/mystations";
 	}
 	
 	@GetMapping("/delete/{stationId}")
 	public String deleteStation(@PathVariable long stationId) {
-		stationRepository.deleteById(stationId);
+		stationService.deleteById(stationId);
 		return "redirect:/station/mystations";
 	}
 }

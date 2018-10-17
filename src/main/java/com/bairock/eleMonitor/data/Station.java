@@ -37,8 +37,8 @@ public class Station {
 	private Date registerTime;
 	
 	@OneToMany(mappedBy="station", cascade=CascadeType.ALL, orphanRemoval=true)
-	@JsonManagedReference("station_device")
-	private List<Device> listDevice;
+	@JsonManagedReference("station_substation")
+	private List<Substation> listSubstation;
 	
 	public long getId() {
 		return id;
@@ -89,12 +89,28 @@ public class Station {
 	public void setRegisterTime(Date registerTime) {
 		this.registerTime = registerTime;
 	}
-	public List<Device> getListDevice() {
-		return listDevice;
+	public List<Substation> getListSubstation() {
+		return listSubstation;
 	}
-	public void setListDevice(List<Device> listDevice) {
-		this.listDevice = listDevice;
+	public void setListSubstation(List<Substation> listSubstation) {
+		this.listSubstation = listSubstation;
 	}
 	
+	public Substation addSubstation(Substation substation) {
+		if(null == substation) {
+			return null;
+		}
+		substation.setStation(this);
+		listSubstation.add(substation);
+		return substation;
+	}
 	
+	public Substation removeSubstation(Substation substation) {
+		if(null == substation) {
+			return null;
+		}
+		listSubstation.remove(substation);
+		substation.setStation(null);
+		return substation;
+	}
 }

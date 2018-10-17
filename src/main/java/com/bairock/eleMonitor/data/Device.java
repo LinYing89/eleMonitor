@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  * @author 44489
  *
  */
-
 @Entity
 public class Device {
 
@@ -23,22 +22,24 @@ public class Device {
 	
 	private String name;
 	
-	//通信管理机号
-	private int managerCode;
-	//总线号
-	private int busCode;
-	//采集终端号
-	private int collectorCode;
 	//起始地址
 	private int beginAddress;
 	//数据长度
 	private int dataLength;
-	//值类型
-	private DeviceValueType valueType;
+	//字节顺序
+	private int byteOrder;
+	//值类型,整数, 浮点数
+	private ValueType valueType;
+	//值格式
+	private ValueFormat valeFormat;
+	//系数
+	private float coefficient;
+	//单位
+	private String unit;
 	
 	@ManyToOne
-	@JsonBackReference("station_device")
-	private Station station;
+	@JsonBackReference("collector_device")
+	private Collector collector;
 	
 	public long getId() {
 		return id;
@@ -52,24 +53,6 @@ public class Device {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getManagerCode() {
-		return managerCode;
-	}
-	public void setManagerCode(int managerCode) {
-		this.managerCode = managerCode;
-	}
-	public int getBusCode() {
-		return busCode;
-	}
-	public void setBusCode(int busCode) {
-		this.busCode = busCode;
-	}
-	public int getCollectorCode() {
-		return collectorCode;
-	}
-	public void setCollectorCode(int collectorCode) {
-		this.collectorCode = collectorCode;
-	}
 	public int getBeginAddress() {
 		return beginAddress;
 	}
@@ -82,12 +65,41 @@ public class Device {
 	public void setDataLength(int dataLength) {
 		this.dataLength = dataLength;
 	}
-	public DeviceValueType getValueType() {
+	public int getByteOrder() {
+		return byteOrder;
+	}
+	public void setByteOrder(int byteOrder) {
+		this.byteOrder = byteOrder;
+	}
+	public ValueType getValueType() {
 		return valueType;
 	}
-	public void setValueType(DeviceValueType valueType) {
+	public void setValueType(ValueType valueType) {
 		this.valueType = valueType;
 	}
-	
+	public ValueFormat getValeFormat() {
+		return valeFormat;
+	}
+	public void setValeFormat(ValueFormat valeFormat) {
+		this.valeFormat = valeFormat;
+	}
+	public float getCoefficient() {
+		return coefficient;
+	}
+	public void setCoefficient(float coefficient) {
+		this.coefficient = coefficient;
+	}
+	public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+	public Collector getCollector() {
+		return collector;
+	}
+	public void setCollector(Collector collector) {
+		this.collector = collector;
+	}
 	
 }
