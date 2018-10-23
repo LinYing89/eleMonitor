@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
 <link rel="stylesheet" href="/css/root.css" />
-<link rel="stylesheet" href="/css/ele.css" />
+<link rel="stylesheet" href="/css/substation.css" />
 <title></title>
 </head>
 
@@ -20,7 +20,7 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active"><a class="nav-link" href="#">首页<span
+				<li class="nav-item active"><a class="nav-link" href="/map">地图<span
 						class="sr-only">(current)</span></a></li>
 				<li class="nav-item dropdown"><a
 					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
@@ -28,13 +28,12 @@
 					aria-expanded="false"> 电力数据 </a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="#">电站数据</a> <a
-							class="dropdown-item" href="dataAnalysis.html">数据分析</a>
+							class="dropdown-item" href="/dataAnalysis/">数据分析</a>
 					</div></li>
-				<li class="nav-item"><a class="nav-link" href="#"> 设备管理 </a></li>
 			</ul>
 			<div class="nav-item">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="station/add">系统设置</a>
+					<li class="nav-item"><a class="nav-link" href="/station/mystations">系统设置</a>
 					</li>
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
@@ -52,17 +51,21 @@
 
 	<div id="container" class="row">
 		<div id="nav-station" class="col-auto bg-dark">
-			<div class="row station-title">
-				<span class="col" id="p-address-name">淮海工学院</span> <a href="#"
-					data-toggle="modal" data-target="#addSubstationModal"><img
+			<div class="row station-title p-1 m-0">
+				<span class="col pl-1" id="p-address-name" th:text="${stationName}">淮海工学院</span>
+				<a href="#" data-toggle="modal" data-target="#addSubstationModal"><img
 					class="title-icon mr-1" src="/img/添加.svg" /></a>
+			</div>
+			<div class="row p-1 mt-2 mr-0 div-left-title">
+				<span class="col">变电站列表</span>
 			</div>
 
 			<div class="nav flex-column nav-pills" id="v-pills-tab"
 				role="tablist" aria-orientation="vertical">
-				<a th:each="substation : ${listSubstation}"
-					th:text="${substation.name}" class="nav-link"
-					th:classappend="${substation.active}? 'active'">1号变电站</a>
+				<a th:each="sub : ${listSubstation}" th:text="${sub.name}"
+					class="nav-link" href="#"
+					th:href="|/substation/${stationId}/${sub.id}|"
+					th:classappend="${sub.id == substation.id}? 'active'">1号变电站</a>
 			</div>
 		</div>
 		<div class="col">
@@ -70,19 +73,25 @@
 
 				<div class="tab-pane fade show active" id="v-pills-home"
 					role="tabpanel" aria-labelledby="v-pills-home-tab">
-					<div class="row">
+					<div class="row" th:if="${substation}">
 						<div id="station-info" class="col-9">
 							<div class="row bg-light p-3">
-								<span class="col-6" id="station-name" data-stationid="">1号变电站
-									<a class="dropdown-toggle" id="a-station-option" href="#"
-									data-toggle="dropdown">操作</a>
+								<div class="col-6">
+									<span>变电站名称: <span class="col-auto" id="station-name"
+										th:text="${substation.name}">1号变电站</span>
+									</span> <a class="col-auto dropdown-toggle" id="a-station-option"
+										href="#" data-toggle="dropdown">操作</a>
 									<div class="dropdown-menu" aria-labelledby="a-station-option">
 										<a class="dropdown-item" href="#" data-toggle="modal"
 											data-target="#editSubstationModal">编辑</a> <a
-											class="dropdown-item" href="#" data-stationid="">设备管理</a> <a
-											class="dropdown-item" href="#" data-stationid="">删除</a>
+											class="dropdown-item" href="#"
+											th:href="|/msgManager/${substation.id}/0|" data-stationid="">设备管理</a>
+										<a class="dropdown-item" href="#"
+											th:href="'/substation/del/' + ${substation.id}"
+											data-stationid="">删除</a>
 									</div>
-								</span>
+								</div>
+
 
 								<div class="col-6 row">
 									<img id="img-alarm-horn" src="/img/喇叭.svg" />&emsp; <span>人体红外报警</span>
@@ -92,45 +101,13 @@
 							<div class="row">
 								<div class="col-auto">
 									<div class="ele-card align-self-center">
-										<div class="row">
-											<div class="col">
-												<div class="row">
-													<img class="col-12 img-dev" src="/img/温度计.svg" />
-												</div>
-												<div class="dev-name row align-item-end">
-													<span class="col-12 text-center">站房温度</span>
-												</div>
-											</div>
-											<div class="col">
-												<p>26.5℃</p>
-												<div class="dev-alarm row">
-													<img class="col-12 img-dev img-alarm" hidden
-														src="/img/alarm.svg" />
-												</div>
-											</div>
+										<div class="row mt-2">
+											<span class="col-6 text-center">站房温度</span> <span
+												class="col-6 text-center">26.5℃</span>
 										</div>
-									</div>
-								</div>
-								<div class="col-auto">
-									<div class="ele-card align-self-center">
-										<div class="row">
-											<div class="col">
-												<div class="row">
-													<img class="col-12 img-dev" src="/img/湿度.svg" />
-												</div>
-												<div class="dev-name row align-item-end">
-													<span class="col-12 text-center">站房湿度</span>
-												</div>
-											</div>
-											<div class="col">
-												<p>
-													65%</span>
-												</p>
-												<div class="dev-alarm row">
-													<img class="col-12 img-dev img-alarm" hidden
-														src="/img/alarm.svg" />
-												</div>
-											</div>
+										<div class="row mt-2">
+											<span class="col-6 text-center">站房湿度</span> <span
+												class="col-6 text-center">65%</span>
 										</div>
 									</div>
 								</div>
@@ -246,10 +223,29 @@
 										</div>
 									</div>
 								</div>
-
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<img class="col-12 img-dev" src="/img/二氧化硫.svg" />
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center">二氧化硫</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>0.3mg/m3</p>
+												<div class="dev-alarm row">
+													<img class="col-12 img-dev img-alarm" hidden
+														src="img/alarm.svg" />
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
-							<br />
-							<h6>控制</h6>
+							<h6 class="mt-1">控制</h6>
 							<div class="row">
 								<div class="col-auto">
 									<div class="ele-card align-self-center">
@@ -412,7 +408,6 @@
 										</div>
 									</div>
 								</div>
-
 							</div>
 						</div>
 						<div class="col-3">
@@ -512,11 +507,11 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form>
+					<form th:action="|/substation/${stationId}|" method="post">
 						<div class="form-group">
 							<label for="substationName">变电站名称</label> <input type="text"
-								class="form-control" id="substationName" placeholder="变电站名称"
-								required="required">
+								class="form-control" id="substationName" name="name"
+								placeholder="变电站名称" required="required">
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>
 					</form>
@@ -527,7 +522,7 @@
 
 	<!-- Modal 编辑变电站 -->
 	<div class="modal fade" id="editSubstationModal" tabindex="-1"
-		role="dialog" aria-hidden="true">
+		role="dialog" aria-hidden="true" th:if="${substation}">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -538,10 +533,10 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form>
+					<form th:action="|/substation/edit/${substation.id}|" method="post">
 						<div class="form-group">
 							<label for="substationName">变电站名称</label> <input type="text"
-								class="form-control" id="substationName" placeholder="变电站名称"
+								th:value="${substation.name}" class="form-control" name="name"
 								required="required">
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>
@@ -555,7 +550,7 @@
 	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
 	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
 
-	<script type="text/javascript" src="/js/ele.js"></script>
+	<script type="text/javascript" src="/js/substation.js"></script>
 </body>
 
 </html>

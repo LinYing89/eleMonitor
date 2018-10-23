@@ -35,9 +35,17 @@ public class SubstationService {
 		}
 		//先找到station, 建立起对应关系, 否则substation没有stationid
 		station.addSubstation(substation);
-		Substation res= substationRepository.saveAndFlush(substation);
-		substation.setId(res.getId());
+		substationRepository.saveAndFlush(substation);
 		return substation;
+	}
+	
+	public Substation editSubStation(long substationId, Substation substation) {
+		Substation sub = findBySubstationId(substationId);
+		if(null != sub) {
+			sub.setName(substation.getName());
+			substationRepository.saveAndFlush(sub);
+		}
+		return sub;
 	}
 	
 	/**

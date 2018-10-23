@@ -8,12 +8,45 @@ package com.bairock.eleMonitor.data;
 public enum DataType {
 
 	/**
-	 * 数字量
+	 * 遥信
 	 */
-	DIGITAL,
-	
+	YAO_XIN(0, "遥信"),
 	/**
-	 * 开关量
+	 * 遥测
 	 */
-	SWITCH
+	YAO_CE(1, "遥测"),
+	/**
+	 * 遥脉
+	 */
+	YAO_MAI(2, "遥脉"),
+	/**
+	 * 遥控
+	 */
+	YAO_KONG(3, "遥控");
+	
+	private int code;
+	private String info;
+	
+	private DataType(int code, String info) {
+		this.code = code;
+		this.info = info;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	
+	
 }

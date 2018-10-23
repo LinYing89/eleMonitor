@@ -22,7 +22,7 @@ public class StationController {
 	@Autowired
 	private StationService stationService;
 	
-	@GetMapping("mystations")
+	@GetMapping("/mystations")
 	public String myStations(Model model) {
 		List<Station> list = stationService.findAll();
 		model.addAttribute("listStation", list);
@@ -35,9 +35,15 @@ public class StationController {
 	}
 	
 	@PostMapping("/add")
-	public String addStationSubmit(Model model, @ModelAttribute Station station) {
+	public String addStationSubmit(@ModelAttribute Station station) {
 		station.setRegisterTime(new Date());
 		stationService.save(station);
+		return "redirect:/station/mystations";
+	}
+	
+	@PostMapping("/edit/{stationId}")
+	public String editStation(@PathVariable long stationId, @ModelAttribute Station station) {
+		stationService.edit(stationId, station);
 		return "redirect:/station/mystations";
 	}
 	

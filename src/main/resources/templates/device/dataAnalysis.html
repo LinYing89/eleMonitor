@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+	integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+	crossorigin="anonymous" />
+<link rel="stylesheet" href="/css/dataAnalysis.css" />
+<link rel="stylesheet" href="/css/root.css" />
+<title></title>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href="/map">地图<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> 数据分析 </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/substation/0">电站数据</a> <a
+							class="dropdown-item" href="#">数据分析</a>
+					</div></li>
+			</ul>
+			<div class="nav-item">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="Settings.html">系统设置</a>
+					</li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> admin </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人资料</a> <a
+								class="dropdown-item" href="#">退出</a>
+						</div></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div id="container" class="row">
+		<div id="nav-station" class="col-auto bg-dark">
+			<p id="p-address-name" class="p-2">淮海工学院</p>
+			<div class="nav flex-column nav-pills" id="v-pills-tab"
+				role="tablist" aria-orientation="vertical">
+				<a class="nav-link active" id="v-pills-home-tab" data-toggle="pill"
+					href="#v-pills-home" role="tab" aria-controls="v-pills-home"
+					aria-selected="true">1号变电站</a> <a class="nav-link"
+					id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-home"
+					role="tab" aria-controls="v-pills-profile" aria-selected="false">2号变电站</a>
+				<a class="nav-link" id="v-pills-messages-tab" data-toggle="pill"
+					href="#v-pills-home" role="tab" aria-controls="v-pills-messages"
+					aria-selected="false">3号变电站</a> <a class="nav-link"
+					id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-home"
+					role="tab" aria-controls="v-pills-settings" aria-selected="false">4号变电站</a>
+			</div>
+		</div>
+		<div class="col">
+			<div class="tab-content" id="v-pills-tabContent">
+
+				<div class="tab-pane fade show active" id="v-pills-home"
+					role="tabpanel" aria-labelledby="v-pills-home-tab">
+					<div>
+						<div id="station-info">
+							<div class="row p-2 bg-light">
+								<span class="col-auto" id="station-name">1号变电站</span>
+								<div class="col row offset-1">
+									<button id="btn-chart-line" type="button"
+										class="btn btn-outline-primary btn-sm btn-chart"
+										data-chart-type="line">
+										<img class="chart-icon" src="/img/图表折线图.svg" /> 折线图
+									</button>
+									&emsp;
+									<button id="btn-chart-bar" type="button"
+										class="btn btn-outline-primary btn-sm btn-chart"
+										data-chart-type="bar">
+										<img class="chart-icon" src="/img/图表柱状图.svg" /> 柱状图
+									</button>
+									&emsp;
+									<button id="btn-chart-pie" type="button"
+										class="btn btn-outline-primary btn-sm btn-chart"
+										data-chart-type="pie">
+										<img class="chart-icon" src="/img/图表饼图.svg" /> 饼图
+									</button>
+								</div>
+							</div>
+							<br />
+							<div class="row">
+								<div id="tem1" style="width: 600px; height: 400px;"></div>
+
+							</div>
+							<br />
+							<div class="row">
+								<div id="tem2" style="width: 600px; height: 400px;"></div>
+
+							</div>
+							<br />
+							<h6>母排测温</h6>
+							<div class="row"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="temModal" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">电缆测温</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">机柜名称</th>
+								<th scope="col">线号</th>
+								<th scope="col">温度值</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>12#入线</td>
+								<td>1-A</td>
+								<td>30.5℃</td>
+								<td>A相</td>
+							</tr>
+							<tr>
+								<td>12#入线</td>
+								<td>1-B</td>
+								<td>32.0℃</td>
+								<td>B相</td>
+							</tr>
+							<tr>
+								<td>12#入线</td>
+								<td>1-C</td>
+								<td>31.0℃</td>
+								<td>C相</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.js"
+		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+		crossorigin="anonymous"></script>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js "
+		integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49 "
+		crossorigin="anonymous "></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js "
+		integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T "
+		crossorigin="anonymous "></script>
+
+	<!-- 引入 ECharts 文件 -->
+	<script src="/js/echarts.js"></script>
+
+	<script type="text/javascript">
+		// 基于准备好的dom，初始化echarts实例
+		var myChart = echarts.init(document.getElementById('tem1'));
+		var myChart2 = echarts.init(document.getElementById('tem2'));
+
+		var chartType = 'line';
+		// 指定图表的配置项和数据
+		var option = {
+			title : {
+				text : '电缆测温'
+			},
+			legend : {},
+			tooltip : {},
+			dataset : {
+				// 提供一份数据。
+				source : [ [ 'tem', 'A相', 'B相', 'C相' ],
+						[ '2001-08-10\n11:12:10', 23, 24, 22.7 ],
+						[ '2001-08-10\n11:12:13', 25, 27, 32 ],
+						[ '2001-08-10\n11:12:16', 33, 20, 22 ],
+						[ '2001-08-10\n11:12:17', 31, 29, 27 ] ]
+			},
+			xAxis : {
+				type : 'category',
+			},
+			yAxis : {},
+			series : [ {
+				type : chartType
+			}, {
+				type : chartType
+			}, {
+				type : chartType
+			} ]
+		};
+
+		// 使用刚指定的配置项和数据显示图表。
+		myChart.setOption(option);
+		myChart2.setOption(option);
+		myChart2.setOption({
+			title : {
+				text : "母排测温"
+			}
+		})
+	</script>
+
+	<script type="text/javascript" src="/js/dataAnalysis.js"></script>
+</body>
+
+</html>

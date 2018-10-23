@@ -77,4 +77,13 @@ public class MsgManager {
 		this.listCollector = listCollector;
 	}
 	
+	public void addCollector(Collector collector) {
+		collector.setMsgManager(this);
+		listCollector.add(collector);
+	}
+	
+	public void removeCollector(Collector collector) {
+		collector.setMsgManager(null);
+		listCollector.remove(collector);
+	}
 }

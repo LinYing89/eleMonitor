@@ -36,7 +36,7 @@ public class Collector {
 	// 数据长度
 	private int dataLength;
 	// 值类型
-	private DataType valueType;
+	private DataType dataType;
 	//功能码
 	private int functionCode;
 
@@ -96,12 +96,12 @@ public class Collector {
 		this.dataLength = dataLength;
 	}
 
-	public DataType getValueType() {
-		return valueType;
+	public DataType getDataType() {
+		return dataType;
 	}
 
-	public void setValueType(DataType valueType) {
-		this.valueType = valueType;
+	public void setDataType(DataType dataType) {
+		this.dataType = dataType;
 	}
 
 	public int getFunctionCode() {
@@ -128,5 +128,14 @@ public class Collector {
 		this.listDevice = listDevice;
 	}
 	
+	public void addDevice(Device device) {
+		device.setCollector(this);
+		listDevice.add(device);
+	}
+	
+	public void removeDevice(Device device) {
+		device.setCollector(null);
+		listDevice.remove(device);
+	}
 	
 }

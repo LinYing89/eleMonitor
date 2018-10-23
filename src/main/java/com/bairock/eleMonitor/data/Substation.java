@@ -78,5 +78,14 @@ public class Substation {
 		this.active = active;
 	}
 	
+	public void addMsgManager(MsgManager msgManager) {
+		msgManager.setSubstation(this);
+		listMsgManager.add(msgManager);
+	}
+	
+	public void removeMsgManager(MsgManager msgManager) {
+		msgManager.setSubstation(null);
+		listMsgManager.remove(msgManager);
+	}
 	
 }

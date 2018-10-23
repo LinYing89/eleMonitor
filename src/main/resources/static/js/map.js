@@ -1,16 +1,20 @@
 var map;
+//站点数组, 点击marker时遍历
+var stations = new Array();
 
 $(document).ready(function() {
-	
+
 	initMap();
-	
+
 	var address = $(".btn-station");
 	address.each(function() {
+		var stationId = $(this).data("id");
+		//添加到站点数组
+		stations.push(new station(stationId, $(this).text()));
 		$(this).dblclick(function() {
 			console.log($(this).text());
-			//$(location).prop('href', 'ele/ele.html');
-			var stationId = $(this).data("id");
-			window.location.href = "substation/" + stationId;
+			// $(location).prop('href', 'ele/ele.html');
+			window.location.href = "/substation/" + stationId + "/0";
 		});
 		$(this).click(function() {
 			console.log($(this).text());
@@ -19,8 +23,8 @@ $(document).ready(function() {
 			var point = new BMap.Point(lng, lat);
 			map.centerAndZoom(point, 15);
 		});
-		
-		//在地图上添加标记点
+
+		// 在地图上添加标记点
 		var lng = $(this).data("addr").lng;
 		var lat = $(this).data("addr").lat;
 		addMarker(new BMap.Point(lng, lat), 1, $(this).text());
@@ -47,9 +51,9 @@ function initMap() {
 	map.addControl(new BMap.MapTypeControl());
 	map.setCurrentCity("连云港"); // 仅当设置城市信息时，MapTypeControl的切换功能才能可用
 
-//	addMarker(point, 0);
-//	addMarker(new BMap.Point(119.236, 34.613), 1);
-//	addMarker(new BMap.Point(119.246, 34.613), 2);
+	// addMarker(point, 0);
+	// addMarker(new BMap.Point(119.236, 34.613), 1);
+	// addMarker(new BMap.Point(119.246, 34.613), 2);
 	// map.openInfoWindow(infoWindow, point); // 打开信息窗口
 }
 
@@ -84,12 +88,26 @@ function addMarker(point, state, title) { // 创建图标对象
 		var opts = {
 			width : 250, // 信息窗口宽度
 			height : 100, // 信息窗口高度
-			title : $(this).getTitle() // 信息窗口标题
+			offset : new BMap.Size(0, -42), //便宜, 防止盖住marker
+			title : $(this)[0].getTitle()
+		// 信息窗口标题
 		}
 		var infoWindow = new BMap.InfoWindow("状态:正常", opts); // 创建信息窗口对象
 		this.openInfoWindow(infoWindow);
 	});
 	marker.addEventListener("dblclick", function(e) {
-		window.location.href = "ele"
+		var title = $(this)[0].getTitle();
+		for(i in stations){
+			if(stations[i].name == title){
+				window.location.href = "/substation/" + stations[i].id + "/0";
+				return;
+			}
+		}
+		
 	});
+}
+
+function station(id, name) {
+	this.id = id;
+	this.name = name;
 }

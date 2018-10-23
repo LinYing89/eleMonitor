@@ -21,7 +21,7 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active"><a class="nav-link" href="#">首页<span
+				<li class="nav-item active"><a class="nav-link" href="/map">地图<span
 						class="sr-only">(current)</span></a></li>
 			</ul>
 			<div class="nav-item">
@@ -48,12 +48,10 @@
 				<a class="nav-link nav-classes" disabled><img src="/img/站点.svg" />
 					站点管理</a> <a class="nav-link nav-settings-item active"
 					id="v-pills-my-station-tab" href="Settings.html" role="tab"
-					aria-selected="true">我的站点</a> <a
-					class="nav-link nav-settings-item"
-					id="v-pills-add-station-tab"
-					href="/station/add" role="tab" aria-selected="true">添加站点</a> <a
-					class="nav-link nav-classes" disabled><img
-					src="/img/user_white.svg" /> 账号管理</a> <a
+					aria-selected="true">我的站点</a> <a class="nav-link nav-settings-item"
+					id="v-pills-add-station-tab" href="/station/add" role="tab"
+					aria-selected="true">添加站点</a> <a class="nav-link nav-classes"
+					disabled><img src="/img/user_white.svg" /> 账号管理</a> <a
 					class="nav-link nav-settings-item" id="v-pills-users-tab"
 					data-toggle="pill" href="#v-pills-users" role="tab"
 					aria-controls="v-pills-users" aria-selected="true">系统用户管理</a> <a
@@ -95,8 +93,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="station : ${listStation}"
-								th:data-id="${station.id}">
+							<tr th:each="station : ${listStation}" th:data-id="${station.id}">
 								<td th:text="${station.name}">淮海工学院</td>
 								<td th:text="${station.address}">苍梧路</td>
 								<td th:text="'经:'+${station.lat}+'&#10;纬:'+${station.lng}">纬:119.226<br />经:34.613
@@ -104,7 +101,10 @@
 								<td th:text="${station.tel}">15861295673</td>
 								<td th:text="${station.remark}">备注</td>
 								<td th:text="${station.registerTime}">2018-10-08</td>
-								<td><a href="#">编辑 </a><span>|</span> <a href="#" th:href="'/station/delete/'+${station.id}">删除</a></td>
+								<td><a href="#" data-toggle="modal"
+									data-target="#editStationModal"
+									th:attr="data-id=${station.id}, data-name=${station.name}, data-address=${station.address}, data-lat=${station.lat}, data-lng=${station.lng}, data-tel=${station.tel}, data-remark=${station.remark}">编辑 
+								</a><a href="#" th:href="'/station/delete/'+${station.id}">删除</a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -113,10 +113,61 @@
 		</div>
 	</div>
 
-	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
-	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
-	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<!-- Modal 编辑站点 -->
+	<div class="modal fade" id="editStationModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editStationModalTitle">编辑站点</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form class="pr-3" action="/station/stationId" method="post">
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">设备名称</label> <input
+								type="text" class="form-control col-sm-9" name="name" id="name"
+								required="required">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">数据地址</label> <input
+								type="text" class="form-control col-sm-9" name="address"
+								id="address" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">经度</label>
+							<input type="text" class="form-control col-sm-9" id="lat"
+								name="lat" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">纬度</label>
+							<input type="text" class="form-control col-sm-9" id="lng"
+								name="lng" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">联系电话</label>
+							<input type="text" class="form-control col-sm-9" id="tel"
+								name="tel" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">备注</label>
+							<input type="text" class="form-control col-sm-9" id="remark"
+								name="remark">
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	<script src="/js/mystation.js"></script>
 </body>
 
 </html>

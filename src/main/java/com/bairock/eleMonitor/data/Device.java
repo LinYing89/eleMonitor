@@ -31,7 +31,7 @@ public class Device {
 	//值类型,整数, 浮点数
 	private ValueType valueType;
 	//值格式
-	private ValueFormat valeFormat;
+	private ValueFormat valueFormat;
 	//系数
 	private float coefficient;
 	//单位
@@ -77,11 +77,11 @@ public class Device {
 	public void setValueType(ValueType valueType) {
 		this.valueType = valueType;
 	}
-	public ValueFormat getValeFormat() {
-		return valeFormat;
+	public ValueFormat getValueFormat() {
+		return valueFormat;
 	}
-	public void setValeFormat(ValueFormat valeFormat) {
-		this.valeFormat = valeFormat;
+	public void setValueFormat(ValueFormat valueFormat) {
+		this.valueFormat = valueFormat;
 	}
 	public float getCoefficient() {
 		return coefficient;

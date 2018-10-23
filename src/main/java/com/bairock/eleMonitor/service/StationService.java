@@ -33,6 +33,20 @@ public class StationService {
 		return stationRepository.saveAndFlush(station);
 	}
 	
+	public Station edit(long stationId, Station station) {
+		Station res = findStation(stationId);
+		if(null != res) {
+			res.setName(station.getName());
+			res.setAddress(station.getAddress());
+			res.setLat(station.getLat());
+			res.setLng(station.getLng());
+			res.setTel(station.getTel());
+			res.setRemark(station.getRemark());
+			stationRepository.saveAndFlush(res);
+		}
+		return res;
+	}
+	
 	public void deleteById(long stationId){
 		stationRepository.deleteById(stationId);
 	}
