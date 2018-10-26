@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -36,6 +37,11 @@ public class Substation {
 	@OneToMany(mappedBy="substation", cascade=CascadeType.ALL, orphanRemoval=true)
 	@JsonManagedReference("substation_msgmanager")
 	private List<MsgManager> listMsgManager;
+	
+	//设备组集合
+	@OneToMany(mappedBy="substation", cascade=CascadeType.ALL, orphanRemoval=true)
+	@JsonManagedReference("substation_deviceGroup")
+	private List<DeviceGroup> listDeviceGroup;
 	
 	//是否激活,选中
 	@Transient
@@ -87,5 +93,52 @@ public class Substation {
 		msgManager.setSubstation(null);
 		listMsgManager.remove(msgManager);
 	}
+	public List<DeviceGroup> getListDeviceGroup() {
+		return listDeviceGroup;
+	}
+	public void setListDeviceGroup(List<DeviceGroup> listDeviceGroup) {
+		this.listDeviceGroup = listDeviceGroup;
+	}
 	
+	public void addDeviceGroup(DeviceGroup devGroup) {
+		devGroup.setSubstation(this);
+		listDeviceGroup.add(devGroup);
+	}
+	
+	public void removeDeviceGroup(DeviceGroup devGroup) {
+		devGroup.setSubstation(null);
+		listDeviceGroup.remove(devGroup);
+	}
+	
+	/**
+	 * 获取所有子节点设备
+	 * @return
+	 */
+	public List<Device> findDevices(){
+		List<Device> listDevices = new ArrayList<>();
+		for(MsgManager manager : listMsgManager) {
+			for(Collector collector : manager.getListCollector()) {
+				listDevices.addAll(collector.getListDevice());
+			}
+		}
+		return listDevices;
+	}
+	
+	/**
+	 * 获取没有设备组的设备
+	 * @return
+	 */
+	public List<Device> findDeviceNoGroup(){
+		List<Device> listDevices = new ArrayList<>();
+		for(MsgManager manager : listMsgManager) {
+			for(Collector collector : manager.getListCollector()) {
+				for(Device dev : collector.getListDevice()) {
+					if(dev.getDeviceGroup() == null) {
+						listDevices.add(dev);
+					}
+				}
+			}
+		}
+		return listDevices;
+	}
 }

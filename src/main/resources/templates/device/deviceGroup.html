@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/root.css" />
+
+<link rel="stylesheet" href="/css/icomoon/deviceicon.css" />
+
+<!-- styles -->
+<!-- base | always include -->
+<link rel="stylesheet" type="text/css"
+	href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/base/jquery.fonticonpicker.min.css">
+<!-- optional themes | no need to include default theme -->
+<!--<link rel="stylesheet" type="text/css" href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">-->
+
+<link rel="stylesheet" type="text/css"
+	href="/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">
+<title></title>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href="/map">地图<span
+						class="sr-only">(current)</span></a></li>
+			</ul>
+			<div class="nav-item">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link"
+						href="/station/mystations">系统设置</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> admin </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人资料</a> <a
+								class="dropdown-item" href="#">退出</a>
+						</div></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div id="container" class="row">
+		<div id="nav-station" class="col-auto bg-dark m-0">
+			<div class="row station-title p-1 m-0" id="p-address-name">
+				<span class="col pl-1" th:text="${substation.name}">1号变电站</span>
+			</div>
+			<div class="row p-1 mt-2 mr-0 div-left-title">
+				<span class="col">设备组列表</span> <a href="#" data-toggle="modal"
+					data-option="add" th:attr="data-substation-id=${substation.id}"
+					data-target="#addDevGroupModal"><img class="title-icon mr-1"
+					src="/img/添加.svg" /></a>
+			</div>
+			<div class="nav flex-column nav-pills" id="v-pills-tab"
+				role="tablist" aria-orientation="vertical">
+				<a th:each="group : ${substation.listDeviceGroup}"
+					th:text="${group.name}" class="nav-link" href="#"
+					th:href="|/devGroup/${substation.id}/${group.id}|"
+					th:classappend="${group.id == devGroup.id}? 'active'">设备组1</a>
+			</div>
+		</div>
+		<div class="col p-0">
+			<div class="tab-content m-0" id="v-pills-tabContent">
+
+				<div class="tab-pane fade show active" id="v-pills-my-device"
+					role="tabpanel">
+
+					<div th:if="${devGroup}" class="m-0 p-0">
+						<div class="col-12 row bg-light p-2 m-0">
+							<nav class="col-auto mr-auto align-self-center"
+								aria-label="breadcrumb col-auto">
+								<ol class="breadcrumb m-0 bg-light p-1">
+									<li class="breadcrumb-item"><a href="#"
+										th:href="|/substation/${devGroup.substation.station.id}/${devGroup.substation.id}|">首页</a></li>
+									<li class="breadcrumb-item"> <a href="#" th:href="|/msgManager/${substation.id}/0|">设备管理</a></li>
+									<li class="breadcrumb-item active" aria-current="page">组管理</li>
+								</ol>
+							</nav>
+							<div class="col-auto mr-2">
+								<span class="align-self-center col-atuo">组名称:</span> <span
+									class="align-self-center col-atuo" id="station-name"
+									th:text="${devGroup.name}" data-stationid="">组1 </span> <span
+									class="align-self-center col-atuo">&emsp; 组图标:</span> <span
+									class="align-self-center col-atuo icon-preview"
+									th:classappend="${devGroup.icon}"></span> <a
+									class="dropdown-toggle align-self-center col-auto"
+									id="a-station-option" href="#" data-toggle="dropdown">操作</a>
+								<div class="dropdown-menu" aria-labelledby="a-station-option">
+									<a class="dropdown-item" href="#" data-toggle="modal"
+										data-option="edit"
+										th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-icon=${devGroup.icon}"
+										data-target="#addDevGroupModal">编辑</a> <a
+										class="dropdown-item" href="#"
+										th:href="|/devGroup/del/${devGroup.id}|" data-stationid="">删除</a>
+								</div>
+								<button type="button" class="btn btn-primary ml-2 col-auto"
+									th:attr="data-dev-group-id=${devGroup.id}" data-toggle="modal"
+									data-option="add" data-target="#addDevice">添加数据节点</button>
+							</div>
+						</div>
+
+						<table class="table">
+							<caption>数据节点列表</caption>
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">数据名称</th>
+									<th scope="col">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="device : ${devGroup.listDevice}">
+									<td th:text="${device.name}">采集终端</td>
+									<td class="row"><a href="#"
+										th:href="|/devGroup/del/device/${devGroup.id}/${device.id}|">删除 </a></td>
+								</tr>
+							</tbody>
+						</table>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加组 -->
+	<div class="modal fade" id="addDevGroupModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addDevGroupModalTitle">添加组</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/devGroup/${substation.id}|" method="post">
+						<div class="form-group">
+							<label for="substationName">设备组名称</label> <input type="text"
+								class="form-control" id="name" name="name" required="required">
+						</div>
+						<div class="form-group">
+							<label for="substationName">组图标</label> <select
+								class="form-control" id="myselect" name="icon">
+								<option value="icon-device">icon-device</option>
+								<option value="icon-SF6">icon-SF6</option>
+								<option value="icon-door">icon-door</option>
+								<option value="icon-pump">icon-pump</option>
+								<option value="icon-doorsensor">icon-doorsensor</option>
+								<option value="icon-line-tem">icon-line-tem</option>
+								<option value="icon-light">icon-light</option>
+								<option value="icon-tem">icon-tem</option>
+								<option value="icon-gas">icon-gas</option>
+								<option value="icon-alarm">icon-alarm</option>
+								<option value="icon-dehumidity">icon-dehumidity</option>
+								<option value="icon-fan">icon-fan</option>
+								<option value="icon-aircondition">icon-aircondition</option>
+								<option value="icon-water-level">icon-water-level</option>
+								<option value="icon-infrared">icon-infrared</option>
+								<option value="icon-hoco">icon-hoco</option>
+								<option value="icon-humidity">icon-humidity</option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal 添加设备 -->
+	<div class="modal fade" id="addDevice" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addDevTitle">选择节点数据</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div th:if="${devGroup}" class="modal-body">
+					<form th:action="|/devGroup/add/device/${devGroup.id}|" method="post">
+						<div class="form-group">
+							<label for="substationName">节点数据列表</label> <select multiple 
+								class="form-control" id="deviceId" name="deviceId">
+								<option th:each="device : ${listDevice}" th:value="${device.id}" th:text="${device.name}">设备名</option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script src="/js/jquery.fonticonpicker.js"></script>
+	<script src="/js/deviceGroup.js"></script>
+
+	<script type="text/javascript">
+		// Make sure to fire only when the DOM is ready
+		$(document).ready(function($) {
+			$('#myselect').fontIconPicker({
+				theme : 'fip-bootstrap',
+				//source: ['icon-heart', 'icon-lemon', 'icon-user', 'icon-map', 'icon-help'],
+				emptyIcon : false,
+			//hasSearch: false
+			}); // Load with default options
+
+		});
+	</script>
+</body>
+
+</html>

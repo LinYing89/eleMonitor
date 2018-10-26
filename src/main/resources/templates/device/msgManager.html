@@ -22,19 +22,11 @@
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active"><a class="nav-link" href="/map">地图<span
 						class="sr-only">(current)</span></a></li>
-				<li class="nav-item dropdown"><a
-					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-					role="button" data-toggle="dropdown" aria-haspopup="true"
-					aria-expanded="false"> 数据分析 </a>
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="eleInfo2.html">电站数据</a> <a
-							class="dropdown-item" href="#">数据分析</a>
-					</div></li>
 			</ul>
 			<div class="nav-item">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="station/mystations">系统设置</a>
-					</li>
+					<li class="nav-item"><a class="nav-link"
+						href="/station/mystations">系统设置</a></li>
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
 						role="button" data-toggle="dropdown" aria-haspopup="true"
@@ -52,12 +44,12 @@
 	<div id="container" class="row">
 		<div id="nav-station" class="col-auto bg-dark m-0">
 			<div class="row station-title p-1 m-0" id="p-address-name">
-				<span class="col pl-1" th:text="${substationName}">1号变电站</span> <a
-					href="#" data-toggle="modal" data-target="#addSubstationModal"><img
-					class="title-icon mr-1" src="/img/添加.svg" /></a>
+				<span class="col pl-1" th:text="${substationName}">1号变电站</span>
 			</div>
 			<div class="row p-1 mt-2 mr-0 div-left-title">
-				<span class="col">通信机列表</span>
+				<span class="col">通信机列表</span> <a href="#" data-toggle="modal"
+					data-target="#addSubstationModal"><img class="title-icon mr-1"
+					src="/img/添加.svg" /></a>
 			</div>
 			<div class="nav flex-column nav-pills" id="v-pills-tab"
 				role="tablist" aria-orientation="vertical">
@@ -74,37 +66,44 @@
 					role="tabpanel">
 
 					<div th:if="${msgManager}" class="m-0 p-0">
-
-						<nav aria-label="breadcrumb col-12">
-							<ol class="breadcrumb m-0">
-								<li class="breadcrumb-item"><a href="#"
-									th:href="|/substation/${msgManager.substation.station.id}/${msgManager.substation.id}|">首页</a></li>
-								<li class="breadcrumb-item active" aria-current="page"
-									th:text="${msgManager.substation.name}">设备管理</li>
-							</ol>
-						</nav>
 						<div class="col-12 row bg-light p-2 m-0">
-							<span class="align-self-center col-atuo">通信机名称:</span> <span
-								class="align-self-center col-atuo" id="station-name"
-								th:text="${msgManager.name}" data-stationid="">通信管理机1 </span> <a
-								class="dropdown-toggle align-self-center col-auto"
-								id="a-station-option" href="#" data-toggle="dropdown">操作</a>
-							<div class="dropdown-menu" aria-labelledby="a-station-option">
-								<a class="dropdown-item" href="#" data-toggle="modal"
-									data-target="#editMsgManagerModal">编辑</a> <a
-									class="dropdown-item" href="#"
-									th:href="|/msgManager/del/${msgManager.id}|" data-stationid="">删除</a>
+							<nav class="col-auto mr-auto align-self-center"
+								aria-label="breadcrumb col-auto">
+								<ol class="breadcrumb m-0 bg-light p-1">
+									<li class="breadcrumb-item"><a href="#"
+										th:href="|/substation/${msgManager.substation.station.id}/${msgManager.substation.id}|">首页</a></li>
+									<li class="breadcrumb-item"><a href="#"
+										th:href="|/devGroup/${msgManager.substation.id}/0|">数据组管理</a></li>
+								</ol>
+							</nav>
+							<div class="col-auto mr-2">
+								<span class="align-self-center col-atuo">通信机名称:</span> <span
+									class="align-self-center col-atuo" id="station-name"
+									th:text="${msgManager.name}" data-stationid="">通信管理机1 </span> <a
+									class="dropdown-toggle align-self-center col-auto"
+									id="a-station-option" href="#" data-toggle="dropdown">操作</a>
+								<div class="dropdown-menu" aria-labelledby="a-station-option">
+									<a class="dropdown-item" href="#" data-toggle="modal"
+										data-target="#editMsgManagerModal">编辑</a> <a
+										class="dropdown-item" href="#"
+										th:href="|/msgManager/del/${msgManager.id}|" data-stationid="">删除</a>
+								</div>
+								<button type="button" class="btn btn-primary ml-2 col-auto"
+									th:attr="data-msg-manager-id=${msgManager.id}"
+									data-toggle="modal" data-option="add"
+									data-target="#editCollectorModal">添加采集终端</button>
+								<button type="button" class="btn btn-primary ml-2 col-auto">下发配置命令</button>
 							</div>
-							<button type="button" class="btn btn-primary ml-2 col-auto" th:attr="data-msg-manager-id=${msgManager.id}"
-								data-toggle="modal" data-option="add" data-target="#editCollectorModal">添加采集终端</button>
 						</div>
 
 						<table class="table">
-							<thead>
+							<caption>采集终端列表</caption>
+							<thead class="thead-light">
 								<tr>
 									<th scope="col">设备名称</th>
 									<th scope="col">总线</th>
 									<th scope="col">终端号</th>
+									<th scope="col">功能码</th>
 									<th scope="col">起始地址</th>
 									<th scope="col">数据长度</th>
 									<th scope="col">数据类型</th>
@@ -116,14 +115,22 @@
 									<td th:text="${collector.name}">采集终端</td>
 									<td th:text="${collector.busCode}">1</td>
 									<td th:text="${collector.code}">1</td>
+									<td th:text="${collector.functionCode}">1</td>
 									<td th:text="${collector.beginAddress}">0xb1</td>
 									<td th:text="${collector.dataLength}">2</td>
 									<td th:text="${collector.dataType.info}">数值量</td>
-									<td><a href="#" data-toggle="modal"
-										data-target="#editCollectorModal" data-option="edit"
-										th:attr="data-id=${collector.id}, data-name=${collector.name}, data-busCode=${collector.busCode}, data-code=${collector.code}, data-beginAddress=${collector.beginAddress}, data-dataLength=${collector.dataLength}, data-dataType=${collector.dataType}">编辑
-									</a> <a href="#" th:href="|/device/${collector.id}|">设备管理 </a> <a
-										href="#" th:href="|/collector/del/${collector.id}|">删除</a></td>
+									<td class="row"><a href="#"
+										th:href="|/device/${collector.id}|">设备管理 </a> <a
+										class="nav-link dropdown-toggle p-0 ml-2" href="#"
+										role="button" data-toggle="dropdown" aria-haspopup="true"
+										aria-expanded="false">更多</a>
+										<div class="dropdown-menu">
+											<a href="#" data-toggle="modal" class="dropdown-item"
+												data-target="#editCollectorModal" data-option="edit"
+												th:attr="data-id=${collector.id}, data-name=${collector.name}, data-busCode=${collector.busCode}, data-functionCode=${collector.functionCode}, data-code=${collector.code}, data-beginAddress=${collector.beginAddress}, data-dataLength=${collector.dataLength}, data-dataType=${collector.dataType}">编辑
+											</a> <a href="#" class="dropdown-item"
+												th:href="|/collector/del/${collector.id}|">删除</a>
+										</div></td>
 								</tr>
 							</tbody>
 						</table>
@@ -181,7 +188,8 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form th:if="${msgManager}" th:action="|/msgManager/edit/${msgManager.id}|" method="post">
+					<form th:if="${msgManager}"
+						th:action="|/msgManager/edit/${msgManager.id}|" method="post">
 						<div class="form-group">
 							<label for="substationName">通信管理机名称</label> <input type="text"
 								class="form-control" name="name" th:value="${msgManager.name}"
@@ -196,6 +204,41 @@
 							<label for="substationName">通信管理机位置</label> <input type="text"
 								class="form-control" name="place" th:value="${msgManager.place}"
 								required="required">
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加数据组 -->
+	<div class="modal fade" id="addDeviceGroupModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">添加数据组</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form action="#" method="post">
+						<div class="form-group">
+							<label for="substationName">组名称</label> <input type="text"
+								class="form-control" name="name" required="required">
+						</div>
+						<div class="form-group">
+							<label for="substationName">组图标</label> <select
+								class="form-control" id="exampleFormControlSelect1">
+								<option>湿度</option>
+								<option>2</option>
+								<option>3</option>
+								<option>4</option>
+								<option>5</option>
+							</select>
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>
 					</form>
@@ -235,6 +278,11 @@
 								id="code" placeholder="终端号" required="required">
 						</div>
 						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">功能码</label> <input
+								type="text" class="form-control col-sm-9" name="functionCode"
+								id="functionCode" required="required">
+						</div>
+						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">起始地址</label>
 							<input type="text" class="form-control col-sm-9"
 								id="beginAddress" name="beginAddress" placeholder="起始地址"
@@ -264,6 +312,7 @@
 	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
 	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
 	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
 	<script src="/js/msgManager.js"></script>
 </body>
 

@@ -9,17 +9,6 @@ $(document).ready(function() {
 });
 
 function alarmBegin(devObj) {
-	var alarmObj = $(devObj.find(".img-alarm")[0]);
-	var css = {
-		opacity:'0.4'
-	};
-	alarmObj.animate(css, 1000, rowBack);
-
-	function rowBack() {
-		if(css.opacity <= '0.4') css.opacity = '1';
-		else if(css.opacity === "1") css.opacity = '0.4';
-		alarmObj.animate(css, 1000, rowBack);
-	}
 	
 	var cssBorder = {outlineWidth: "0"};
 	devObj.animate(cssBorder, 2000, rowBack2);

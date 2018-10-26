@@ -39,6 +39,7 @@ public class CollectorService {
 			res.setName(collector.getName());
 			res.setCode(collector.getCode());
 			res.setBusCode(collector.getBusCode());
+			res.setFunctionCode(collector.getFunctionCode());
 			res.setBeginAddress(collector.getBeginAddress());
 			res.setDataLength(collector.getDataLength());
 			res.setDataType(collector.getDataType());
