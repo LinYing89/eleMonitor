@@ -22,7 +22,17 @@ public class MsgManagerService {
 		return option.orElse(null);
 	}
 	
+	public MsgManager findByMsgManagerCode(int msgManagerCode){
+		Optional<MsgManager> option = msgManagerRepository.findByCode(msgManagerCode);
+		return option.orElse(null);
+	}
+	
 	public MsgManager addMsgManager(long substationId, MsgManager msgManager) {
+		if(findByMsgManagerCode(msgManager.getCode()) != null) {
+			//已有同号的通信机
+			return null;
+		}
+		
 		Substation substation = substationService.findBySubstationId(substationId);
 		if(null == substation) {
 			return null;
@@ -34,6 +44,10 @@ public class MsgManagerService {
 	}
 	
 	public MsgManager editMsgManager(long msgManagerId, MsgManager msgManager) {
+		if(findByMsgManagerCode(msgManager.getCode()) != null) {
+			//已有同号的通信机
+			return null;
+		}
 		MsgManager res = findByMsgManagerId(msgManagerId);
 		if(null != res) {
 			res.setName(msgManager.getName());

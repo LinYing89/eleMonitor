@@ -37,6 +37,7 @@ public class DeviceGroupService {
 		DeviceGroup res = findById(devGroupId);
 		if(null != res) {
 			res.setName(devGroup.getName());
+			res.setValueType(devGroup.getValueType());
 			res.setIcon(devGroup.getIcon());
 			deviceGroupRepository.saveAndFlush(res);
 		}

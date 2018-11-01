@@ -48,8 +48,9 @@
 			</div>
 			<div class="row p-1 mt-2 mr-0 div-left-title">
 				<span class="col">通信机列表</span> <a href="#" data-toggle="modal"
-					data-target="#addSubstationModal"><img class="title-icon mr-1"
-					src="/img/添加.svg" /></a>
+					data-target="#editMsgManagerModal" data-option="add"
+					th:attr="data-substation-id=${substationId}"><img
+					class="title-icon mr-1" src="/img/添加.svg" /></a>
 			</div>
 			<div class="nav flex-column nav-pills" id="v-pills-tab"
 				role="tablist" aria-orientation="vertical">
@@ -84,15 +85,18 @@
 									id="a-station-option" href="#" data-toggle="dropdown">操作</a>
 								<div class="dropdown-menu" aria-labelledby="a-station-option">
 									<a class="dropdown-item" href="#" data-toggle="modal"
-										data-target="#editMsgManagerModal">编辑</a> <a
-										class="dropdown-item" href="#"
+										data-target="#editMsgManagerModal" data-option="edit"
+										th:attr="data-id=${msgManager.id}, data-name=${msgManager.name}, data-code=${msgManager.code}, data-place=${msgManager.place}">编辑</a>
+									<a class="dropdown-item" href="#"
 										th:href="|/msgManager/del/${msgManager.id}|" data-stationid="">删除</a>
 								</div>
 								<button type="button" class="btn btn-primary ml-2 col-auto"
 									th:attr="data-msg-manager-id=${msgManager.id}"
 									data-toggle="modal" data-option="add"
 									data-target="#editCollectorModal">添加采集终端</button>
-								<button type="button" class="btn btn-primary ml-2 col-auto">下发配置命令</button>
+								<button type="button" id="btn-send-config"
+									th:attr="data-msg-manager-id=${msgManager.id}"
+									class="btn btn-primary ml-2 col-auto">下发配置命令</button>
 							</div>
 						</div>
 
@@ -143,30 +147,37 @@
 	</div>
 
 	<!-- Modal 添加通信机 -->
-	<div class="modal fade" id="addSubstationModal" tabindex="-1"
+	<div class="modal fade" id="editMsgManagerModal" tabindex="-1"
 		role="dialog" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalCenterTitle">添加通信机</h5>
+					<h5 class="modal-title" id="editMsgManagerModalTitle">添加通信机</h5>
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<form th:action="|/msgManager/${substationId}|" method="post">
+					<form th:action="|/msgManager/${substationId}|" method="post"
+						id="form-add-msgmanager">
 						<div class="form-group">
 							<label for="substationName">通信管理机名称</label> <input type="text"
-								class="form-control" name="name" required="required">
+								class="form-control" id="manager-name" name="name"
+								required="required">
 						</div>
 						<div class="form-group">
 							<label for="substationName">通信管理机编号</label> <input type="text"
-								class="form-control" name="code" required="required">
+								class="form-control" id="manager-code" name="code"
+								required="required">
 						</div>
+
 						<div class="form-group">
 							<label for="substationName">通信管理机位置</label> <input type="text"
-								class="form-control" name="place" required="required">
+								class="form-control" id="manager-place" name="place">
+						</div>
+						<div class="form-group">
+							<span id="manager-code-repeated" class="text-danger"></span>
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>
 					</form>
@@ -176,41 +187,41 @@
 	</div>
 
 	<!-- Modal 编辑通信机 -->
-	<div class="modal fade" id="editMsgManagerModal" tabindex="-1"
-		role="dialog" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">编辑通信机</h5>
-					<button type="button" class="close" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form th:if="${msgManager}"
-						th:action="|/msgManager/edit/${msgManager.id}|" method="post">
-						<div class="form-group">
-							<label for="substationName">通信管理机名称</label> <input type="text"
-								class="form-control" name="name" th:value="${msgManager.name}"
-								required="required">
-						</div>
-						<div class="form-group">
-							<label for="substationName">通信管理机编号</label> <input type="text"
-								class="form-control" name="code" th:value="${msgManager.code}"
-								required="required">
-						</div>
-						<div class="form-group">
-							<label for="substationName">通信管理机位置</label> <input type="text"
-								class="form-control" name="place" th:value="${msgManager.place}"
-								required="required">
-						</div>
-						<button type="submit" class="btn btn-primary">提交</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+	<!-- 	<div class="modal fade" id="editMsgManagerModal" tabindex="-1" -->
+	<!-- 		role="dialog" aria-hidden="true"> -->
+	<!-- 		<div class="modal-dialog" role="document"> -->
+	<!-- 			<div class="modal-content"> -->
+	<!-- 				<div class="modal-header"> -->
+	<!-- 					<h5 class="modal-title">编辑通信机</h5> -->
+	<!-- 					<button type="button" class="close" data-dismiss="modal" -->
+	<!-- 						aria-label="Close"> -->
+	<!-- 						<span aria-hidden="true">&times;</span> -->
+	<!-- 					</button> -->
+	<!-- 				</div> -->
+	<!-- 				<div class="modal-body"> -->
+	<!-- 					<form th:if="${msgManager}" -->
+	<!-- 						th:action="|/msgManager/edit/${msgManager.id}|" method="post"> -->
+	<!-- 						<div class="form-group"> -->
+	<!-- 							<label for="substationName">通信管理机名称</label> <input type="text" -->
+	<!-- 								class="form-control" name="name" th:value="${msgManager.name}" -->
+	<!-- 								required="required"> -->
+	<!-- 						</div> -->
+	<!-- 						<div class="form-group"> -->
+	<!-- 							<label for="substationName">通信管理机编号</label> <input type="text" -->
+	<!-- 								class="form-control" name="code" th:value="${msgManager.code}" -->
+	<!-- 								required="required"> -->
+	<!-- 						</div> -->
+	<!-- 						<div class="form-group"> -->
+	<!-- 							<label for="substationName">通信管理机位置</label> <input type="text" -->
+	<!-- 								class="form-control" name="place" th:value="${msgManager.place}" -->
+	<!-- 								required="required"> -->
+	<!-- 						</div> -->
+	<!-- 						<button type="submit" class="btn btn-primary">提交</button> -->
+	<!-- 					</form> -->
+	<!-- 				</div> -->
+	<!-- 			</div> -->
+	<!-- 		</div> -->
+	<!-- 	</div> -->
 
 	<!-- Modal 添加数据组 -->
 	<div class="modal fade" id="addDeviceGroupModal" tabindex="-1"
@@ -312,6 +323,9 @@
 	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
 	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
 	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
 
 	<script src="/js/msgManager.js"></script>
 </body>

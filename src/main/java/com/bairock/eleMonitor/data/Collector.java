@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -136,6 +137,19 @@ public class Collector {
 	public void removeDevice(Device device) {
 		device.setCollector(null);
 		listDevice.remove(device);
+	}
+	
+	public void handler(byte[] byData) {
+		for(Device device : listDevice) {
+			int from = device.getBeginAddress() - this.beginAddress;
+			if(from < byData.length) {
+				int to = from + device.getDataLength();
+				if(to <= byData.length) {
+					byte[] byDevData = Arrays.copyOfRange(byData, from, to);
+					device.handler(byDevData);
+				}
+			}
+		}
 	}
 	
 }

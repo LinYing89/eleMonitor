@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * 变电所
+ * 
  * @author 44489
  *
  */
@@ -24,121 +25,184 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class Substation {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	private String name;
 	private String remark;
-	
+
 	@ManyToOne
 	@JsonBackReference("station_substation")
 	private Station station;
-	
-	@OneToMany(mappedBy="substation", cascade=CascadeType.ALL, orphanRemoval=true)
+
+	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("substation_msgmanager")
 	private List<MsgManager> listMsgManager;
-	
-	//设备组集合
-	@OneToMany(mappedBy="substation", cascade=CascadeType.ALL, orphanRemoval=true)
+
+	// 设备组集合
+	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("substation_deviceGroup")
 	private List<DeviceGroup> listDeviceGroup;
-	
-	//是否激活,选中
+
+	// 是否激活,选中
 	@Transient
 	private boolean active;
-	
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getRemark() {
 		return remark;
 	}
+
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
 	public Station getStation() {
 		return station;
 	}
+
 	public void setStation(Station station) {
 		this.station = station;
 	}
+
 	public List<MsgManager> getListMsgManager() {
 		return listMsgManager;
 	}
+
 	public void setListMsgManager(List<MsgManager> listMsgManager) {
 		this.listMsgManager = listMsgManager;
 	}
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public void addMsgManager(MsgManager msgManager) {
 		msgManager.setSubstation(this);
 		listMsgManager.add(msgManager);
 	}
-	
+
 	public void removeMsgManager(MsgManager msgManager) {
 		msgManager.setSubstation(null);
 		listMsgManager.remove(msgManager);
 	}
+
 	public List<DeviceGroup> getListDeviceGroup() {
 		return listDeviceGroup;
 	}
+
 	public void setListDeviceGroup(List<DeviceGroup> listDeviceGroup) {
 		this.listDeviceGroup = listDeviceGroup;
 	}
-	
+
 	public void addDeviceGroup(DeviceGroup devGroup) {
 		devGroup.setSubstation(this);
 		listDeviceGroup.add(devGroup);
 	}
-	
+
 	public void removeDeviceGroup(DeviceGroup devGroup) {
 		devGroup.setSubstation(null);
 		listDeviceGroup.remove(devGroup);
 	}
-	
+
 	/**
 	 * 获取所有子节点设备
+	 * 
 	 * @return
 	 */
-	public List<Device> findDevices(){
+	public List<Device> findDevices() {
 		List<Device> listDevices = new ArrayList<>();
-		for(MsgManager manager : listMsgManager) {
-			for(Collector collector : manager.getListCollector()) {
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
 				listDevices.addAll(collector.getListDevice());
 			}
 		}
 		return listDevices;
 	}
-	
+
 	/**
 	 * 获取没有设备组的设备
+	 * 
 	 * @return
 	 */
-	public List<Device> findDeviceNoGroup(){
+	public List<Device> findDeviceNoGroup() {
 		List<Device> listDevices = new ArrayList<>();
-		for(MsgManager manager : listMsgManager) {
-			for(Collector collector : manager.getListCollector()) {
-				for(Device dev : collector.getListDevice()) {
-					if(dev.getDeviceGroup() == null) {
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					if (dev.getDeviceGroup() == null) {
 						listDevices.add(dev);
 					}
 				}
 			}
 		}
 		return listDevices;
+	}
+
+	public List<Device> findCtrlDeviceNoGroup() {
+		List<Device> listDevices = new ArrayList<>();
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					if (dev.getValueType() == ValueType.SWITCH && dev.getDeviceGroup() == null) {
+						listDevices.add(dev);
+					}
+				}
+			}
+		}
+		return listDevices;
+	}
+
+	public List<DeviceGroup> findCtrlDeviceGroup() {
+		List<DeviceGroup> listGroup = new ArrayList<>();
+		for (DeviceGroup group : listDeviceGroup) {
+			if (group.getValueType() == ValueType.SWITCH) {
+				listGroup.add(group);
+			}
+		}
+		return listGroup;
+	}
+
+	public List<Device> findValueDeviceNoGroup() {
+		List<Device> listDevices = new ArrayList<>();
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					if (dev.getValueType() != ValueType.SWITCH && dev.getDeviceGroup() == null) {
+						listDevices.add(dev);
+					}
+				}
+			}
+		}
+		return listDevices;
+	}
+
+	public List<DeviceGroup> findValueDeviceGroup() {
+		List<DeviceGroup> listGroup = new ArrayList<>();
+		for (DeviceGroup group : listDeviceGroup) {
+			if (group.getValueType() != ValueType.SWITCH) {
+				listGroup.add(group);
+			}
+		}
+		return listGroup;
 	}
 }

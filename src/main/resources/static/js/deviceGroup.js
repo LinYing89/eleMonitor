@@ -11,9 +11,11 @@ $('#addDevGroupModal').on('show.bs.modal', function(event) {
 		title.text("编辑数据组");
 		var id = target.data('id')
 		var name = target.data('name') // Extract info from data-*
+		var valueType = target.data('value-type')
 		var icon = target.data('icon')
 		
 		modal.find('#name').val(name)
+		modal.find('#valueType').val(valueType)
 		modal.find('#myselect').val(icon)
 
 		modal.find('form').attr('action', '/devGroup/edit/' + id)

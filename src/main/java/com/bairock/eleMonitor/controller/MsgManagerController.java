@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.Substation;
+import com.bairock.eleMonitor.data.webData.FormResult;
 import com.bairock.eleMonitor.service.MsgManagerService;
 import com.bairock.eleMonitor.service.SubstationService;
 
@@ -59,16 +61,38 @@ public class MsgManagerController {
 		return "device/msgManager";
 	}
 	
+	@ResponseBody
 	@PostMapping("/{substationId}")
-	public String addMsgManager(@PathVariable long substationId, @ModelAttribute MsgManager msgManager) {
+	public FormResult addMsgManager(@PathVariable long substationId, @ModelAttribute MsgManager msgManager) {
 		MsgManager res = msgManagerService.addMsgManager(substationId, msgManager);
-		return "redirect:/msgManager/" + substationId + "/" + res.getId();
+		FormResult result = new FormResult();
+		if(null == res) {
+			//通信机号重复
+			result.setCode(1);
+			result.setMsg("通信机号重复");
+		}else {
+			result.setCode(0);
+			result.setMsg("添加成功");
+		}
+		return result;
+//		return "redirect:/msgManager/" + substationId + "/" + res.getId();
 	}
 	
+	@ResponseBody
 	@PostMapping("/edit/{msgManagerId}")
-	public String editMsgManager(@PathVariable long msgManagerId, @ModelAttribute MsgManager msgManager) {
+	public FormResult editMsgManager(@PathVariable long msgManagerId, @ModelAttribute MsgManager msgManager) {
 		MsgManager res = msgManagerService.editMsgManager(msgManagerId, msgManager);
-		return "redirect:/msgManager/" + res.getSubstation().getId() + "/" + res.getId();
+		FormResult result = new FormResult();
+		if(null == res) {
+			//通信机号重复
+			result.setCode(1);
+			result.setMsg("通信机号重复");
+		}else {
+			result.setCode(0);
+			result.setMsg("添加成功");
+		}
+		return result;
+		//return "redirect:/msgManager/" + res.getSubstation().getId() + "/" + res.getId();
 	}
 	
 	@GetMapping("/del/{msgManagerId}")

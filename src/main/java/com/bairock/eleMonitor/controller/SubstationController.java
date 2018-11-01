@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.bairock.eleMonitor.data.Device;
+import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
 import com.bairock.eleMonitor.service.StationService;
@@ -42,28 +44,31 @@ public class SubstationController {
 		Station station = stationService.findStation(stationId);
 		List<Substation> listSubstation = station.getListSubstation();
 //		List<Substation> listSubstation = substationService.findByStationId(stationId);
-		model.addAttribute("stationId", stationId);
-		model.addAttribute("stationName", station.getName());
-		model.addAttribute("listSubstation", listSubstation);
+		model.addAttribute("station", station);
+		//model.addAttribute("listSubstation", listSubstation);
 		if(listSubstation.size() > 0) {
-			if(substationId == 0) {
-				model.addAttribute("substation", listSubstation.get(0));
-			}else {
-				boolean haved = false;
+			Substation substation = listSubstation.get(0);
+			if(substationId != 0) {
 				for(Substation s : listSubstation) {
 					if(s.getId() == substationId) {
-						model.addAttribute("substation", s);
-						haved = true;
+						substation = s;
 						break;
 					}
 				}
-				if(!haved) {
-					model.addAttribute("substation", listSubstation.get(0));
-				}
 			}
+			model.addAttribute("substation", substation);
+			
+			List<Device> listValueDevice = substation.findValueDeviceNoGroup();
+			List<DeviceGroup> listValueGroup = substation.findValueDeviceGroup();
+			List<Device> listCtrlDevice = substation.findCtrlDeviceNoGroup();
+			List<DeviceGroup> listCtrlGroup = substation.findCtrlDeviceGroup();
+			model.addAttribute("listValueDevice", listValueDevice);
+			model.addAttribute("listValueGroup", listValueGroup);
+			model.addAttribute("listCtrlDevice", listCtrlDevice);
+			model.addAttribute("listCtrlGroup", listCtrlGroup);
 		}
 		
-		return "substation/substation";
+		return "substation/substation2";
 	}
 	
 	@PostMapping("/{stationId}")

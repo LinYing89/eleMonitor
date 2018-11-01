@@ -29,6 +29,8 @@ public class DeviceGroup {
 	//组图标路径
 	private String icon;
 	
+	private ValueType valueType = ValueType.VALUE;
+	
 	@ManyToOne
 	@JsonBackReference("substation_deviceGroup")
 	private Substation substation;
@@ -73,6 +75,12 @@ public class DeviceGroup {
 		this.substation = substation;
 	}
 	
+	public ValueType getValueType() {
+		return valueType;
+	}
+	public void setValueType(ValueType valueType) {
+		this.valueType = valueType;
+	}
 	public Device findDeviceById(long id) {
 		for(Device device : listDevice) {
 			if(device.getId() == id) {

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/root.css" />
+<link rel="stylesheet" href="/css/substation.css" />
+
+<link rel="stylesheet" href="/css/icomoon/deviceicon.css" />
+
+<title></title>
+</head>
+
+<body>
+	<span id="span-user-name">admin</span>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active"><a class="nav-link" href="/map">地图<span
+						class="sr-only">(current)</span></a></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> 电力数据 </a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">电站数据</a> <a
+							class="dropdown-item" href="/dataAnalysis/">数据分析</a>
+					</div></li>
+			</ul>
+			<div class="nav-item">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link"
+						href="/station/mystations">系统设置</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> admin </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人资料</a> <a
+								class="dropdown-item" href="#">退出</a>
+						</div></li>
+				</ul>
+			</div>
+		</div>
+
+	</nav>
+
+	<div id="container" class="row">
+		<div id="nav-station" class="col-auto bg-dark">
+			<div class="row station-title p-1 m-0">
+				<span class="col pl-1" id="p-address-name" th:text="${station.name}">淮海工学院</span>
+				<a href="#" data-toggle="modal" data-target="#addSubstationModal"><img
+					class="title-icon mr-1" src="/img/添加.svg" /></a>
+			</div>
+			<div class="row p-1 mt-2 mr-0 div-left-title">
+				<span class="col">变电站列表</span>
+			</div>
+
+			<div class="nav flex-column nav-pills" id="v-pills-tab"
+				role="tablist" aria-orientation="vertical">
+				<a th:each="sub : ${station.listSubstation}" th:text="${sub.name}"
+					class="nav-link" href="#"
+					th:href="|/substation/${station.id}/${sub.id}|"
+					th:classappend="${sub.id == substation.id}? 'active'">1号变电站</a>
+			</div>
+		</div>
+		<div class="col">
+			<div class="tab-content" id="v-pills-tabContent">
+
+				<div class="tab-pane fade show active" id="v-pills-home"
+					role="tabpanel" aria-labelledby="v-pills-home-tab">
+					<div class="row" th:if="${substation}">
+						<div id="station-info" class="col-9">
+							<div class="row bg-light p-2">
+								<div class="col-6">
+									<span>变电站名称: <span class="col-auto" id="station-name"
+										th:text="${substation.name}">1号变电站</span>
+									</span> <a class="col-auto dropdown-toggle" id="a-station-option"
+										href="#" data-toggle="dropdown">操作</a>
+									<div class="dropdown-menu" aria-labelledby="a-station-option">
+										<a class="dropdown-item" href="#" data-toggle="modal"
+											data-target="#editSubstationModal">编辑</a> <a
+											class="dropdown-item" href="#"
+											th:href="|/msgManager/${substation.id}/0|" data-stationid="">设备管理</a>
+										<a class="dropdown-item" href="#"
+											th:href="'/substation/del/' + ${substation.id}"
+											data-stationid="">删除</a>
+									</div>
+								</div>
+							</div>
+							<h6 class="mt-1 text-muted">环境</h6>
+							<div class="row">
+								<div class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row h-100">
+											<div class="col">
+												<div class="w-100 h-50 d-flex justify-content-center">
+													<img class="img-dev align-self-center" src="/img/温度计.svg">
+												</div>
+												<div class="w-100 h-50 d-flex justify-content-center">
+													<span class="align-self-center">26.5℃</span>
+												</div>
+											</div>
+											<div class="col">
+												<div class="w-100 h-50 d-flex justify-content-center">
+													<img class="img-dev align-self-center" src="/img/湿度.svg">
+												</div>
+												<div class="w-100 h-50 d-flex justify-content-center">
+													<span class="align-self-center">65%</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div th:each="valueDevice : ${listValueDevice}" class="col-auto">
+									<div class="ele-card align-self-center" th:id="|card-dev-${valueDevice.id}|">
+										<div class="row h-50">
+											<div class="col d-flex justify-content-center">
+												<span class="img-dev align-self-center icon-main-preview"
+													th:classappend="${valueDevice.icon}"></span>
+											</div>
+											<div class="col d-flex justify-content-center">
+												<span class="align-self-center" th:id="|value-dev-${valueDevice.id}|"
+													th:text="${valueDevice.valueString}">正常</span>
+											</div>
+										</div>
+										<div class="row h-50">
+											<div class="col-12 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:text="${valueDevice.name}">烟雾探测</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div th:each="valueGroup : ${listValueGroup}" class="col-auto">
+									<div class="ele-card align-self-center clickable" th:id="|card-group-${valueGroup.id}|"
+										data-toggle="modal" th:attr="data-target=|#g${valueGroup.id}|">
+										<div class="row h-50">
+											<div class="col d-flex justify-content-center">
+												<span class="img-dev align-self-center icon-main-preview" 
+													th:classappend="${valueGroup.icon}"></span>
+											</div>
+											<div class="col d-flex justify-content-center">
+												<span class="align-self-center" th:if="${!#lists.isEmpty(valueGroup.listDevice)}"
+													th:id="|value-group-${valueGroup.id}|"
+													th:text="${valueGroup.listDevice[0].valueString}">正常</span>
+											</div>
+										</div>
+										<div class="row h-50">
+											<div class="col-12 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:text="${valueGroup.name}">烟雾探测</span>
+											</div>
+										</div>
+										
+										
+									</div>
+								</div>
+							</div>
+							<h6 class="mt-1 text-muted">控制</h6>
+							<div class="row">
+								<div th:each="ctrlDevice : ${listCtrlDevice}" class="col-auto">
+									<div class="ele-card align-self-center">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<span class="col-12 text-center img-dev icon-main-preview"
+														th:classappend="${ctrlDevice.icon}"></span>
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center" th:id="|value-dev-${ctrlDevice.id}|"
+														th:text="${ctrlDevice.name}">空调</span>
+												</div>
+											</div>
+											<div class="col">
+												<p>关</p>
+												<div class="btn-group btn-group-sm btn-group-dev"
+													role="group">
+													<button type="button" class="btn btn-outline-secondary">打开</button>
+													<button type="button"
+														class="btn btn-outline-secondary active">关闭</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div th:each="ctrlGroup : ${listCtrlGroup}" class="col-auto">
+									<div class="ele-card align-self-center clickable"
+										data-toggle="modal" th:attr="data-target=|#g${ctrlGroup.id}|">
+										<div class="row">
+											<div class="col">
+												<div class="row">
+													<span class="col-12 text-center img-dev icon-main-preview"
+														th:classappend="${ctrlGroup.icon}"></span>
+												</div>
+												<div class="dev-name row align-item-end">
+													<span class="col-12 text-center"
+														th:text="${ctrlGroup.name}">门控</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-3">
+							<p>事件信息</p>
+							<div class="event-card">
+								<ul class="list-group list-group-flush small">
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+								</ul>
+							</div>
+							<div id="div-other-card" class="row">
+								<div class="col-auto other-card">
+									<div class="row">
+										<img class="col-12 img-other-card" src="/img/摄像头.svg" />
+									</div>
+									<div class="row align-item-end">
+										<span class="col-12 text-center">摄像头</span>
+									</div>
+								</div>
+								<div class="col-auto other-card offset-1">
+									<div class="row">
+										<img class="col-12 img-other-card" src="/img/操作记录.svg" />
+									</div>
+									<div class="row align-item-end">
+										<span class="col-12 text-center">操作记录</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="temModal" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">电缆测温</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">机柜名称</th>
+								<th scope="col">线号</th>
+								<th scope="col">温度值</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>12#入线</td>
+								<td>1-A</td>
+								<td>30.5℃</td>
+								<td>A相</td>
+							</tr>
+							<tr>
+								<td>12#入线</td>
+								<td>1-B</td>
+								<td>32.0℃</td>
+								<td>B相</td>
+							</tr>
+							<tr>
+								<td>12#入线</td>
+								<td>1-C</td>
+								<td>31.0℃</td>
+								<td>C相</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加变电站 -->
+	<div class="modal fade" id="addSubstationModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">添加变电站</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/substation/${stationId}|" method="post">
+						<div class="form-group">
+							<label for="substationName">变电站名称</label> <input type="text"
+								class="form-control" id="substationName" name="name"
+								placeholder="变电站名称" required="required">
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 编辑变电站 -->
+	<div class="modal fade" id="editSubstationModal" tabindex="-1"
+		role="dialog" aria-hidden="true" th:if="${substation}">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">编辑变电站</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/substation/edit/${substation.id}|" method="post">
+						<div class="form-group">
+							<label for="substationName">变电站名称</label> <input type="text"
+								th:value="${substation.name}" class="form-control" name="name"
+								required="required">
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 环境组 -->
+	<div th:each="group : ${listValueGroup}" class="modal fade"
+		th:id="|g${group.id}|" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" th:text="${group.name}">组名</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">名称</th>
+								<th scope="col">值</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="device : ${group.listDevice}">
+								<td class="p-1" th:text="${device.name}">1-A</td>
+								<td class="p-1" th:id="|value-dev-${device.id}|" th:text="${device.valueString}">30.5℃</td>
+								<td class="p-1" th:text="${device.remark}">A相</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 控制组 -->
+	<div th:each="group : ${listCtrlGroup}" class="modal fade"
+		th:id="|g${group.id}|" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" th:text="${group.name}">组名</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">名称</th>
+								<th scope="col">状态</th>
+								<th scope="col">操作</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="device : ${group.listDevice}">
+								<td th:text="${device.name}" class="align-middle p-1">1-A</td>
+								<td th:id="|value-dev-${device.id}|" th:text="${device.valueString}" class="align-middle p-1">开</td>
+								<td class="p-1"><div class="btn-group btn-group-sm"
+										role="group">
+										<button type="button" th:id="|btn-on-dev-${device.id}|" class="btn btn-outline-secondary">打开</button>
+										<button type="button" th:id="|btn-off-dev-${device.id}|" class="btn btn-outline-secondary active">关闭</button>
+									</div></td>
+								<td th:text="${device.remark}">A相</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script type="text/javascript" src="/js/substation.js"></script>
+
+</body>
+
+</html>

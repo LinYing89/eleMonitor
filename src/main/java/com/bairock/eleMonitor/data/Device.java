@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,17 +32,21 @@ public class Device {
 	// 字节顺序
 	private int byteOrder;
 	// 值类型,整数, 浮点数
-	private ValueType valueType;
+	private ValueType valueType = ValueType.VALUE;
 	// 值格式
-	private ValueFormat valueFormat;
+	private ValueFormat valueFormat = ValueFormat.ABS;
 	// 系数
-	private float coefficient;
+	private float coefficient = 1;
 	// 单位
-	private String unit;
+	private String unit = "";
 	// 排序索引
 	private int sortIndex;
 	// 组图标路径
-	private String icon;
+	private String icon = "";
+	
+	private String remark = "";
+	
+	private float value;
 
 	@ManyToOne
 	@JsonIgnore
@@ -51,6 +56,9 @@ public class Device {
 	@JsonBackReference("collector_device")
 	private Collector collector;
 
+	@Transient
+	private OnValueChangedListener onValueChangedListener;
+	
 	public long getId() {
 		return id;
 	}
@@ -153,6 +161,85 @@ public class Device {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	public float getValue() {
+		return value;
+	}
+
+	public void setValue(float value) {
+		if(value != this.value) {
+			this.value = value;
+			if(null != onValueChangedListener) {
+				onValueChangedListener.onValueChanged(this, value);
+			}
+		}
+	}
+	
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getValueString() {
+		String valueString = "";
+		switch(valueType) {
+		case ALARM :
+			if(value == 0) {
+				valueString = "正常";
+			}else {
+				valueString = "异常";
+			}
+			break;
+		case SWITCH :
+			if(value == 0) {
+				valueString = "关";
+			}else {
+				valueString = "开";
+			}
+			break;
+		default:
+			valueString = value + unit;
+			break;
+		}
+		return valueString;
+	}
+	
+	public void handler(byte[] byData) {
+		float value = 0;
+		if(byteOrder == 12) {
+			value = bytesToInt12(byData) * coefficient;
+		}else {
+			value = bytesToInt21(byData) * coefficient;
+		}
+		setValue(value);
+	}
+	
+	private int bytesToInt12(byte[] by) {
+		int value = 0;
+		for(int i=0; i < by.length; i++) {
+			value = value << 8 | by[i];
+		}
+		return value;
+	}
+	
+	private int bytesToInt21(byte[] by) {
+		int value = 0;
+		for(int i=by.length - 1; i >= 0; i--) {
+			value = value << 8 | by[i];
+		}
+		return value;
+	}
+
+	public void setOnValueChangedListener(OnValueChangedListener onValueChangedListener) {
+		this.onValueChangedListener = onValueChangedListener;
+	}
+
+	public interface OnValueChangedListener{
+		void onValueChanged(Device device, float value);
 	}
 
 }

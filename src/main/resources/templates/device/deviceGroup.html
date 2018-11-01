@@ -7,16 +7,15 @@
 <link rel="stylesheet" href="/css/root.css" />
 
 <link rel="stylesheet" href="/css/icomoon/deviceicon.css" />
-
 <!-- styles -->
 <!-- base | always include -->
 <link rel="stylesheet" type="text/css"
 	href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/base/jquery.fonticonpicker.min.css">
 <!-- optional themes | no need to include default theme -->
 <!--<link rel="stylesheet" type="text/css" href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">-->
-
 <link rel="stylesheet" type="text/css"
 	href="/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">
+	
 <title></title>
 </head>
 
@@ -100,7 +99,7 @@
 								<div class="dropdown-menu" aria-labelledby="a-station-option">
 									<a class="dropdown-item" href="#" data-toggle="modal"
 										data-option="edit"
-										th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-icon=${devGroup.icon}"
+										th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-value-type=${devGroup.valueType}, data-icon=${devGroup.icon}"
 										data-target="#addDevGroupModal">编辑</a> <a
 										class="dropdown-item" href="#"
 										th:href="|/devGroup/del/${devGroup.id}|" data-stationid="">删除</a>
@@ -152,6 +151,14 @@
 						<div class="form-group">
 							<label for="substationName">设备组名称</label> <input type="text"
 								class="form-control" id="name" name="name" required="required">
+						</div>
+						<div class="form-group">
+							<label for="substationName">设备类型</label> <select
+								class="form-control" id="valueType" name="valueType">
+								<option value="VALUE">数值量</option>
+								<option value="ALARM">报警</option>
+								<option value="SWITCH">开关量</option>
+							</select>
 						</div>
 						<div class="form-group">
 							<label for="substationName">组图标</label> <select
