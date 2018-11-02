@@ -1,4 +1,13 @@
 
+$("#del-dev-group").click(function() {
+	var r = confirm("确认删除设备组吗?");
+	if (r == true) {
+		var url = $(this).attr("href");
+		window.location.href=url;
+	} 
+	return false;
+});
+
 $('#addDevGroupModal').on('show.bs.modal', function(event) {
 	var modal = $(this)
 	var target = $(event.relatedTarget) // Button that triggered the modal

@@ -101,7 +101,7 @@
 										data-option="edit"
 										th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-value-type=${devGroup.valueType}, data-icon=${devGroup.icon}"
 										data-target="#addDevGroupModal">编辑</a> <a
-										class="dropdown-item" href="#"
+										class="dropdown-item" href="#" id="del-dev-group"
 										th:href="|/devGroup/del/${devGroup.id}|" data-stationid="">删除</a>
 								</div>
 								<button type="button" class="btn btn-primary ml-2 col-auto"

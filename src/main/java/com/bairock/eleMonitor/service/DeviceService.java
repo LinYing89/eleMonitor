@@ -21,6 +21,10 @@ public class DeviceService {
 	@Autowired
 	private CollectorService collectorService;
 	
+	@Autowired
+	public DeviceService(SimpMessageSendingOperations messaging) {
+		this.messaging = messaging;
+	}
 	
 	public Device findById(long deviceId) {
 		Optional<Device> option = deviceRepository.findById(deviceId);
@@ -65,7 +69,8 @@ public class DeviceService {
 	 * @param devWebData
 	 */
 	public void broadcastValueChanged(String userName, DevWebData devWebData) {
-		String topic = String.format("/topic/%s/devState", userName);
+		//String topic = String.format("/topic/%s/devState", userName);
+		String topic = "/topic/admin/devState";
 		messaging.convertAndSend(topic, devWebData);
 	}
 }

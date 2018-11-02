@@ -10,7 +10,7 @@ public class DevWebData {
 	//设备id
 	private long devId;
 	//设备值
-	private float value;
+	private String value;
 	//是否有组
 	private boolean haveDevGroup;
 	//组id
@@ -26,10 +26,10 @@ public class DevWebData {
 	public void setDevId(long devId) {
 		this.devId = devId;
 	}
-	public float getValue() {
+	public String getValue() {
 		return value;
 	}
-	public void setValue(float value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 	public boolean isHaveDevGroup() {

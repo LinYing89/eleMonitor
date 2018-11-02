@@ -87,7 +87,7 @@
 									<a class="dropdown-item" href="#" data-toggle="modal"
 										data-target="#editMsgManagerModal" data-option="edit"
 										th:attr="data-id=${msgManager.id}, data-name=${msgManager.name}, data-code=${msgManager.code}, data-place=${msgManager.place}">编辑</a>
-									<a class="dropdown-item" href="#"
+									<a class="dropdown-item" href="#" id="del-msg-manager"
 										th:href="|/msgManager/del/${msgManager.id}|" data-stationid="">删除</a>
 								</div>
 								<button type="button" class="btn btn-primary ml-2 col-auto"
@@ -132,7 +132,7 @@
 											<a href="#" data-toggle="modal" class="dropdown-item"
 												data-target="#editCollectorModal" data-option="edit"
 												th:attr="data-id=${collector.id}, data-name=${collector.name}, data-busCode=${collector.busCode}, data-functionCode=${collector.functionCode}, data-code=${collector.code}, data-beginAddress=${collector.beginAddress}, data-dataLength=${collector.dataLength}, data-dataType=${collector.dataType}">编辑
-											</a> <a href="#" class="dropdown-item"
+											</a> <a href="#" class="dropdown-item del-collector"
 												th:href="|/collector/del/${collector.id}|">删除</a>
 										</div></td>
 								</tr>

@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import com.bairock.eleMonitor.Util;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -57,7 +58,7 @@ public class Device {
 	private Collector collector;
 
 	@Transient
-	private OnValueChangedListener onValueChangedListener;
+	private OnValueListener onValueListener;
 	
 	public long getId() {
 		return id;
@@ -168,12 +169,17 @@ public class Device {
 	}
 
 	public void setValue(float value) {
-		if(value != this.value) {
-			this.value = value;
-			if(null != onValueChangedListener) {
-				onValueChangedListener.onValueChanged(this, value);
-			}
+		//保留两位小数
+		value = Util.scale(value);
+		if(null != onValueListener) {
+			onValueListener.onValueReceived(this, value);
 		}
+//		if(Math.abs(value - this.value) >= 0.01) {
+			this.value = value;
+			if(null != onValueListener) {
+				onValueListener.onValueChanged(this, value);
+			}
+//		}
 	}
 	
 	public String getRemark() {
@@ -184,6 +190,8 @@ public class Device {
 		this.remark = remark;
 	}
 
+	@Transient
+	@JsonIgnore
 	public String getValueString() {
 		String valueString = "";
 		switch(valueType) {
@@ -202,7 +210,7 @@ public class Device {
 			}
 			break;
 		default:
-			valueString = value + unit;
+			valueString = String.valueOf(value);
 			break;
 		}
 		return valueString;
@@ -234,12 +242,23 @@ public class Device {
 		return value;
 	}
 
-	public void setOnValueChangedListener(OnValueChangedListener onValueChangedListener) {
-		this.onValueChangedListener = onValueChangedListener;
+	public void setOnValueListener(OnValueListener onValueListener) {
+		this.onValueListener = onValueListener;
 	}
 
-	public interface OnValueChangedListener{
+	public interface OnValueListener{
+		/**
+		 * 设备值改变
+		 * @param device
+		 * @param value
+		 */
 		void onValueChanged(Device device, float value);
+		/**
+		 * 收到设备值, 不一定是改变了
+		 * @param device
+		 * @param value
+		 */
+		void onValueReceived(Device device, float value);
 	}
 
 }

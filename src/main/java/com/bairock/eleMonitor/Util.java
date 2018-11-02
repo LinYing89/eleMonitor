@@ -1,5 +1,7 @@
 package com.bairock.eleMonitor;
 
+import java.math.BigDecimal;
+
 public class Util {
 
 	public static String bytesToHexString(byte[] src) {
@@ -17,5 +19,15 @@ public class Util {
 			stringBuilder.append(" ");
 		}
 		return stringBuilder.toString();
+	}
+	
+	/**
+	 * accurate to the second decimal place
+	 * @param f
+	 * @return
+	 */
+	public static float scale(float f) {
+		BigDecimal b = new BigDecimal(f);
+		return b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
 }

@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,6 +107,14 @@ public class MsgManager {
 			}
 		}
 		return null;
+	}
+	
+	public List<Device> findAllDevice() {
+		List<Device> listDevice = new ArrayList<>();
+		for (Collector c : listCollector) {
+			listDevice.addAll(c.getListDevice());
+		}
+		return listDevice;
 	}
 
 	public void handler(byte[] by) {

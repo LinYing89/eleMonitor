@@ -29,6 +29,27 @@ $(document).ready(function() {
 	});
 });
 
+$("#del-msg-manager").click(function() {
+	var r = confirm("确认删除通信管理机?");
+	if (r == true) {
+		var url = $(this).attr("href");
+		window.location.href=url;
+	} 
+	return false;
+});
+
+var collectors = $(".del-collector");
+collectors.each(function(){
+	$(this).click(function(){
+		var r = confirm("确认删除采集终端吗?");
+		if (r == true) {
+			var url = $(this).attr("href");
+			window.location.href=url;
+		} 
+		return false;
+	});
+});
+
 $('#editMsgManagerModal').on('show.bs.modal', function(event) {
 	var modal = $(this)
 	var target = $(event.relatedTarget)

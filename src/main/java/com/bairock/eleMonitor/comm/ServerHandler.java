@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.bairock.eleMonitor.SpringUtil;
 import com.bairock.eleMonitor.Util;
+import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.service.MsgManagerService;
 
@@ -67,6 +68,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 			if(!mapAdded) {
 				channelMap.put(msgManagerId, this);
 			}
+			
+			//设置设备值监听器
+			for(Device dev : mm.findAllDevice()) {
+				dev.setOnValueListener(new MyOnValueListener());
+			}
+			
 			byte[] by = new byte[len];
 			by = Arrays.copyOfRange(req, 6, req.length);
 			mm.handler(by);
