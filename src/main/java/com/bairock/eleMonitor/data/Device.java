@@ -1,15 +1,20 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import com.bairock.eleMonitor.Util;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * 设备
@@ -18,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Entity
-public class Device {
+public class Device implements Comparable<Device>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +61,14 @@ public class Device {
 	@ManyToOne
 	@JsonBackReference("collector_device")
 	private Collector collector;
+	
+	@OneToMany(mappedBy="device", cascade=CascadeType.ALL, orphanRemoval=true)
+	@JsonManagedReference("device_event")
+	private List<DeviceEventMessage> listEventMessage;
+	
+	@OneToMany(mappedBy="device", cascade=CascadeType.ALL, orphanRemoval=true)
+	@JsonManagedReference("device_history")
+	private List<DeviceValueHistory> listValueHistory;
 
 	@Transient
 	private OnValueListener onValueListener;
@@ -190,6 +203,22 @@ public class Device {
 		this.remark = remark;
 	}
 
+	public List<DeviceEventMessage> getListEventMessage() {
+		return listEventMessage;
+	}
+
+	public void setListEventMessage(List<DeviceEventMessage> listEventMessage) {
+		this.listEventMessage = listEventMessage;
+	}
+
+	public List<DeviceValueHistory> getListValueHistory() {
+		return listValueHistory;
+	}
+
+	public void setListValueHistory(List<DeviceValueHistory> listValueHistory) {
+		this.listValueHistory = listValueHistory;
+	}
+
 	@Transient
 	@JsonIgnore
 	public String getValueString() {
@@ -214,6 +243,26 @@ public class Device {
 			break;
 		}
 		return valueString;
+	}
+	
+	public void addEventMessage(DeviceEventMessage event) {
+		if(null != event && !listEventMessage.contains(event)) {
+			listEventMessage.add(event);
+		}
+	}
+	
+	public void removeEventMessage(DeviceEventMessage event) {
+		listEventMessage.remove(event);
+	}
+	
+	public void addValueHistory(DeviceValueHistory history) {
+		if(null != history && !listValueHistory.contains(history)) {
+			listValueHistory.add(history);
+		}
+	}
+	
+	public void removeValueHistoru(DeviceValueHistory history) {
+		listValueHistory.remove(history);
 	}
 	
 	public void handler(byte[] byData) {
@@ -259,6 +308,14 @@ public class Device {
 		 * @param value
 		 */
 		void onValueReceived(Device device, float value);
+	}
+
+	@Override
+	public int compareTo(Device o) {
+		if (o == null) {
+			return -1;
+		}
+		return this.sortIndex - o.sortIndex;
 	}
 
 }

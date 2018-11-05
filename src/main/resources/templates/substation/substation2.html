@@ -103,7 +103,8 @@
 										th:id="|card-dev-${valueDevice.id}|">
 										<div class="row h-50">
 											<div class="col-4 d-flex justify-content-center">
-												<span class="img-dev align-self-center ml-2 icon-main-preview"
+												<span
+													class="img-dev align-self-center ml-2 icon-main-preview"
 													th:classappend="${valueDevice.icon}"></span>
 											</div>
 											<div class="col-8 d-flex justify-content-center">
@@ -136,9 +137,10 @@
 														th:classappend="${valueGroup.listDevice[0].icon}"></span>
 												</div>
 												<div class="w-100 d-flex justify-content-center">
-													<span class="align-self-center" th:id="|value-group-${valueGroup.listDevice[0].id}|"
-														th:text="${valueGroup.listDevice[0].valueString}">26.5</span> <span
-														class="align-self-center"
+													<span class="align-self-center"
+														th:id="|value-group-${valueGroup.listDevice[0].id}|"
+														th:text="${valueGroup.listDevice[0].valueString}">26.5</span>
+													<span class="align-self-center"
 														th:text="${valueGroup.listDevice[0].unit}">%</span>
 												</div>
 												<div class="w-100 d-flex justify-content-center">
@@ -153,9 +155,10 @@
 														th:classappend="${valueGroup.listDevice[1].icon}"></span>
 												</div>
 												<div class="w-100 d-flex justify-content-center">
-													<span class="align-self-center" th:id="|value-group-${valueGroup.listDevice[1].id}|"
-														th:text="${valueGroup.listDevice[1].valueString}">26.5</span> <span
-														class="align-self-center"
+													<span class="align-self-center"
+														th:id="|value-group-${valueGroup.listDevice[1].id}|"
+														th:text="${valueGroup.listDevice[1].valueString}">26.5</span>
+													<span class="align-self-center"
 														th:text="${valueGroup.listDevice[1].unit}">%</span>
 												</div>
 												<div class="w-100 d-flex justify-content-center">
@@ -210,17 +213,23 @@
 												</div>
 												<div class="dev-name row align-item-end">
 													<span class="col-12 text-center"
-														th:id="|value-dev-${ctrlDevice.id}|"
 														th:text="${ctrlDevice.name}">空调</span>
 												</div>
 											</div>
 											<div class="col">
-												<span th:id="|value-dev-${device.id}|" th:text="${ctrlDevice.valueString}"></span>
-												<div class="btn-group btn-group-sm btn-group-dev"
+												<span th:id="|value-dev-${ctrlDevice.id}|"
+													th:text="${ctrlDevice.valueString}"></span>
+												<div class="btn-group btn-group-sm btn-group-dev mt-4"
 													role="group">
-													<button type="button" class="btn btn-outline-secondary">打开</button>
+													<button type="button" th:id="|btn-dev-on-${ctrlDevice.id}|"
+														th:attr="data-id=${ctrlDevice.id}"
+														class="btn btn-outline-secondary"
+														th:classappend="btn-dev-on">打开</button>
 													<button type="button"
-														class="btn btn-outline-secondary active">关闭</button>
+														th:attr="data-id=${ctrlDevice.id}"
+														th:id="|btn-dev-off-${ctrlDevice.id}|"
+														class="btn btn-outline-secondary active"
+														th:classappend="btn-dev-off">关闭</button>
 												</div>
 											</div>
 										</div>
@@ -247,8 +256,8 @@
 						</div>
 						<div class="col-3">
 							<p>事件信息</p>
-							<div class="event-card">
-								<ul class="list-group list-group-flush small">
+							<div class="event-card" id="div-event">
+								<ul class="list-group list-group-flush small" id="ul-event">
 									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
 									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
 									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
@@ -357,8 +366,9 @@
 						<tbody>
 							<tr th:each="device : ${group.listDevice}">
 								<td class="p-1" th:text="${device.name}">1-A</td>
-								<td class="p-1"> <span th:id="|value-dev-${device.id}|"
-									th:text="${device.value}">30.5℃</span><span th:text="${device.unit}"></span></td>
+								<td class="p-1"><span th:id="|value-dev-${device.id}|"
+									th:text="${device.value}">30.5℃</span><span
+									th:text="${device.unit}"></span></td>
 								<td class="p-1" th:text="${device.remark}">A相</td>
 							</tr>
 						</tbody>
@@ -397,10 +407,13 @@
 									th:text="${device.valueString}" class="align-middle p-1">开</td>
 								<td class="p-1"><div class="btn-group btn-group-sm"
 										role="group">
-										<button type="button" th:id="|btn-on-dev-${device.id}|"
-											class="btn btn-outline-secondary">打开</button>
-										<button type="button" th:id="|btn-off-dev-${device.id}|"
-											class="btn btn-outline-secondary active">关闭</button>
+										<button type="button" th:id="|btn-dev-on-group-${device.id}|"
+											th:attr="data-id=${device.id}"
+											class="btn btn-outline-secondary" th:classappend="btn-dev-on">打开</button>
+										<button type="button" th:id="|btn-dev-off-group-${device.id}|"
+											th:attr="data-id=${device.id}"
+											class="btn btn-outline-secondary active"
+											th:classappend="btn-dev-off">关闭</button>
 									</div></td>
 								<td th:text="${device.remark}">A相</td>
 							</tr>
@@ -417,6 +430,8 @@
 
 	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
 	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+	
+	<script type="text/javascript" src="/js/jquery.color-2.1.2.min.js"></script>
 
 	<script type="text/javascript" src="/js/substation.js"></script>
 

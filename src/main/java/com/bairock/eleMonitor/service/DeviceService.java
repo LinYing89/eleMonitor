@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
+import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.webData.DevWebData;
 import com.bairock.eleMonitor.repository.DeviceRepository;
 
@@ -72,5 +73,11 @@ public class DeviceService {
 		//String topic = String.format("/topic/%s/devState", userName);
 		String topic = "/topic/admin/devState";
 		messaging.convertAndSend(topic, devWebData);
+	}
+	
+	public void broadcastEvent(String userName, DeviceEventMessage event) {
+		//String topic = String.format("/topic/%s/devState", userName);
+		String topic = "/topic/admin/devEvent";
+		messaging.convertAndSend(topic, event);
 	}
 }

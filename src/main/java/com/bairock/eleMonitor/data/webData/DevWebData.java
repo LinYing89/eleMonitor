@@ -10,7 +10,9 @@ public class DevWebData {
 	//设备id
 	private long devId;
 	//设备值
-	private String value;
+	private float value;
+	//值字符串
+	private String valueString;
 	//是否有组
 	private boolean haveDevGroup;
 	//组id
@@ -19,6 +21,8 @@ public class DevWebData {
 	private boolean normal;
 	//是否告警
 	private boolean alarm;
+	//是否是开关量
+	private boolean onOff;
 	
 	public long getDevId() {
 		return devId;
@@ -26,10 +30,10 @@ public class DevWebData {
 	public void setDevId(long devId) {
 		this.devId = devId;
 	}
-	public String getValue() {
+	public float getValue() {
 		return value;
 	}
-	public void setValue(String value) {
+	public void setValue(float value) {
 		this.value = value;
 	}
 	public boolean isHaveDevGroup() {
@@ -55,6 +59,18 @@ public class DevWebData {
 	}
 	public void setAlarm(boolean alarm) {
 		this.alarm = alarm;
+	}
+	public String getValueString() {
+		return valueString;
+	}
+	public void setValueString(String valueString) {
+		this.valueString = valueString;
+	}
+	public boolean isOnOff() {
+		return onOff;
+	}
+	public void setOnOff(boolean onOff) {
+		this.onOff = onOff;
 	}
 	
 }

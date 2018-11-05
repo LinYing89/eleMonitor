@@ -205,4 +205,16 @@ public class Substation {
 		}
 		return listGroup;
 	}
+	
+	public List<DeviceEventMessage> findDeviceEventMessages(){
+		List<DeviceEventMessage> list = new ArrayList<>();
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					list.addAll(dev.getListEventMessage());
+				}
+			}
+		}
+		return list;
+	}
 }
