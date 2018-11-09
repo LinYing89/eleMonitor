@@ -276,22 +276,27 @@
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">总线号</label>
 							<input type="text" class="form-control col-sm-9" name="busCode"
-								id="busCode" placeholder="总线号" required="required">
+								id="busCode" required="required">
 						</div>
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">终端名称</label>
 							<input type="text" class="form-control col-sm-9" name="name"
-								id="name" placeholder="采集终端名称" required="required">
+								id="name" required="required">
 						</div>
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">终端号</label>
 							<input type="text" class="form-control col-sm-9" name="code"
-								id="code" placeholder="终端号" required="required">
+								id="code" required="required">
 						</div>
-						<div class="form-group row">
-							<label class="col-sm-3 col-form-label">功能码</label> <input
-								type="text" class="form-control col-sm-9" name="functionCode"
-								id="functionCode" required="required">
+						<div class="form-group row" id="div-function-code">
+							<label class="col-sm-3 col-form-label">功能码</label> <select
+								class="form-control col-sm-9" required="required"
+								name="functionCode" id="select-function-code">
+								<option value="1" selected="selected">01-开关量输出</option>
+								<option value="2">02-开关量输入</option>
+								<option value="3">03-数值量</option>
+								<option value="4">04-数值量</option>
+							</select>
 						</div>
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">起始地址</label>
@@ -302,7 +307,8 @@
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">数据长度</label>
 							<input type="text" class="form-control col-sm-9" id="dataLength"
-								name="dataLength" placeholder="数据长度" required="required">
+								name="dataLength" required="required">
+							<small id="dataLengthHelp" class="form-text text-muted offset-3">读取的位数</small>
 						</div>
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">数据类型</label>

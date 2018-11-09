@@ -21,10 +21,12 @@ $('#addDevGroupModal').on('show.bs.modal', function(event) {
 		var id = target.data('id')
 		var name = target.data('name') // Extract info from data-*
 		var valueType = target.data('value-type')
+		var lineTem = target.data('line-tem')
 		var icon = target.data('icon')
 		
 		modal.find('#name').val(name)
 		modal.find('#valueType').val(valueType)
+		modal.find('#lineTem').prop("checked", lineTem);
 		modal.find('#myselect').val(icon)
 
 		modal.find('form').attr('action', '/devGroup/edit/' + id)

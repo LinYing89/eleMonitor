@@ -1,8 +1,11 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,12 +34,14 @@ public class DeviceGroup {
 	
 	private ValueType valueType = ValueType.VALUE;
 	
-	@ManyToOne
+	private boolean lineTem;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("substation_deviceGroup")
 	private Substation substation;
 	
-	@OneToMany(orphanRemoval=false)
-	private List<Device> listDevice;
+	@OneToMany(mappedBy="deviceGroup", cascade= {CascadeType.REFRESH}, orphanRemoval=false)
+	private List<Device> listDevice = new ArrayList<>();
 	
 	public long getId() {
 		return id;
@@ -66,7 +71,9 @@ public class DeviceGroup {
 		return listDevice;
 	}
 	public void setListDevice(List<Device> listDevice) {
-		this.listDevice = listDevice;
+		if(null != listDevice) {
+			this.listDevice = listDevice;
+		}
 	}
 	public Substation getSubstation() {
 		return substation;
@@ -80,6 +87,13 @@ public class DeviceGroup {
 	}
 	public void setValueType(ValueType valueType) {
 		this.valueType = valueType;
+	}
+	
+	public boolean isLineTem() {
+		return lineTem;
+	}
+	public void setLineTem(boolean lineTem) {
+		this.lineTem = lineTem;
 	}
 	public Device findDeviceById(long id) {
 		for(Device device : listDevice) {

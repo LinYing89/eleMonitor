@@ -1,8 +1,5 @@
 package com.bairock.eleMonitor.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,21 +96,31 @@ public class DevWebSocketController {
 
 		// 数据长度
 		int totalLen = 0;
-
-		List<byte[]> listBytes = new ArrayList<>();
+		byte[] byHead = new byte[7];
+		byHead[2] = 0x40;
+		
+		byte[] byAllData = new byte[msgManager.getListCollector().size() * 8];
+		byHead[6] = (byte) byAllData.length;
+		int pos = 0;
 		for (Collector collector : msgManager.getListCollector()) {
-			byte[] byOne = new byte[7 + collector.getDataLength()];
-			byOne[0] = (byte) collector.getBusCode();
-			byOne[1] = (byte) collector.getCode();
-			byOne[2] = (byte) collector.getFunctionCode();
-			byOne[3] = (byte) (collector.getBeginAddress() >> 8);
-			byOne[4] = (byte) collector.getBeginAddress();
-			byOne[5] = (byte) (collector.getDataLength() >> 8);
-			byOne[6] = (byte) collector.getDataLength();
-			listBytes.add(byOne);
-			totalLen += byOne.length;
+			byte[] byData = new byte[8];
+			
+			byData[0] = (byte) collector.getCode();
+			byData[1] = (byte) collector.getFunctionCode();
+			
+			byData[2] = (byte) (collector.getBeginAddress() >> 8);
+			byData[3] = (byte) collector.getBeginAddress();
+			
+			byData[4] = (byte) (collector.getDataLength() >> 8);
+			byData[5] = (byte) collector.getDataLength();
+			
+			byData[6] = (byte) (collector.getDataLength() * 2);
+			
+//			System.arraycopy(byHead, 0, byOne, 0, byHead.length);
+			System.arraycopy(byData, 0, byAllData, pos, byData.length);
+			pos += 8;
 		}
-
+		totalLen = byHead.length + byAllData.length;
 		// 报文, 长度为数据长度加上长度字节数(2) + 通信机号长度(4) + 校验码长度(2)
 		byte[] byTotal = new byte[totalLen + 8];
 		byTotal[0] = (byte) (totalLen >> 8);
@@ -122,11 +129,14 @@ public class DevWebSocketController {
 		int copyPos = 2;
 		System.arraycopy(byManagerCode, 0, byTotal, copyPos, byManagerCode.length);
 		copyPos += byManagerCode.length;
+		System.arraycopy(byHead, 0, byTotal, copyPos, byHead.length);
+		copyPos += byHead.length;
+		System.arraycopy(byAllData, 0, byTotal, copyPos, byAllData.length);
 
-		for (byte[] by : listBytes) {
-			System.arraycopy(by, 0, byTotal, copyPos, by.length);
-			copyPos += by.length;
-		}
+//		for (byte[] by : listBytes) {
+//			System.arraycopy(by, 0, byTotal, copyPos, by.length);
+//			copyPos += by.length;
+//		}
 		logger.info("config: " + Util.bytesToHexString(byTotal));
 
 		// 发往通信机

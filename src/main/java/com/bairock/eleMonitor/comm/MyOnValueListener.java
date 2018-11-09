@@ -9,11 +9,13 @@ import com.bairock.eleMonitor.data.Device.OnValueListener;
 import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.ValueType;
 import com.bairock.eleMonitor.data.webData.DevWebData;
+import com.bairock.eleMonitor.service.DeviceEventMessageService;
 import com.bairock.eleMonitor.service.DeviceService;
 
 public class MyOnValueListener implements OnValueListener {
 
 	private DeviceService deviceService = SpringUtil.getBean(DeviceService.class);
+	private DeviceEventMessageService eventService = SpringUtil.getBean(DeviceEventMessageService.class);
 
 	@Override
 	public void onValueChanged(Device device, float value) {
@@ -27,9 +29,10 @@ public class MyOnValueListener implements OnValueListener {
 		}
 		String message = null;
 		if (device.getValueType() == ValueType.ALARM) {
-			message = device.getName();
-			if (device.getValue() == 1) {
+			//返回值与配置的报警值相同才报警
+			if (device.getValue() == device.getAlarmTriggerValue()) {
 				data.setAlarm(true);
+				message = device.getName();
 				message += " 报警";
 			}
 		}
@@ -37,7 +40,7 @@ public class MyOnValueListener implements OnValueListener {
 			message = device.getName();
 			data.setOnOff(true);
 			if (device.getValue() == 1) {
-				data.setAlarm(true);
+				//data.setAlarm(true);
 				message += " 开";
 			} else {
 				message += " 关";
@@ -52,6 +55,7 @@ public class MyOnValueListener implements OnValueListener {
 			event.setEventTime(new Date());
 			event.setMessage(message);
 			event.setTimeFormat(new SimpleDateFormat("yy-MM-dd HH-mm-ss").format(event.getEventTime()));
+			eventService.add(event);
 			deviceService.broadcastEvent("admin", event);
 		}
 	}

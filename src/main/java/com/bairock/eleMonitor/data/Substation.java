@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,7 @@ public class Substation {
 	private String name;
 	private String remark;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("station_substation")
 	private Station station;
 
@@ -42,7 +43,7 @@ public class Substation {
 	// 设备组集合
 	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("substation_deviceGroup")
-	private List<DeviceGroup> listDeviceGroup;
+	private List<DeviceGroup> listDeviceGroup = new ArrayList<>();
 
 	// 是否激活,选中
 	@Transient
@@ -111,7 +112,9 @@ public class Substation {
 	}
 
 	public void setListDeviceGroup(List<DeviceGroup> listDeviceGroup) {
-		this.listDeviceGroup = listDeviceGroup;
+		if(null != listDeviceGroup) {
+			this.listDeviceGroup = listDeviceGroup;
+		}
 	}
 
 	public void addDeviceGroup(DeviceGroup devGroup) {
@@ -124,6 +127,15 @@ public class Substation {
 		listDeviceGroup.remove(devGroup);
 	}
 
+	public MsgManager findMsgManagerByCode(int code) {
+		for(MsgManager m : listMsgManager) {
+			if(m.getCode() == code) {
+				return m;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 获取所有子节点设备
 	 * 
@@ -175,7 +187,7 @@ public class Substation {
 	public List<DeviceGroup> findCtrlDeviceGroup() {
 		List<DeviceGroup> listGroup = new ArrayList<>();
 		for (DeviceGroup group : listDeviceGroup) {
-			if (group.getValueType() == ValueType.SWITCH) {
+			if (group.getValueType() == ValueType.SWITCH && !group.isLineTem()) {
 				listGroup.add(group);
 			}
 		}
@@ -199,7 +211,17 @@ public class Substation {
 	public List<DeviceGroup> findValueDeviceGroup() {
 		List<DeviceGroup> listGroup = new ArrayList<>();
 		for (DeviceGroup group : listDeviceGroup) {
-			if (group.getValueType() != ValueType.SWITCH) {
+			if (group.getValueType() != ValueType.SWITCH && !group.isLineTem()) {
+				listGroup.add(group);
+			}
+		}
+		return listGroup;
+	}
+	
+	public List<DeviceGroup> findLineTemGroup() {
+		List<DeviceGroup> listGroup = new ArrayList<>();
+		for (DeviceGroup group : listDeviceGroup) {
+			if (group.isLineTem()) {
 				listGroup.add(group);
 			}
 		}

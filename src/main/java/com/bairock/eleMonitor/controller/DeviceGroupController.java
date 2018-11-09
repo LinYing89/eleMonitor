@@ -86,6 +86,7 @@ public class DeviceGroupController {
 		Device dev = deviceService.findById(deviceId);
 		res.addDevice(dev);
 		deviceGroupService.update(res);
+		deviceService.update(dev);
 		return "redirect:/devGroup/" + res.getSubstation().getId() + "/" + res.getId();
 	}
 	
@@ -95,6 +96,7 @@ public class DeviceGroupController {
 		Device dev = res.findDeviceById(deviceId);
 		res.removeDevice(dev);
 		deviceGroupService.update(res);
+		deviceService.update(dev);
 		return "redirect:/devGroup/" + res.getSubstation().getId() + "/" + res.getId();
 	}
 }

@@ -20,6 +20,7 @@ public class StationService {
 	 * @param stationId
 	 * @return
 	 */
+//	@Cacheable(value="station", key="#stationId")
 	public Station findStation(long stationId) {
 		Optional<Station> option = stationRepository.findById(stationId);
 		return option.orElse(null);
@@ -29,10 +30,12 @@ public class StationService {
 		return stationRepository.findAll();
 	}
 	
+//	@CachePut(value = "station",key="#result.id")
 	public Station save(Station station){
 		return stationRepository.saveAndFlush(station);
 	}
 	
+//	@CachePut(value = "station",key="#result.id")
 	public Station edit(long stationId, Station station) {
 		Station res = findStation(stationId);
 		if(null != res) {
@@ -47,6 +50,7 @@ public class StationService {
 		return res;
 	}
 	
+//	@CacheEvict(value = "station", key="#stationId")
 	public void deleteById(long stationId){
 		stationRepository.deleteById(stationId);
 	}

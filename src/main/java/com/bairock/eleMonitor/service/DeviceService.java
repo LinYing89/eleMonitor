@@ -2,7 +2,12 @@ package com.bairock.eleMonitor.service;
 
 import java.util.Optional;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,9 @@ public class DeviceService {
 
 	private SimpMessageSendingOperations messaging;
 	
+	@Resource
+	private DeviceService self;
+	
 	@Autowired
 	private DeviceRepository deviceRepository;
 	@Autowired
@@ -27,11 +35,14 @@ public class DeviceService {
 		this.messaging = messaging;
 	}
 	
+	@Cacheable(value = "device", key = "#deviceId")
 	public Device findById(long deviceId) {
 		Optional<Device> option = deviceRepository.findById(deviceId);
-		return option.orElse(null);
+		Device d = option.orElse(null);
+		return d;
 	}
 	
+	@CachePut(value = "device", key = "#result.id")
 	public Device addDevice(long collectorId, Device device) {
 		Collector collector = collectorService.findById(collectorId);
 		if(null == collector) {
@@ -42,14 +53,17 @@ public class DeviceService {
 		return device;
 	}
 	
+	@CachePut(value = "device", key = "#result.id")
 	public Device editDevice(long deviceId, Device device) {
-		Device res = findById(deviceId);
+		Device res = self.findById(deviceId);
 		if(null != res) {
+			res.setPlace(device.getPlace());
 			res.setName(device.getName());
 			res.setBeginAddress(device.getBeginAddress());
 			res.setDataLength(device.getDataLength());
 			res.setByteOrder(device.getByteOrder());
 			res.setValueType(device.getValueType());
+			res.setAlarmTriggerValue(device.getAlarmTriggerValue());
 			res.setValueFormat(device.getValueFormat());
 			res.setCoefficient(device.getCoefficient());
 			res.setUnit(device.getUnit());
@@ -59,7 +73,13 @@ public class DeviceService {
 		return res;
 	}
 	
+	public void update(Device device) {
+		deviceRepository.saveAndFlush(device);
+	}
+	
+	@CacheEvict(value = "device", key = "#result.id")
 	public Device deleteDevice(Device device) {
+//		deviceRepository.deleteById(device.getId());
 		deviceRepository.delete(device);
 		return device;
 	}

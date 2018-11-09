@@ -1,10 +1,12 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,16 +40,16 @@ public class Collector {
 	private int dataLength;
 	// 值类型
 	private DataType dataType;
-	//功能码
+	// 功能码
 	private int functionCode;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("msgmanager_collector")
 	private MsgManager msgManager;
-	
-	@OneToMany(mappedBy="collector", cascade=CascadeType.ALL, orphanRemoval=true)
+
+	@OneToMany(mappedBy = "collector", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("collector_device")
-	private List<Device> listDevice;
+	private List<Device> listDevice = new ArrayList<>();
 
 	public long getId() {
 		return id;
@@ -126,30 +128,73 @@ public class Collector {
 	}
 
 	public void setListDevice(List<Device> listDevice) {
-		this.listDevice = listDevice;
+		if (null != listDevice) {
+			this.listDevice = listDevice;
+		}
 	}
-	
+
 	public void addDevice(Device device) {
 		device.setCollector(this);
 		listDevice.add(device);
 	}
-	
+
 	public void removeDevice(Device device) {
-		device.setCollector(null);
+//		device.setCollector(null);
 		listDevice.remove(device);
 	}
-	
-	public void handler(byte[] byData) {
-		for(Device device : listDevice) {
-			int from = device.getBeginAddress() - this.beginAddress;
-			if(from < byData.length) {
-				int to = from + device.getDataLength();
-				if(to <= byData.length) {
-					byte[] byDevData = Arrays.copyOfRange(byData, from, to);
-					device.handler(byDevData);
-				}
+
+	public Device findDeviceById(long id) {
+		for (Device d : listDevice) {
+			if (d.getId() == id) {
+				return d;
 			}
 		}
+		return null;
 	}
-	
+
+	public void handler(byte[] byData) {
+		// 数据类型,1,2开关量, 3,4数值量
+
+		switch (functionCode) {
+		case 1:
+		case 2:
+			// 输出和输入开关量, 开关, 报警等, 按位计算
+			for (Device device : listDevice) {
+				if (device.getValueType() == ValueType.SWITCH || device.getValueType() == ValueType.ALARM) {
+					// 第几位
+					int bit = device.getBeginAddress();
+					// 位所在的字节, 位的表示方法为所有字节先高后低
+					int whichByte = byData.length - 1 - (bit / 8);
+					if (whichByte < 0 || whichByte >= byData.length) {
+						continue;
+					}
+					byte b1 = byData[whichByte];
+					int value = b1 >> bit & 1;
+					device.setValue(value);
+				}
+			}
+			break;
+		case 3:
+		case 4:
+			// 数值量, 温度等, 按字节计算, 配置的数据长度位寄存器长度, 一个寄存器2个字节
+			// 返回的数据为字节的长度, 返回的长度应为dataLength*2
+			for (Device device : listDevice) {
+				if (device.getValueType() == ValueType.VALUE) {
+					// 地址为寄存器的地址, *2为字节的起始地址
+					int from = (device.getBeginAddress() - this.beginAddress) * 2;
+					if (from >= 0 && from < byData.length) {
+						// 实际截取的字节数应为dataLength*2. 因为dataLength为字数, 即寄存器的长度
+						int to = from + (device.getDataLength() * 2);
+						if (to <= byData.length) {
+							byte[] byDevData = Arrays.copyOfRange(byData, from, to);
+							device.handler(byDevData);
+						}
+					}
+				}
+			}
+			break;
+		}
+
+	}
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,13 +35,13 @@ public class MsgManager {
 	// 安装位置
 	private String place;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("substation_msgmanager")
 	private Substation substation;
 
 	@OneToMany(mappedBy = "msgManager", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("msgmanager_collector")
-	private List<Collector> listCollector;
+	private List<Collector> listCollector = new ArrayList<Collector>();
 
 	public long getId() {
 		return id;
@@ -100,13 +101,30 @@ public class MsgManager {
 		listCollector.remove(collector);
 	}
 
-	public Collector findCollectorByCode(int code) {
+	public Collector findCollectorById(long id) {
 		for (Collector c : listCollector) {
-			if (c.getCode() == code) {
+			if (c.getId() == id) {
 				return c;
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * 获取终端集合, 一个通信机下可能配有终端号相同的多个终端
+	 * 目的是一个终端下可同时配置数值量和开关量, 不过是分两次配置, 所以配置的两个终端参数,其实对应一个终端实物
+	 * 区别则是功能吗不同, 即值类型不同
+	 * @param code
+	 * @return
+	 */
+	public List<Collector> findCollectorByCode(int code) {
+		List<Collector> list = new ArrayList<>();
+		for (Collector c : listCollector) {
+			if (c.getCode() == code) {
+				list.add(c);
+			}
+		}
+		return list;
 	}
 	
 	public List<Device> findAllDevice() {
@@ -137,12 +155,18 @@ public class MsgManager {
 			int dataLen = byAllData[index] << 8 | byAllData[index + 1];
 			index += 2;
 			// 数据,索引6, 长度dataLen
-			byte[] byteData = Arrays.copyOfRange(byAllData, index, index + dataLen);
+			byte[] byteData = Arrays.copyOfRange(byAllData, index, index + dataLen - 1);
+			//值类型
+			byte[] byValueType = Arrays.copyOfRange(byAllData, index + dataLen - 1, index + dataLen);
 			index += dataLen;
+//			index += 1;
 
-			Collector collector = findCollectorByCode(collectorCode);
-			if (null != collector) {
-				collector.handler(byteData);
+			List<Collector> listCollector = findCollectorByCode(collectorCode);
+			for(Collector c : listCollector) {
+				if(c.getFunctionCode() == byValueType[0]) {
+					//判断值类型是否匹配
+					c.handler(byteData);
+				}
 			}
 		}
 	}

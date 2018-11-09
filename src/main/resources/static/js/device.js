@@ -9,6 +9,15 @@ devices.each(function(){
 		} 
 		return false;
 	});
+	
+	$("#select-value-type").change(function(){
+		var valueType = $(this).val();
+		if(valueType=="ALARM"){
+			$("#div-alarm-value").show();
+		}else{
+			$("#div-alarm-value").hide();
+		}
+	});
 });
 
 $('#addDeviceModal').on('show.bs.modal', function(event) {
@@ -19,10 +28,12 @@ $('#addDeviceModal').on('show.bs.modal', function(event) {
 		title.text("添加设备");
 		var collectorId = target.data('collector-id')
 		modal.find('form').attr('action', '/device/' + collectorId)
+		modal.find("#div-alarm-value").hide();
 	} else {
 		title.text("编辑设备");
 		var id = target.data('id')
 		var name = target.data('name')
+		var place = target.data('place')
 		var beginAddress = target.data('beginaddress')
 		var dataLength = target.data('datalength')
 		var byteOrder = target.data('byteorder')
@@ -30,15 +41,24 @@ $('#addDeviceModal').on('show.bs.modal', function(event) {
 		var unit = target.data('unit')
 		var valueFormat = target.data('valueformat')
 		var valueType = target.data('valuetype')
+		var alarmValue = target.data('alarmvalue')
 		
 		modal.find('#name').val(name)
+		modal.find('#place').val(place)
 		modal.find('#beginAddress').val(beginAddress)
 		modal.find('#dataLength').val(dataLength)
 		modal.find('#byteOrder').val(byteOrder)
 		modal.find('#coefficient').val(coefficient)
 		modal.find('#unit').val(unit)
 		modal.find('#valueFormat').val(valueFormat)
-		modal.find('#valueType').val(valueType)
+		modal.find('#select-value-type').val(valueType)
+		modal.find('#select-alarm-trigger-value').val(alarmValue)
+		
+		if(valueType=="ALARM"){
+			$("#div-alarm-value").show();
+		}else{
+			$("#div-alarm-value").hide();
+		}
 
 		modal.find('form').attr('action', '/device/edit/' + id)
 	}

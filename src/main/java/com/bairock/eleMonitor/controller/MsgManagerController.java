@@ -41,21 +41,33 @@ public class MsgManagerController {
 		model.addAttribute("substationName", substation.getName());
 		model.addAttribute("listMsgManager", listMsgManager);
 		if(listMsgManager.size() > 0) {
+			MsgManager mm = null;
 			if(msgManagerId == 0) {
-				model.addAttribute("msgManager", listMsgManager.get(0));
+				mm = listMsgManager.get(0);
+				//尝试获取缓存中的对象
+				mm = msgManagerService.findByMsgManagerCode(mm.getCode());
 			}else {
-				boolean haved = false;
-				for(MsgManager s : listMsgManager) {
-					if(s.getId() == msgManagerId) {
-						model.addAttribute("msgManager", s);
-						haved = true;
-						break;
-					}
-				}
-				if(!haved) {
-					model.addAttribute("msgManager", listMsgManager.get(0));
-				}
+//				MsgManager m1 = msgManagerService.findByMsgManagerId(msgManagerId);
+//				mm = msgManagerService.findByMsgManagerCode(m1.getCode());
+				mm = msgManagerService.findByMsgManagerId(msgManagerId);
 			}
+			model.addAttribute("msgManager", mm);
+			
+//			if(msgManagerId == 0) {
+//				model.addAttribute("msgManager", listMsgManager.get(0));
+//			}else {
+//				boolean haved = false;
+//				for(MsgManager s : listMsgManager) {
+//					if(s.getId() == msgManagerId) {
+//						model.addAttribute("msgManager", s);
+//						haved = true;
+//						break;
+//					}
+//				}
+//				if(!haved) {
+//					model.addAttribute("msgManager", listMsgManager.get(0));
+//				}
+//			}
 		}
 		
 		return "device/msgManager";

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
+import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.service.CollectorService;
 import com.bairock.eleMonitor.service.DeviceService;
 
@@ -45,9 +46,14 @@ public class DeviceController {
 	@GetMapping("/del/{deviceId}")
 	public String deleteDevice(@PathVariable long deviceId) {
 		Device device = deviceService.findById(deviceId);
+		DeviceGroup dg = device.getDeviceGroup();
+		if(dg != null) {
+			dg.removeDevice(device);
+		}
 		Collector collector = device.getCollector();
-		deviceService.deleteDevice(device);
 		collector.removeDevice(device);
+		
+		deviceService.deleteDevice(device);
 		return "redirect:/device/" + collector.getId();
 	}
 }

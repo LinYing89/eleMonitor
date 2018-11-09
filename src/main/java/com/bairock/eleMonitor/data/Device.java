@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +30,8 @@ public class Device implements Comparable<Device>{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
+	private String place="";
+	
 	private String name;
 
 	// 起始地址
@@ -37,8 +40,10 @@ public class Device implements Comparable<Device>{
 	private int dataLength;
 	// 字节顺序
 	private int byteOrder;
-	// 值类型,整数, 浮点数
+	// 值类型
 	private ValueType valueType = ValueType.VALUE;
+	//报警设备报警时返回的值, valueType为ALARM时有效,  有的设备报警值为0, 有的设备报警值为1
+	private int alarmTriggerValue = 1;
 	// 值格式
 	private ValueFormat valueFormat = ValueFormat.ABS;
 	// 系数
@@ -58,15 +63,15 @@ public class Device implements Comparable<Device>{
 	@JsonIgnore
 	private DeviceGroup deviceGroup;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("collector_device")
 	private Collector collector;
 	
-	@OneToMany(mappedBy="device", cascade=CascadeType.ALL, orphanRemoval=true)
+	@OneToMany(mappedBy="device", cascade= {CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval=true)
 	@JsonManagedReference("device_event")
 	private List<DeviceEventMessage> listEventMessage;
 	
-	@OneToMany(mappedBy="device", cascade=CascadeType.ALL, orphanRemoval=true)
+	@OneToMany(mappedBy="device", cascade=CascadeType.REMOVE, orphanRemoval=true)
 	@JsonManagedReference("device_history")
 	private List<DeviceValueHistory> listValueHistory;
 
@@ -79,6 +84,16 @@ public class Device implements Comparable<Device>{
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public String getPlace() {
+		return place;
+	}
+
+	public void setPlace(String place) {
+		if(null != place) {
+			this.place = place;
+		}
 	}
 
 	public String getName() {
@@ -119,6 +134,14 @@ public class Device implements Comparable<Device>{
 
 	public void setValueType(ValueType valueType) {
 		this.valueType = valueType;
+	}
+
+	public int getAlarmTriggerValue() {
+		return alarmTriggerValue;
+	}
+
+	public void setAlarmTriggerValue(int alarmTriggerValue) {
+		this.alarmTriggerValue = alarmTriggerValue;
 	}
 
 	public ValueFormat getValueFormat() {
@@ -225,7 +248,7 @@ public class Device implements Comparable<Device>{
 		String valueString = "";
 		switch(valueType) {
 		case ALARM :
-			if(value == 0) {
+			if(value != alarmTriggerValue) {
 				valueString = "正常";
 			}else {
 				valueString = "异常";
@@ -278,7 +301,7 @@ public class Device implements Comparable<Device>{
 	private int bytesToInt12(byte[] by) {
 		int value = 0;
 		for(int i=0; i < by.length; i++) {
-			value = value << 8 | by[i];
+			value = value << 8 | (by[i] & 0xff);
 		}
 		return value;
 	}
@@ -286,7 +309,7 @@ public class Device implements Comparable<Device>{
 	private int bytesToInt21(byte[] by) {
 		int value = 0;
 		for(int i=by.length - 1; i >= 0; i--) {
-			value = value << 8 | by[i];
+			value = value << 8 | (by[i] & 0xff);
 		}
 		return value;
 	}

@@ -70,9 +70,9 @@ public class CollectorController {
 	
 	@GetMapping("/del/{collectorId}")
 	public String deleteCollector(@PathVariable long collectorId, Model model) {
-		Collector res = collectorService.findById(collectorId);
+		Collector res = collectorService.deleteCollector(collectorId);
+		//下面两行不能放在service中, 因为从manger中移除res后, 返回的res无法获取manager
 		MsgManager manager = res.getMsgManager();
-		collectorService.deleteCollector(res);
 		manager.removeCollector(res);
 		return "redirect:/msgManager/" + manager.getSubstation().getId() + "/" + manager.getId();
 	}

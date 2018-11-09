@@ -7,9 +7,9 @@ package com.bairock.eleMonitor.data;
  */
 public enum ValueType {
 
-	VALUE(1, "数值量"),
+	SWITCH(1, "开关量"),
 	ALARM(2, "报警"),
-	SWITCH(3, "开关量");
+	VALUE(3, "数值量");
 	
 	private int code;
 	private String info;

@@ -109,6 +109,7 @@
 							<thead class="thead-light">
 								<tr>
 									<th scope="col">图标</th>
+									<th scope="col">位置</th>
 									<th scope="col">数据名称</th>
 									<th scope="col">数据地址</th>
 									<th scope="col">数据宽度</th>
@@ -123,6 +124,7 @@
 							<tbody>
 								<tr th:each="device : ${collector.listDevice}">
 									<td><span th:classappend="${device.icon}"></span></td>
+									<td th:text="${device.place}">温度</td>
 									<td th:text="${device.name}">温度</td>
 									<td th:text="${device.beginAddress}">1</td>
 									<td th:text="${device.dataLength}">2</td>
@@ -133,7 +135,7 @@
 									<td th:text="${device.unit}">℃</td>
 									<td><a href="#" data-toggle="modal"
 										data-target="#addDeviceModal" data-option="edit"
-										th:attr="data-id=${device.id}, data-name=${device.name}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}">编辑
+										th:attr="data-id=${device.id}, data-name=${device.name}, data-place=${device.place}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}">编辑
 									</a> <a href="#">设置阈值 </a><a href="#" class="del-device"
 										th:href="|/device/del/${device.id}|">删除</a></td>
 								</tr>
@@ -168,6 +170,10 @@
 								required="required">
 						</div>
 						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">设备位置</label> <input
+								type="text" class="form-control col-sm-9" name="place" id="place">
+						</div>
+						<div class="form-group row">
 							<label class="col-sm-3 col-form-label">数据地址</label> <input
 								type="text" class="form-control col-sm-9" name="beginAddress"
 								id="beginAddress" required="required">
@@ -184,11 +190,19 @@
 						</div>
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">数据类型</label>
-							<select class="form-control col-sm-9" required="required"
-								name="valueType" id="valueType">
-								<option value="VALUE">数值量</option>
-								<option value="ALARM">报警</option>
+							<select class="form-control col-sm-9" required="required" id="select-value-type"
+								name="valueType">
 								<option value="SWITCH">开关量</option>
+								<option value="ALARM">报警</option>
+								<option value="VALUE">数值量</option>
+							</select>
+						</div>
+						<div class="form-group row" id="div-alarm-value">
+							<label class="col-sm-3 col-form-label">报警值</label>
+							<select class="form-control col-sm-9" required="required"
+								name="alarmTriggerValue" id="select-alarm-trigger-value">
+								<option value="1" selected="selected">1</option>
+								<option value="0">0</option>
 							</select>
 						</div>
 						<div class="form-group row">

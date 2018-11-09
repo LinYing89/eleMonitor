@@ -15,7 +15,7 @@
 <!--<link rel="stylesheet" type="text/css" href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">-->
 <link rel="stylesheet" type="text/css"
 	href="/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">
-	
+
 <title></title>
 </head>
 
@@ -83,7 +83,8 @@
 								<ol class="breadcrumb m-0 bg-light p-1">
 									<li class="breadcrumb-item"><a href="#"
 										th:href="|/substation/${devGroup.substation.station.id}/${devGroup.substation.id}|">首页</a></li>
-									<li class="breadcrumb-item"> <a href="#" th:href="|/msgManager/${substation.id}/0|">设备管理</a></li>
+									<li class="breadcrumb-item"><a href="#"
+										th:href="|/msgManager/${substation.id}/0|">设备管理</a></li>
 									<li class="breadcrumb-item active" aria-current="page">组管理</li>
 								</ol>
 							</nav>
@@ -99,7 +100,7 @@
 								<div class="dropdown-menu" aria-labelledby="a-station-option">
 									<a class="dropdown-item" href="#" data-toggle="modal"
 										data-option="edit"
-										th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-value-type=${devGroup.valueType}, data-icon=${devGroup.icon}"
+										th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-value-type=${devGroup.valueType}, data-line-tem=${devGroup.lineTem}, data-icon=${devGroup.icon}"
 										data-target="#addDevGroupModal">编辑</a> <a
 										class="dropdown-item" href="#" id="del-dev-group"
 										th:href="|/devGroup/del/${devGroup.id}|" data-stationid="">删除</a>
@@ -122,7 +123,8 @@
 								<tr th:each="device : ${devGroup.listDevice}">
 									<td th:text="${device.name}">采集终端</td>
 									<td class="row"><a href="#"
-										th:href="|/devGroup/del/device/${devGroup.id}/${device.id}|">删除 </a></td>
+										th:href="|/devGroup/del/device/${devGroup.id}/${device.id}|">删除
+									</a></td>
 								</tr>
 							</tbody>
 						</table>
@@ -160,6 +162,11 @@
 								<option value="SWITCH">开关量</option>
 							</select>
 						</div>
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input"
+								id="lineTem" name="lineTem"> <label class="form-check-label"
+								for="lineTem">电缆测温组</label>
+						</div>
 						<div class="form-group">
 							<label for="substationName">组图标</label> <select
 								class="form-control" id="myselect" name="icon">
@@ -188,10 +195,10 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Modal 添加设备 -->
-	<div class="modal fade" id="addDevice" tabindex="-1"
-		role="dialog" aria-hidden="true">
+	<div class="modal fade" id="addDevice" tabindex="-1" role="dialog"
+		aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -202,11 +209,13 @@
 					</button>
 				</div>
 				<div th:if="${devGroup}" class="modal-body">
-					<form th:action="|/devGroup/add/device/${devGroup.id}|" method="post">
+					<form th:action="|/devGroup/add/device/${devGroup.id}|"
+						method="post">
 						<div class="form-group">
-							<label for="substationName">节点数据列表</label> <select multiple 
+							<label for="substationName">节点数据列表</label> <select multiple
 								class="form-control" id="deviceId" name="deviceId">
-								<option th:each="device : ${listDevice}" th:value="${device.id}" th:text="${device.name}">设备名</option>
+								<option th:each="device : ${listDevice}" th:value="${device.id}"
+									th:text="${device.name}">设备名</option>
 							</select>
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>

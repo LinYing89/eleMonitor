@@ -3,6 +3,7 @@ package com.bairock.eleMonitor.data;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,10 +23,10 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("device_event")
 	private Device device;
 	

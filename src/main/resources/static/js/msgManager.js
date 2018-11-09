@@ -27,7 +27,20 @@ $(document).ready(function() {
             }
         });
 	});
+	
+	$("#select-function-code").change(function(){
+		var functionCode = $(this).val();
+		functionCodeChanged(functionCode);
+	});
 });
+
+function functionCodeChanged(functionCode){
+	if(functionCode==1 || functionCode==2){
+		$("#dataLengthHelp").text("读取的位数");
+	}else{
+		$("#dataLengthHelp").text("读取的字数");
+	}
+}
 
 $("#del-msg-manager").click(function() {
 	var r = confirm("确认删除通信管理机?");
@@ -85,7 +98,7 @@ $('#editCollectorModal').on('show.bs.modal', function(event) {
 		title.text("编辑采集终端");
 		var id = target.data('id')
 		var busCode = target.data('buscode') // Extract info from data-*
-		var functionCode = target.data('functionCode')
+		var functionCode = target.data('functioncode')
 		var name = target.data('name')
 		var code = target.data('code')
 		var beginAddress = target.data('beginaddress')
@@ -99,12 +112,14 @@ $('#editCollectorModal').on('show.bs.modal', function(event) {
 		// data binding library or other methods instead.
 
 		modal.find('#busCode').val(busCode)
-		modal.find('#functionCode').val(functionCode)
+		modal.find('#select-function-code').val(functionCode)
 		modal.find('#name').val(name)
 		modal.find('#code').val(code)
 		modal.find('#beginAddress').val(beginAddress)
 		modal.find('#dataLength').val(dataLength)
 		modal.find('#dataType').val(dataType)
+		
+		functionCodeChanged(functionCode);
 
 		modal.find('form').attr('action', '/collector/edit/' + id)
 	}
