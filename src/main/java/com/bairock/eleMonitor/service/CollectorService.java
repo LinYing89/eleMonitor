@@ -54,7 +54,7 @@ public class CollectorService {
 		return collector;
 	}
 
-	@CachePut(value = "collector", key = "#result.id")
+//	@CachePut(value = "collector", key = "#result.id")
 	public Collector editCollector(long collectorId, Collector collector) {
 		Collector res = self.findById(collectorId);
 		if (null != res) {

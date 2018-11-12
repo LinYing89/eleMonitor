@@ -7,15 +7,18 @@ import com.bairock.eleMonitor.SpringUtil;
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.Device.OnValueListener;
 import com.bairock.eleMonitor.data.DeviceEventMessage;
+import com.bairock.eleMonitor.data.DeviceValueHistory;
 import com.bairock.eleMonitor.data.ValueType;
 import com.bairock.eleMonitor.data.webData.DevWebData;
 import com.bairock.eleMonitor.service.DeviceEventMessageService;
 import com.bairock.eleMonitor.service.DeviceService;
+import com.bairock.eleMonitor.service.DeviceValueHistoryService;
 
 public class MyOnValueListener implements OnValueListener {
 
 	private DeviceService deviceService = SpringUtil.getBean(DeviceService.class);
 	private DeviceEventMessageService eventService = SpringUtil.getBean(DeviceEventMessageService.class);
+	private DeviceValueHistoryService historyService = SpringUtil.getBean(DeviceValueHistoryService.class);
 
 	@Override
 	public void onValueChanged(Device device, float value) {
@@ -29,7 +32,7 @@ public class MyOnValueListener implements OnValueListener {
 		}
 		String message = null;
 		if (device.getValueType() == ValueType.ALARM) {
-			//返回值与配置的报警值相同才报警
+			// 返回值与配置的报警值相同才报警
 			if (device.getValue() == device.getAlarmTriggerValue()) {
 				data.setAlarm(true);
 				message = device.getName();
@@ -40,30 +43,42 @@ public class MyOnValueListener implements OnValueListener {
 			message = device.getName();
 			data.setOnOff(true);
 			if (device.getValue() == 1) {
-				//data.setAlarm(true);
+				// data.setAlarm(true);
 				message += " 开";
 			} else {
 				message += " 关";
 			}
 		}
 		data.setNormal(true);
-		deviceService.broadcastValueChanged("admin", data);
+		long substationId = device.getCollector().getMsgManager().getSubstation().getId();
+		deviceService.broadcastValueChanged(substationId, data);
 
-		if (null != message) {
-			DeviceEventMessage event = new DeviceEventMessage();
-			event.setDevice(device);
-			event.setEventTime(new Date());
-			event.setMessage(message);
-			event.setTimeFormat(new SimpleDateFormat("yy-MM-dd HH-mm-ss").format(event.getEventTime()));
-			eventService.add(event);
-			deviceService.broadcastEvent("admin", event);
+		try {
+			if (null != message) {
+				DeviceEventMessage event = new DeviceEventMessage();
+				//event.setDevice(device);
+				event.setEventTime(new Date());
+				event.setMessage(message);
+				event.setTimeFormat(new SimpleDateFormat("yy-MM-dd HH-mm-ss").format(event.getEventTime()));
+				device.addEventMessage(event);
+				eventService.add(event);
+				deviceService.broadcastEvent(substationId, event);
+				
+			}
+		} catch (Exception e) {
+
 		}
 	}
 
 	@Override
 	public void onValueReceived(Device device, float value) {
-		// TODO Auto-generated method stub
-
+		DeviceValueHistory devHistory = new DeviceValueHistory();
+		//devHistory.setDevice(device);
+		devHistory.setTime(new Date());
+		devHistory.setValue(value);
+		device.addValueHistory(devHistory);
+		historyService.add(devHistory);
+		
 	}
 
 }

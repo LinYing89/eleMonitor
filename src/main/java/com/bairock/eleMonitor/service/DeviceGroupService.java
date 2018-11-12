@@ -51,7 +51,7 @@ public class DeviceGroupService {
 		return devGroup;
 	}
 
-	@CachePut(value = "deviceGroup", key = "#result.id")
+//	@CachePut(value = "deviceGroup", key = "#result.id")
 	public DeviceGroup editDeviceGroup(long devGroupId, DeviceGroup devGroup) {
 		DeviceGroup res = self.findById(devGroupId);
 		if (null != res) {

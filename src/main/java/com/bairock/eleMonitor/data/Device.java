@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -67,13 +68,13 @@ public class Device implements Comparable<Device>{
 	@JsonBackReference("collector_device")
 	private Collector collector;
 	
-	@OneToMany(mappedBy="device", cascade= {CascadeType.DETACH, CascadeType.REMOVE}, orphanRemoval=true)
+	@OneToMany(mappedBy="device", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, orphanRemoval=true)
 	@JsonManagedReference("device_event")
-	private List<DeviceEventMessage> listEventMessage;
+	private List<DeviceEventMessage> listEventMessage = new ArrayList<>();
 	
-	@OneToMany(mappedBy="device", cascade=CascadeType.REMOVE, orphanRemoval=true)
+	@OneToMany(mappedBy="device", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, orphanRemoval=true)
 	@JsonManagedReference("device_history")
-	private List<DeviceValueHistory> listValueHistory;
+	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
 
 	@Transient
 	private OnValueListener onValueListener;
@@ -231,7 +232,9 @@ public class Device implements Comparable<Device>{
 	}
 
 	public void setListEventMessage(List<DeviceEventMessage> listEventMessage) {
-		this.listEventMessage = listEventMessage;
+		if(null != listEventMessage) {
+			this.listEventMessage = listEventMessage;
+		}
 	}
 
 	public List<DeviceValueHistory> getListValueHistory() {
@@ -239,7 +242,9 @@ public class Device implements Comparable<Device>{
 	}
 
 	public void setListValueHistory(List<DeviceValueHistory> listValueHistory) {
-		this.listValueHistory = listValueHistory;
+		if(null != listValueHistory) {
+			this.listValueHistory = listValueHistory;
+		}
 	}
 
 	@Transient
@@ -270,6 +275,7 @@ public class Device implements Comparable<Device>{
 	
 	public void addEventMessage(DeviceEventMessage event) {
 		if(null != event && !listEventMessage.contains(event)) {
+			event.setDevice(this);
 			listEventMessage.add(event);
 		}
 	}
@@ -280,6 +286,7 @@ public class Device implements Comparable<Device>{
 	
 	public void addValueHistory(DeviceValueHistory history) {
 		if(null != history && !listValueHistory.contains(history)) {
+			history.setDevice(this);
 			listValueHistory.add(history);
 		}
 	}

@@ -76,7 +76,7 @@ public class MsgManagerService {
 		return msgManager;
 	}
 
-	@CachePut(value = "msgmanager", condition = "#result!=null", key = "#result.code")
+//	@CachePut(value = "msgmanager", condition = "#result!=null", key = "#result.code")
 	public MsgManager editMsgManager(long msgManagerId, MsgManager msgManager) {
 		MsgManager res = self.findByMsgManagerId(msgManagerId);
 		if (null != res) {

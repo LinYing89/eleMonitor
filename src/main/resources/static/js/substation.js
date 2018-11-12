@@ -93,15 +93,16 @@ function newEventColorAnim(devObj) {
 }
 
 function initWebSocket() {
+	var substationId = $("#v-pills-tab").data("substation-id");
 	var socket = new SockJS("/eleMonitor-dev");
 	stompClient = Stomp.over(socket);
 	stompClient.connect({}, function(frame) {
 		console.info("stompClient connected");
 
 		// var topicDevState = "/topic/" + userName + "/devState";
-		var topicDevState = "/topic/admin/devState";
+		var topicDevState = "/topic/" + substationId + "/devState";
 		stompClient.subscribe(topicDevState, handlerDevState);
-		var topicDevEvent = "/topic/admin/devEvent";
+		var topicDevEvent = "/topic/" + substationId + "/devEvent";
 		stompClient.subscribe(topicDevEvent, handlerDevEvent);
 	});
 

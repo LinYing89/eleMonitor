@@ -27,7 +27,8 @@ $('#addDevGroupModal').on('show.bs.modal', function(event) {
 		modal.find('#name').val(name)
 		modal.find('#valueType').val(valueType)
 		modal.find('#lineTem').prop("checked", lineTem);
-		modal.find('#myselect').val(icon)
+		iconPicker.setIcon(icon);
+//		modal.find('#myselect').setIcon(icon)
 
 		modal.find('form').attr('action', '/devGroup/edit/' + id)
 	}

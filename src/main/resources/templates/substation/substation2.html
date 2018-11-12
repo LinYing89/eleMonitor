@@ -65,6 +65,7 @@
 			</div>
 
 			<div class="nav flex-column nav-pills" id="v-pills-tab"
+				th:attr="data-substation-id=${substation.id}"
 				role="tablist" aria-orientation="vertical">
 				<a th:each="sub : ${station.listSubstation}" th:text="${sub.name}"
 					class="nav-link" href="#"
@@ -296,12 +297,8 @@
 						<div class="col-3">
 							<p>事件信息</p>
 							<div class="event-card" id="div-event">
-								<ul class="list-group list-group-flush small" id="ul-event">
-									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
-									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
-									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
-									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
-									<li class="list-group-item">18-09-27 21:30:11 人体红外报警</li>
+								<ul th:each="event : ${listEvent}" class="list-group list-group-flush small" id="ul-event">
+									<li class="list-group-item" th:text="|${#dates.format(event.eventTime, 'yy-MM-dd HH-mm-ss')} ${event.message}|">18-09-27 21:30:11 人体红外报警</li>
 								</ul>
 							</div>
 							<div id="div-other-card" class="row">

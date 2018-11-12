@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.bairock.eleMonitor.data.Device;
+import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.data.LineTemFormGroup;
 import com.bairock.eleMonitor.data.Station;
@@ -64,12 +65,6 @@ public class SubstationController {
 			}
 			
 			model.addAttribute("substation", substation);
-			for(DeviceGroup dg : substation.getListDeviceGroup()) {
-				for(Device dev : dg.getListDevice()) {
-					DeviceGroup d2 = dev.getDeviceGroup();
-					System.out.println(d2.toString());
-				}
-			}
 			
 			List<Device> listValueDevice = substation.findValueDeviceNoGroup();
 			List<DeviceGroup> listValueGroup = substation.findValueDeviceGroup();
@@ -96,6 +91,13 @@ public class SubstationController {
 			model.addAttribute("listCtrlDevice", listCtrlDevice);
 			model.addAttribute("listCtrlGroup", listCtrlGroup);
 			model.addAttribute("listLineTemFormGroup", listLineTemFormGroup);
+			
+			List<DeviceEventMessage> listEvent = substation.findDeviceEventMessages();
+			model.addAttribute("listEvent", listEvent);
+//			List<DeviceEventMessage> list = deviceEventMessageService.findTodayEvent();
+//			for(DeviceEventMessage d : list) {
+//				System.out.println(d.getMessage());
+//			}
 		}
 		
 		return "substation/substation2";

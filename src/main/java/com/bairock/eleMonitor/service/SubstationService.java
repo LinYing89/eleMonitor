@@ -74,7 +74,7 @@ public class SubstationService {
 		return substation;
 	}
 	
-	@CachePut(value="substation",key="#result.id")
+//	@CachePut(value="substation",key="#result.id")
 	public Substation editSubStation(long substationId, Substation substation) {
 		Substation sub = self.findBySubstationId(substationId);
 		if(null != sub) {

@@ -1,6 +1,7 @@
 package com.bairock.eleMonitor.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -236,6 +237,10 @@ public class Substation {
 					list.addAll(dev.getListEventMessage());
 				}
 			}
+		}
+		Collections.sort(list);
+		if(list.size() > 30) {
+			return list.subList(0, 30);
 		}
 		return list;
 	}

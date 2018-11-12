@@ -212,7 +212,7 @@
 					<form th:action="|/devGroup/add/device/${devGroup.id}|"
 						method="post">
 						<div class="form-group">
-							<label for="substationName">节点数据列表</label> <select multiple
+							<label for="substationName">节点数据列表</label> <select multiple size="10"
 								class="form-control" id="deviceId" name="deviceId">
 								<option th:each="device : ${listDevice}" th:value="${device.id}"
 									th:text="${device.name}">设备名</option>
@@ -234,8 +234,9 @@
 
 	<script type="text/javascript">
 		// Make sure to fire only when the DOM is ready
+		var iconPicker;
 		$(document).ready(function($) {
-			$('#myselect').fontIconPicker({
+			iconPicker = $('#myselect').fontIconPicker({
 				theme : 'fip-bootstrap',
 				//source: ['icon-heart', 'icon-lemon', 'icon-user', 'icon-map', 'icon-help'],
 				emptyIcon : false,

@@ -43,19 +43,26 @@ public class DevWebSocketController {
 		byManagerCode[2] = (byte) (msgManager.getCode() >> 8);
 		byManagerCode[3] = (byte) (msgManager.getCode());
 
-			byte[] byOne = new byte[7];
+//			byte[] byOne = new byte[7];
+			byte[] byOne = new byte[5];
 			byOne[0] = (byte) collector.getBusCode();
 			byOne[1] = (byte) collector.getCode();
 			byOne[2] = 0x5;
 			byOne[3] = (byte) (dev.getBeginAddress() >> 8);
 			byOne[4] = (byte) dev.getBeginAddress();
-			byOne[5] = (byte) (dev.getDataLength() >> 8);
-			byOne[6] = (byte) dev.getDataLength();
+//			byOne[5] = (byte) (dev.getDataLength() >> 8);
+//			byOne[6] = (byte) dev.getDataLength();
+//			byOne[5] = (byte) (dev.getDataLength() >> 8);
+//			byOne[6] = 2;
 			
-			byte[] byData = new byte[dev.getDataLength()];
-			for(int i=0; i<byData.length; i++) {
-				int step = (byData.length - 1 - i) * 8;
-				byData[i] = (byte) (obj.getOption() >> step);
+//			byte[] byData = new byte[dev.getDataLength()];
+//			for(int i=0; i<byData.length; i++) {
+//				int step = (byData.length - 1 - i) * 8;
+//				byData[i] = (byte) (obj.getOption() >> step);
+//			}
+			byte[] byData = new byte[2];
+			if(obj.getOption() == 1) {
+				byData[0] = (byte) 0xff;
 			}
 
 		// 报文, 长度为数据长度加上长度字节数(2) + 通信机号长度(4) + 校验码长度(2)
@@ -111,10 +118,20 @@ public class DevWebSocketController {
 			byData[2] = (byte) (collector.getBeginAddress() >> 8);
 			byData[3] = (byte) collector.getBeginAddress();
 			
-			byData[4] = (byte) (collector.getDataLength() >> 8);
-			byData[5] = (byte) collector.getDataLength();
+			int dataLen = collector.getDataLength();
+			//如果时开关量设备, 要把位数转为字数
+			if(collector.getFunctionCode() == 01 || collector.getFunctionCode() == 02) {
+				int zi = dataLen / 16;
+				if(dataLen % 16 != 0) {
+					zi += 1;
+				}
+				dataLen = zi;
+			}
 			
-			byData[6] = (byte) (collector.getDataLength() * 2);
+			byData[4] = (byte) (dataLen >> 8);
+			byData[5] = (byte) dataLen;
+			
+			byData[6] = (byte) (dataLen * 2);
 			
 //			System.arraycopy(byHead, 0, byOne, 0, byHead.length);
 			System.arraycopy(byData, 0, byAllData, pos, byData.length);

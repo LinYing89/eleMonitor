@@ -53,7 +53,7 @@ public class DeviceService {
 		return device;
 	}
 	
-	@CachePut(value = "device", key = "#result.id")
+//	@CachePut(value = "device", key = "#result.id")
 	public Device editDevice(long deviceId, Device device) {
 		Device res = self.findById(deviceId);
 		if(null != res) {
@@ -86,18 +86,18 @@ public class DeviceService {
 	
 	/**
 	 * 向网页发送设备状态
-	 * @param userName
+	 * @param substationId
 	 * @param devWebData
 	 */
-	public void broadcastValueChanged(String userName, DevWebData devWebData) {
-		//String topic = String.format("/topic/%s/devState", userName);
-		String topic = "/topic/admin/devState";
+	public void broadcastValueChanged(long substationId, DevWebData devWebData) {
+		String topic = String.format("/topic/%d/devState", substationId);
+//		String topic = "/topic/admin/devState";
 		messaging.convertAndSend(topic, devWebData);
 	}
 	
-	public void broadcastEvent(String userName, DeviceEventMessage event) {
-		//String topic = String.format("/topic/%s/devState", userName);
-		String topic = "/topic/admin/devEvent";
+	public void broadcastEvent(long substationId, DeviceEventMessage event) {
+		String topic = String.format("/topic/%d/devEvent", substationId);
+//		String topic = "/topic/admin/devEvent";
 		messaging.convertAndSend(topic, event);
 	}
 }
