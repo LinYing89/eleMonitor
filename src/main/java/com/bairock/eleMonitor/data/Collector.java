@@ -134,8 +134,10 @@ public class Collector {
 	}
 
 	public void addDevice(Device device) {
-		device.setCollector(this);
-		listDevice.add(device);
+		if (null != device && !listDevice.contains(device)) {
+			device.setCollector(this);
+			listDevice.add(device);
+		}
 	}
 
 	public void removeDevice(Device device) {

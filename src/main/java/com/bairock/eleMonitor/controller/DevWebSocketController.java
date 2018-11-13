@@ -12,8 +12,10 @@ import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.webData.DevCtrlData;
+import com.bairock.eleMonitor.data.webData.NetMessageSentResult;
 import com.bairock.eleMonitor.service.DeviceService;
 import com.bairock.eleMonitor.service.MsgManagerService;
+import com.bairock.eleMonitor.service.TestService;
 
 @Controller
 public class DevWebSocketController {
@@ -25,6 +27,9 @@ public class DevWebSocketController {
 
 	@Autowired
 	private DeviceService deviceService;
+	
+	@Autowired
+	private TestService testService;
 
 	/**
 	 * 网页发出的控制命令
@@ -82,7 +87,8 @@ public class DevWebSocketController {
 		logger.info("ctrl: " + Util.bytesToHexString(byTotal));
 
 		// 发往通信机
-		ServerHandler.send(msgManager.getId(), byTotal);
+		sendMessage(msgManager.getId(), byTotal);
+//		ServerHandler.send(msgManager.getId(), byTotal);
 	}
 
 	/**
@@ -157,7 +163,13 @@ public class DevWebSocketController {
 		logger.info("config: " + Util.bytesToHexString(byTotal));
 
 		// 发往通信机
-		ServerHandler.send(msgManagerId, byTotal);
+		sendMessage(msgManagerId, byTotal);
+//		ServerHandler.send(msgManagerId, byTotal);
 
+	}
+	
+	private void sendMessage(long msgManagerId, byte[] byTotal) {
+		NetMessageSentResult result = ServerHandler.send(msgManagerId, byTotal);
+		testService.broadcastSent(result);
 	}
 }

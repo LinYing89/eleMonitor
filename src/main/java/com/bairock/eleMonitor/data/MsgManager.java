@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.bairock.eleMonitor.enums.NetMessageResultEnum;
+import com.bairock.eleMonitor.exception.NetMessageException;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -135,14 +137,17 @@ public class MsgManager {
 		return listDevice;
 	}
 
-	public void handler(byte[] by) {
+	public List<byte[]> handler(byte[] by) throws Exception{
 
 		// 去掉校验码
 		byte[] byAllData = Arrays.copyOfRange(by, 0, by.length - 2);
 
 		int index = 0;
+		int oneStart = 0;
+		List<byte[]> list = new ArrayList<>();
 
 		while (index < byAllData.length) {
+			oneStart = index;
 			// 总线号,索引0,长度1
 			index += 1;
 			// 采集终端号,索引1,长度1
@@ -153,6 +158,9 @@ public class MsgManager {
 			index += 2;
 			// 数据长度,索引4,长度2
 			int dataLen = byAllData[index] << 8 | byAllData[index + 1];
+			if(dataLen == 0) {
+				throw new NetMessageException(NetMessageResultEnum.DATA_LENGTH_ZERO);
+			}
 			index += 2;
 			// 数据,索引6, 长度dataLen
 			byte[] byteData = Arrays.copyOfRange(byAllData, index, index + dataLen - 1);
@@ -160,8 +168,14 @@ public class MsgManager {
 			byte[] byValueType = Arrays.copyOfRange(byAllData, index + dataLen - 1, index + dataLen);
 			index += dataLen;
 //			index += 1;
-
+			
+			byte[] byOne = Arrays.copyOfRange(byAllData, oneStart, index);
+			list.add(byOne);
+			
 			List<Collector> listCollector = findCollectorByCode(collectorCode);
+			if(listCollector.isEmpty()) {
+				throw new NetMessageException(NetMessageResultEnum.UNKNOW_COLLECTOR);
+			}
 			for(Collector c : listCollector) {
 				if(c.getFunctionCode() == byValueType[0]) {
 					//判断值类型是否匹配
@@ -169,5 +183,6 @@ public class MsgManager {
 				}
 			}
 		}
+		return list;
 	}
 }

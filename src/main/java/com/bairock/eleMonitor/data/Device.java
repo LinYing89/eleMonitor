@@ -25,14 +25,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  *
  */
 @Entity
-public class Device implements Comparable<Device>{
+public class Device implements Comparable<Device> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	private String place="";
-	
+	private String place = "";
+
 	private String name;
 
 	// 起始地址
@@ -43,7 +43,7 @@ public class Device implements Comparable<Device>{
 	private int byteOrder;
 	// 值类型
 	private ValueType valueType = ValueType.VALUE;
-	//报警设备报警时返回的值, valueType为ALARM时有效,  有的设备报警值为0, 有的设备报警值为1
+	// 报警设备报警时返回的值, valueType为ALARM时有效, 有的设备报警值为0, 有的设备报警值为1
 	private int alarmTriggerValue = 1;
 	// 值格式
 	private ValueFormat valueFormat = ValueFormat.ABS;
@@ -53,11 +53,13 @@ public class Device implements Comparable<Device>{
 	private String unit = "";
 	// 排序索引
 	private int sortIndex;
+	// 在设备组中的排序索引
+	private int sortIndexInGroup;
 	// 组图标路径
 	private String icon = "";
-	
+
 	private String remark = "";
-	
+
 	private float value;
 
 	@ManyToOne
@@ -67,18 +69,18 @@ public class Device implements Comparable<Device>{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference("collector_device")
 	private Collector collector;
-	
-	@OneToMany(mappedBy="device", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, orphanRemoval=true)
+
+	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference("device_event")
 	private List<DeviceEventMessage> listEventMessage = new ArrayList<>();
-	
-	@OneToMany(mappedBy="device", cascade=CascadeType.REMOVE, fetch=FetchType.LAZY, orphanRemoval=true)
+
+	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference("device_history")
 	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
 
 	@Transient
 	private OnValueListener onValueListener;
-	
+
 	public long getId() {
 		return id;
 	}
@@ -92,7 +94,7 @@ public class Device implements Comparable<Device>{
 	}
 
 	public void setPlace(String place) {
-		if(null != place) {
+		if (null != place) {
 			this.place = place;
 		}
 	}
@@ -185,6 +187,14 @@ public class Device implements Comparable<Device>{
 		this.sortIndex = sortIndex;
 	}
 
+	public int getSortIndexInGroup() {
+		return sortIndexInGroup;
+	}
+
+	public void setSortIndexInGroup(int sortIndexInGroup) {
+		this.sortIndexInGroup = sortIndexInGroup;
+	}
+
 	public DeviceGroup getDeviceGroup() {
 		return deviceGroup;
 	}
@@ -206,19 +216,19 @@ public class Device implements Comparable<Device>{
 	}
 
 	public void setValue(float value) {
-		//保留两位小数
+		// 保留两位小数
 		value = Util.scale(value);
-		if(null != onValueListener) {
+		if (null != onValueListener) {
 			onValueListener.onValueReceived(this, value);
 		}
 //		if(Math.abs(value - this.value) >= 0.01) {
-			this.value = value;
-			if(null != onValueListener) {
-				onValueListener.onValueChanged(this, value);
-			}
+		this.value = value;
+		if (null != onValueListener) {
+			onValueListener.onValueChanged(this, value);
+		}
 //		}
 	}
-	
+
 	public String getRemark() {
 		return remark;
 	}
@@ -232,7 +242,7 @@ public class Device implements Comparable<Device>{
 	}
 
 	public void setListEventMessage(List<DeviceEventMessage> listEventMessage) {
-		if(null != listEventMessage) {
+		if (null != listEventMessage) {
 			this.listEventMessage = listEventMessage;
 		}
 	}
@@ -242,7 +252,7 @@ public class Device implements Comparable<Device>{
 	}
 
 	public void setListValueHistory(List<DeviceValueHistory> listValueHistory) {
-		if(null != listValueHistory) {
+		if (null != listValueHistory) {
 			this.listValueHistory = listValueHistory;
 		}
 	}
@@ -251,18 +261,18 @@ public class Device implements Comparable<Device>{
 	@JsonIgnore
 	public String getValueString() {
 		String valueString = "";
-		switch(valueType) {
-		case ALARM :
-			if(value != alarmTriggerValue) {
+		switch (valueType) {
+		case ALARM:
+			if (value != alarmTriggerValue) {
 				valueString = "正常";
-			}else {
+			} else {
 				valueString = "异常";
 			}
 			break;
-		case SWITCH :
-			if(value == 0) {
+		case SWITCH:
+			if (value == 0) {
 				valueString = "关";
-			}else {
+			} else {
 				valueString = "开";
 			}
 			break;
@@ -272,50 +282,50 @@ public class Device implements Comparable<Device>{
 		}
 		return valueString;
 	}
-	
+
 	public void addEventMessage(DeviceEventMessage event) {
-		if(null != event && !listEventMessage.contains(event)) {
+		if (null != event && !listEventMessage.contains(event)) {
 			event.setDevice(this);
 			listEventMessage.add(event);
 		}
 	}
-	
+
 	public void removeEventMessage(DeviceEventMessage event) {
 		listEventMessage.remove(event);
 	}
-	
+
 	public void addValueHistory(DeviceValueHistory history) {
-		if(null != history && !listValueHistory.contains(history)) {
+		if (null != history && !listValueHistory.contains(history)) {
 			history.setDevice(this);
 			listValueHistory.add(history);
 		}
 	}
-	
+
 	public void removeValueHistoru(DeviceValueHistory history) {
 		listValueHistory.remove(history);
 	}
-	
+
 	public void handler(byte[] byData) {
 		float value = 0;
-		if(byteOrder == 12) {
+		if (byteOrder == 12) {
 			value = bytesToInt12(byData) * coefficient;
-		}else {
+		} else {
 			value = bytesToInt21(byData) * coefficient;
 		}
 		setValue(value);
 	}
-	
+
 	private int bytesToInt12(byte[] by) {
 		int value = 0;
-		for(int i=0; i < by.length; i++) {
+		for (int i = 0; i < by.length; i++) {
 			value = value << 8 | (by[i] & 0xff);
 		}
 		return value;
 	}
-	
+
 	private int bytesToInt21(byte[] by) {
 		int value = 0;
-		for(int i=by.length - 1; i >= 0; i--) {
+		for (int i = by.length - 1; i >= 0; i--) {
 			value = value << 8 | (by[i] & 0xff);
 		}
 		return value;
@@ -325,15 +335,18 @@ public class Device implements Comparable<Device>{
 		this.onValueListener = onValueListener;
 	}
 
-	public interface OnValueListener{
+	public interface OnValueListener {
 		/**
 		 * 设备值改变
+		 * 
 		 * @param device
 		 * @param value
 		 */
 		void onValueChanged(Device device, float value);
+
 		/**
 		 * 收到设备值, 不一定是改变了
+		 * 
 		 * @param device
 		 * @param value
 		 */

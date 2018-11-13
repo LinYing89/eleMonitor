@@ -115,15 +115,21 @@
 							<caption>数据节点列表</caption>
 							<thead class="thead-light">
 								<tr>
+									<th scope="col">数据位置</th>
 									<th scope="col">数据名称</th>
 									<th scope="col">操作</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr th:each="device : ${devGroup.listDevice}">
+									<td th:text="${device.place}">1号机柜</td>
 									<td th:text="${device.name}">采集终端</td>
 									<td class="row"><a href="#"
 										th:href="|/devGroup/del/device/${devGroup.id}/${device.id}|">删除
+									</a><a href="#" class="ml-1"
+										th:href="|/devGroup/move/device/0/${devGroup.id}/${device.id}|">上移
+									</a><a href="#" class="ml-1"
+										th:href="|/devGroup/move/device/1/${devGroup.id}/${device.id}|">下移
 									</a></td>
 								</tr>
 							</tbody>
