@@ -108,11 +108,18 @@ public class MsgManagerController {
 	}
 	
 	@GetMapping("/del/{msgManagerId}")
-	public String deleteMsgManager(@PathVariable long msgManagerId, Model model) {
+	public String deleteMsgManager(@PathVariable long msgManagerId) {
 		MsgManager msgManager = msgManagerService.findByMsgManagerId(msgManagerId);
 		Substation station = msgManager.getSubstation();
 		msgManagerService.deleteMsgManager(msgManager);
 		station.removeMsgManager(msgManager);
 		return "redirect:/msgManager/" + station.getId() + "/0";
+	}
+	
+	@GetMapping("/configurationList/{msgManagerId}")
+	public String getConfigurationList(@PathVariable long msgManagerId, Model model) {
+		MsgManager msgManager = msgManagerService.findByMsgManagerId(msgManagerId);
+		model.addAttribute("msgManager", msgManager);
+		return "device/configurationList";
 	}
 }

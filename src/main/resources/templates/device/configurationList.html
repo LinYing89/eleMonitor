@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/configurationList.css" />
+
+<title>配置清单</title>
+</head>
+
+<body class="container">
+	<table class="table table-sm table-bordered">
+		<caption>
+			<span>站点: <span class="text-dark" th:text="${msgManager.substation.station.name}"></span></span> 
+			<span class="ml-5">变电站: <span class="text-dark" th:text="${msgManager.substation.name}"></span></span>
+			<span class="ml-5">通信机名称: <span class="mr-3 text-dark" th:text="${msgManager.name}"></span>编号: <span class="text-dark" th:text="${msgManager.code}"></span><span></span></span>
+		</caption>
+		<thead>
+			<tr>
+				<th scope="col">终端</th>
+				<th scope="col">数据节点</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="collector : ${msgManager.listCollector}">
+				<td>
+					<form>
+						<div class="form-group row mb-0">
+							<label class="col-4 col-form-label col-form-label-sm">名称</label>
+							<label class="col-auto col-form-label col-form-label-sm"
+								th:text="${collector.name}">名称</label>
+						</div>
+						<div class="form-group row mb-0">
+							<label class="col-4 col-form-label col-form-label-sm">总线</label>
+							<label class="col-auto col-form-label col-form-label-sm"
+								th:text="${collector.busCode}">名称</label>
+						</div>
+						<div class="form-group row mb-0">
+							<label class="col-4 col-form-label col-form-label-sm">终端号</label>
+							<label class="col-auto col-form-label col-form-label-sm"
+								th:text="${collector.code}">名称</label>
+						</div>
+						<div class="form-group row mb-0">
+							<label class="col-4 col-form-label col-form-label-sm">功能码</label>
+							<label class="col-auto col-form-label col-form-label-sm"
+								th:text="${collector.functionCode}">名称</label>
+						</div>
+						<div class="form-group row mb-0">
+							<label class="col-4 col-form-label col-form-label-sm">起始地址</label>
+							<label class="col-auto col-form-label col-form-label-sm"
+								th:text="${collector.beginAddress}">名称</label>
+						</div>
+						<div class="form-group row mb-0">
+							<label class="col-4 col-form-label col-form-label-sm">数据长度</label>
+							<label class="col-auto col-form-label col-form-label-sm"
+								th:text="${collector.dataLength}">名称</label>
+						</div>
+					</form>
+				</td>
+				<td>
+					<table class="table table-sm table-bordered">
+						<thead>
+							<tr>
+								<th scope="col" class="w-25">位置</th>
+								<th scope="col" class="w-25">名称</th>
+								<th scope="col" class="w-25">数据地址</th>
+								<th scope="col" class="w-25">数据宽度</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="device : ${collector.listDevice}">
+								<td th:text="${device.place}">1号机柜</td>
+								<td th:text="${device.name}">温度</td>
+								<td th:text="${device.beginAddress}">0</td>
+								<td th:text="${device.dataLength}">1</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+</body>
+
+</html>

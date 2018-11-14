@@ -173,9 +173,9 @@ public class MsgManager {
 			list.add(byOne);
 			
 			List<Collector> listCollector = findCollectorByCode(collectorCode);
-			if(listCollector.isEmpty()) {
-				throw new NetMessageException(NetMessageResultEnum.UNKNOW_COLLECTOR);
-			}
+//			if(listCollector.isEmpty()) {
+//				throw new NetMessageException(NetMessageResultEnum.UNKNOW_COLLECTOR);
+//			}
 			for(Collector c : listCollector) {
 				if(c.getFunctionCode() == byValueType[0]) {
 					//判断值类型是否匹配

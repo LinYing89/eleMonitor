@@ -34,6 +34,8 @@
 						<a class="dropdown-item" href="#">电站数据</a> <a
 							class="dropdown-item" href="/dataAnalysis/">数据分析</a>
 					</div></li>
+				<li class="nav-item"><a class="nav-link" target="_blank"
+					href="/test/netMessage/received">网络数据测试</a></li>
 			</ul>
 			<div class="nav-item">
 				<ul class="navbar-nav mr-auto">
@@ -65,8 +67,8 @@
 			</div>
 
 			<div class="nav flex-column nav-pills" id="v-pills-tab"
-				th:attr="data-substation-id=${substation.id}"
-				role="tablist" aria-orientation="vertical">
+				th:attr="data-substation-id=${substation.id}" role="tablist"
+				aria-orientation="vertical">
 				<a th:each="sub : ${station.listSubstation}" th:text="${sub.name}"
 					class="nav-link" href="#"
 					th:href="|/substation/${station.id}/${sub.id}|"
@@ -125,12 +127,14 @@
 										</div>
 									</div>
 								</div>
-								<div th:each="lineForm : ${listLineTemFormGroup}" class="col-auto">
+								<div th:each="lineForm : ${listLineTemFormGroup}"
+									class="col-auto">
 									<div class="ele-card align-self-center clickable"
 										th:id="|card-group-${lineForm.id}|" data-toggle="modal"
 										th:attr="data-target=|#g${lineForm.id}|">
 										<div class="row">
-											<div th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceA!=null)}"
+											<div
+												th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceA!=null)}"
 												class="col">
 												<div class="w-100 d-flex justify-content-center">
 													<span class="align-self-center icon-main-preview-group"
@@ -140,15 +144,16 @@
 													<span class="align-self-center"
 														th:id="|value-group-${lineForm.listLineTemForm[0].deviceA.id}|"
 														th:text="${lineForm.listLineTemForm[0].deviceA.valueString}">26.5</span>
-<!-- 													<span class="align-self-center" -->
-<!-- 														th:text="${lineForm.listLineTemForm[0].deviceA.unit}">%</span> -->
+													<!-- 													<span class="align-self-center" -->
+													<!-- 														th:text="${lineForm.listLineTemForm[0].deviceA.unit}">%</span> -->
 												</div>
 												<div class="w-100 d-flex justify-content-center">
 													<span class="align-self-center dev-name-group"
 														th:text="${lineForm.listLineTemForm[0].deviceA.name}">温度</span>
 												</div>
 											</div>
-											<div th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceB!=null)}"
+											<div
+												th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceB!=null)}"
 												class="col">
 												<div class="w-100 d-flex justify-content-center">
 													<span class="align-self-center icon-main-preview-group"
@@ -158,15 +163,16 @@
 													<span class="align-self-center"
 														th:id="|value-group-${lineForm.listLineTemForm[0].deviceB.id}|"
 														th:text="${lineForm.listLineTemForm[0].deviceB.valueString}">26.5</span>
-<!-- 													<span class="align-self-center" -->
-<!-- 														th:text="${lineForm.listLineTemForm[0].deviceB.unit}">%</span> -->
+													<!-- 													<span class="align-self-center" -->
+													<!-- 														th:text="${lineForm.listLineTemForm[0].deviceB.unit}">%</span> -->
 												</div>
 												<div class="w-100 d-flex justify-content-center">
 													<span class="align-self-center dev-name-group"
 														th:text="${lineForm.listLineTemForm[0].deviceB.name}">温度</span>
 												</div>
 											</div>
-											<div th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceC!=null)}"
+											<div
+												th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceC!=null)}"
 												class="col">
 												<div class="w-100 d-flex justify-content-center">
 													<span class="align-self-center icon-main-preview-group"
@@ -176,8 +182,8 @@
 													<span class="align-self-center"
 														th:id="|value-group-${lineForm.listLineTemForm[0].deviceC.id}|"
 														th:text="${lineForm.listLineTemForm[0].deviceC.valueString}">26.5</span>
-<!-- 													<span class="align-self-center" -->
-<!-- 														th:text="${lineForm.listLineTemForm[0].deviceC.unit}">%</span> -->
+													<!-- 													<span class="align-self-center" -->
+													<!-- 														th:text="${lineForm.listLineTemForm[0].deviceC.unit}">%</span> -->
 												</div>
 												<div class="w-100 d-flex justify-content-center">
 													<span class="align-self-center dev-name-group"
@@ -297,8 +303,11 @@
 						<div class="col-3">
 							<p>事件信息</p>
 							<div class="event-card" id="div-event">
-								<ul th:each="event : ${listEvent}" class="list-group list-group-flush small" id="ul-event">
-									<li class="list-group-item" th:text="|${#dates.format(event.eventTime, 'yy-MM-dd HH-mm-ss')} ${event.message}|">18-09-27 21:30:11 人体红外报警</li>
+								<ul th:each="event : ${listEvent}"
+									class="list-group list-group-flush small" id="ul-event">
+									<li class="list-group-item"
+										th:text="|${#dates.format(event.eventTime, 'yy-MM-dd HH-mm-ss')} ${event.message}|">18-09-27
+										21:30:11 人体红外报警</li>
 								</ul>
 							</div>
 							<div id="div-other-card" class="row">

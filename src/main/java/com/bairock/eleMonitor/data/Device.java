@@ -335,6 +335,10 @@ public class Device implements Comparable<Device> {
 		this.onValueListener = onValueListener;
 	}
 
+	public OnValueListener getOnValueListener() {
+		return onValueListener;
+	}
+
 	public interface OnValueListener {
 		/**
 		 * 设备值改变

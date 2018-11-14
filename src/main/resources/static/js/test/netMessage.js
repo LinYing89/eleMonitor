@@ -17,6 +17,9 @@ $(document).ready(function() {
 	$("#filter").click(function() {
 		filter = $("#input-filter").val();
 	});
+	$("#clean").click(function() {
+		$("#container").empty();
+	});
 });
 
 function initWebSocket() {
@@ -35,28 +38,50 @@ function handlerNetMessage(message) {
 		return;
 	}
 	var res = JSON.parse(message.body);
-	if(filter != ""){
-		var heads = res.head.split(" ");
-		if(heads.length >= 6){
-			var managerCode = (parseInt(heads[2], 16) << 32) | (parseInt(heads[3], 16) << 16) | (parseInt(heads[4], 16) << 8) | (parseInt(heads[5], 16));
-			if(parseInt(filter) != managerCode){
+	
+	
+	var div = $('<div>' + res.time + " - " + res.data + '</div>');
+	var divInfo = $('<div class="ml-5"></div>')
+	div.append(divInfo);
+	
+	res.listErrorResult.forEach(function(errorResult){
+		//过滤条件
+		if(filter != ""){
+			var heads = errorResult.head.split(" ");
+			if(heads.length >= 6){
+				var managerCode = (parseInt(heads[2], 16) << 32) | (parseInt(heads[3], 16) << 16) | (parseInt(heads[4], 16) << 8) | (parseInt(heads[5], 16));
+				if(parseInt(filter) != managerCode){
+					return;
+				}
+			}else{
 				return;
 			}
 		}
-	}
-	
-	var div = $('<div>' + res.time + " - " + res.receivedMsg + '</div>');
-	var divInfo = $('<div class="ml-5"></div>')
-	div.append(divInfo);
-	if(res.code != 0){
-		var p = $('<p class="m-0"><small class="text-danger">' + res.message + '</small></p>');
+		
+		var pData = $('<p class="m-0"><small class="text-primary">data: ' + errorResult.data + '</small></p>');
+		divInfo.append(pData);
+		
+		if(errorResult.code != 0){
+			var p = $('<p class="m-0"><small class="text-danger">' + errorResult.message + '</small></p>');
+			divInfo.append(p);
+		}
+		var p = $('<p class="m-0"><small class="text-secondary">head: ' + errorResult.head + '</small></p>');
 		divInfo.append(p);
-	}
-	var p = $('<p class="m-0"><small class="text-secondary">head:&#9;' + res.head + '</small></p>');
-	divInfo.append(p);
-	res.listOne.forEach(function(one){
-		var pone = $('<p class="m-0"><small class="text-secondary">coll:&#9;' + one + '</small></p>');
-		divInfo.append(pone);
+		errorResult.listOne.forEach(function(one){
+			var pone = $('<p class="m-0"><small class="text-secondary">coll: ' + one + '</small></p>');
+			divInfo.append(pone);
+		});
 	});
+	
+//	if(res.code != 0){
+//		var p = $('<p class="m-0"><small class="text-danger">' + res.message + '</small></p>');
+//		divInfo.append(p);
+//	}
+//	var p = $('<p class="m-0"><small class="text-secondary">head:&#9;' + res.head + '</small></p>');
+//	divInfo.append(p);
+//	res.listOne.forEach(function(one){
+//		var pone = $('<p class="m-0"><small class="text-secondary">coll:&#9;' + one + '</small></p>');
+//		divInfo.append(pone);
+//	});
 	$("#container").append(div);
 }

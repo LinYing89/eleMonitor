@@ -126,13 +126,13 @@ public class DevWebSocketController {
 			
 			int dataLen = collector.getDataLength();
 			//如果时开关量设备, 要把位数转为字数
-			if(collector.getFunctionCode() == 01 || collector.getFunctionCode() == 02) {
-				int zi = dataLen / 16;
-				if(dataLen % 16 != 0) {
-					zi += 1;
-				}
-				dataLen = zi;
-			}
+//			if(collector.getFunctionCode() == 01 || collector.getFunctionCode() == 02) {
+//				int zi = dataLen / 16;
+//				if(dataLen % 16 != 0) {
+//					zi += 1;
+//				}
+//				dataLen = zi;
+//			}
 			
 			byData[4] = (byte) (dataLen >> 8);
 			byData[5] = (byte) dataLen;

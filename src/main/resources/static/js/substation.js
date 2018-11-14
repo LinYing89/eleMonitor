@@ -149,20 +149,29 @@ function handlerDevEvent(message) {
 
 function changeSwitchBtnActive(devValue, devId) {
 	if (devValue == 1) {
-		$("#btn-dev-on-" + devId).addClass("active");
-		$("#btn-dev-off-" + devId).removeClass("active");
+		$("#btn-dev-on-" + devId).attr("class", "btn active btn-outline-success")
+		$("#btn-dev-off-" + devId).attr("class", "btn btn-outline-success")
+//		$("#btn-dev-on-" + devId).addClass("active");
+//		$("#btn-dev-off-" + devId).removeClass("active");
 	} else {
-		$("#btn-dev-on-" + devId).removeClass("active");
-		$("#btn-dev-off-" + devId).addClass("active");
+		$("#btn-dev-on-" + devId).attr("class", "btn btn-outline-secondary")
+		$("#btn-dev-off-" + devId).attr("class", "btn active btn-outline-secondary")
+//		$("#btn-dev-on-" + devId).removeClass("active");
+//		$("#btn-dev-off-" + devId).addClass("active");
 	}
 }
 
 function changeGroupSwitchBtnActive(devValue, devId) {
 	if (devValue == 1) {
-		$("#btn-dev-on-group-" + devId).addClass("active");
-		$("#btn-dev-off-group-" + devId).removeClass("active");
+		$("#btn-dev-on-group-" + devId).attr("class", "btn active btn-outline-success")
+		$("#btn-dev-off-group-" + devId).attr("class", "btn btn-outline-success")
+		
+//		$("#btn-dev-on-group-" + devId).addClass("active");
+//		$("#btn-dev-off-group-" + devId).removeClass("active");
 	} else {
-		$("#btn-dev-on-group-" + devId).removeClass("active");
-		$("#btn-dev-off-group-" + devId).addClass("active");
+		$("#btn-dev-on-group-" + devId).attr("class", "btn btn-outline-secondary")
+		$("#btn-dev-off-group-" + devId).attr("class", "btn active btn-outline-secondary")
+//		$("#btn-dev-on-group-" + devId).removeClass("active");
+//		$("#btn-dev-off-group-" + devId).addClass("active");
 	}
 }

@@ -2,6 +2,10 @@ var stompClient;
 
 $(document).ready(function() {
 	initWebSocket();
+	
+	$("#clean").click(function() {
+		$("#container").empty();
+	});
 });
 
 function initWebSocket() {
