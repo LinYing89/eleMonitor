@@ -31,13 +31,11 @@ public class MyOnValueListener implements OnValueListener {
 			data.setDevGroupId(device.getDeviceGroup().getId());
 		}
 		String message = null;
-		if (device.getValueType() == ValueType.ALARM) {
-			// 返回值与配置的报警值相同才报警
-			if (device.getValue() == device.getAlarmTriggerValue()) {
-				data.setAlarm(true);
-				message = device.getName();
-				message += " 报警";
-			}
+
+		if(device.isAlarming()) {
+			data.setAlarm(true);
+			message = device.getName();
+			message += " 报警";
 		}
 		if (device.getValueType() == ValueType.SWITCH) {
 			message = device.getName();
@@ -56,15 +54,16 @@ public class MyOnValueListener implements OnValueListener {
 		try {
 			if (null != message) {
 				DeviceEventMessage event = new DeviceEventMessage();
-				//event.setDevice(device);
+				event.setDevice(device);
 				event.setEventTime(new Date());
 				event.setMessage(message);
+				event.setAlarm(data.isAlarm());
 				event.setTimeFormat(new SimpleDateFormat("yy-MM-dd HH-mm-ss").format(event.getEventTime()));
-				device.addEventMessage(event);
+//				device.addEventMessage(event);
 				eventService.add(event);
 				deviceService.broadcastEvent(substationId, event);
-				
 			}
+			device.getCollector().getMsgManager().getSubstation().getStation().refreshState();
 		} catch (Exception e) {
 
 		}
@@ -73,10 +72,10 @@ public class MyOnValueListener implements OnValueListener {
 	@Override
 	public void onValueReceived(Device device, float value) {
 		DeviceValueHistory devHistory = new DeviceValueHistory();
-		//devHistory.setDevice(device);
+		devHistory.setDevice(device);
 		devHistory.setTime(new Date());
 		devHistory.setValue(value);
-		device.addValueHistory(devHistory);
+//		device.addValueHistory(devHistory);
 		historyService.add(devHistory);
 		
 	}

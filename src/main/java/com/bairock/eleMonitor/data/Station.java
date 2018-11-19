@@ -5,13 +5,18 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import com.bairock.eleMonitor.enums.StationState;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
@@ -32,13 +37,23 @@ public class Station {
 	private double lng;
 	private String tel;
 	private String remark;
+	//状态, 0正常, 1离线, 2异常/报警
+	@Transient
+	private StationState state = StationState.NORMAL;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registerTime;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference("user_station")
+	private User user;
+	
 	@OneToMany(mappedBy="station", cascade=CascadeType.ALL, orphanRemoval=true)
 	@JsonManagedReference("station_substation")
 	private List<Substation> listSubstation;
+	
+	@Transient
+	private OnStateChangedListener onStateChangedListener;
 	
 	public long getId() {
 		return id;
@@ -96,6 +111,47 @@ public class Station {
 		this.listSubstation = listSubstation;
 	}
 	
+	public StationState getState() {
+		return state;
+	}
+	public void setState(StationState state) {
+		if(this.state != state) {
+			this.state = state;
+			if(null != onStateChangedListener) {
+				onStateChangedListener.onStateChanged(this, state);
+			}
+		}
+	}
+	
+	public void refreshState() {
+		for(Substation substation : listSubstation) {
+			for(MsgManager mm : substation.getListMsgManager()) {
+				for(Collector c : mm.getListCollector()) {
+					for(Device d : c.getListDevice()) {
+						if(d.isAlarming()) {
+							setState(StationState.ALARM);
+							return;
+						}
+					}
+				}
+			}
+		}
+		setState(StationState.NORMAL);
+	}
+	
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public OnStateChangedListener getOnStateChangedListener() {
+		return onStateChangedListener;
+	}
+	public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
+		this.onStateChangedListener = onStateChangedListener;
+	}
 	public Substation addSubstation(Substation substation) {
 		if(null == substation) {
 			return null;
@@ -112,5 +168,9 @@ public class Station {
 		listSubstation.remove(substation);
 		substation.setStation(null);
 		return substation;
+	}
+	
+	public interface OnStateChangedListener{
+		void onStateChanged(Station station, StationState state);
 	}
 }

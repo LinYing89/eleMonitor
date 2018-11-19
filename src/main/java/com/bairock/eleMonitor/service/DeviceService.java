@@ -100,4 +100,10 @@ public class DeviceService {
 //		String topic = "/topic/admin/devEvent";
 		messaging.convertAndSend(topic, event);
 	}
+	
+	public void broadcastAdminEvent(DeviceEventMessage event) {
+		String topic = String.format("/topic/admin/devEvent");
+//		String topic = "/topic/admin/devEvent";
+		messaging.convertAndSend(topic, event);
+	}
 }

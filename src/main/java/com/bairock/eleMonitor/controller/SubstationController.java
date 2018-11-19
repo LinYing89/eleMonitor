@@ -92,7 +92,8 @@ public class SubstationController {
 			model.addAttribute("listCtrlGroup", listCtrlGroup);
 			model.addAttribute("listLineTemFormGroup", listLineTemFormGroup);
 			
-			List<DeviceEventMessage> listEvent = substation.findDeviceEventMessages();
+//			List<DeviceEventMessage> listEvent = substation.findDeviceEventMessages();
+			List<DeviceEventMessage> listEvent = substationService.findAllEvent(substation);
 			model.addAttribute("listEvent", listEvent);
 //			List<DeviceEventMessage> list = deviceEventMessageService.findTodayEvent();
 //			for(DeviceEventMessage d : list) {
@@ -101,6 +102,12 @@ public class SubstationController {
 		}
 		
 		return "substation/substation2";
+	}
+	
+	@GetMapping("/reload/{stationId}/{substationId}")
+	public String reload(@PathVariable long stationId, @PathVariable long substationId) {
+		substationService.reloadCache(substationId);
+		return "redirect:/substation/" + stationId + "/" + substationId;
 	}
 	
 	@PostMapping("/{stationId}")

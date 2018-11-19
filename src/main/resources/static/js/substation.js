@@ -24,6 +24,21 @@ $(document).ready(function() {
 		};
 		stompClient.send("/app/ctrlDev", {}, JSON.stringify(devCtrlData));
 	});
+	
+	$(".btn-group-dev").each(function(){
+		changeSwitchBtnActive($(this).data("value"), $(this).data("id"));
+	});
+	
+	$(".btn-group-switch").each(function(){
+		changeGroupSwitchBtnActive($(this).data("value"), $(this).data("id"));
+	});
+	
+	$(".ele-card").each(function(){
+		var alarm = $(this).data("dev-alarming");
+		if(alarm){
+			alarmBegin($(this));
+		}
+	});
 });
 
 $("#del-substation").click(function() {
@@ -163,14 +178,14 @@ function changeSwitchBtnActive(devValue, devId) {
 
 function changeGroupSwitchBtnActive(devValue, devId) {
 	if (devValue == 1) {
-		$("#btn-dev-on-group-" + devId).attr("class", "btn active btn-outline-success")
-		$("#btn-dev-off-group-" + devId).attr("class", "btn btn-outline-success")
+		$("#btn-dev-on-group-" + devId).attr("class", "btn active btn-outline-success btn-dev-on")
+		$("#btn-dev-off-group-" + devId).attr("class", "btn btn-outline-success btn-dev-off")
 		
 //		$("#btn-dev-on-group-" + devId).addClass("active");
 //		$("#btn-dev-off-group-" + devId).removeClass("active");
 	} else {
-		$("#btn-dev-on-group-" + devId).attr("class", "btn btn-outline-secondary")
-		$("#btn-dev-off-group-" + devId).attr("class", "btn active btn-outline-secondary")
+		$("#btn-dev-on-group-" + devId).attr("class", "btn btn-outline-secondary btn-dev-on")
+		$("#btn-dev-off-group-" + devId).attr("class", "btn active btn-outline-secondary btn-dev-off")
 //		$("#btn-dev-on-group-" + devId).removeClass("active");
 //		$("#btn-dev-off-group-" + devId).addClass("active");
 	}

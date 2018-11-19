@@ -13,8 +13,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 设备组
@@ -142,6 +144,17 @@ public class DeviceGroup {
 
 	public void sortDevices() {
 		Collections.sort(listDevice, Comparator.comparing(Device::getSortIndexInGroup));
+	}
+	
+	@Transient
+	@JsonIgnore
+	public boolean isAlarming() {
+		for(Device dev : listDevice) {
+			if(dev.isAlarming()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

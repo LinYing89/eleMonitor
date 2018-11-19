@@ -78,6 +78,12 @@ public class Device implements Comparable<Device> {
 	@JsonManagedReference("device_history")
 	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
 
+	/**
+	 * 报警中
+	 */
+	@Transient
+	private boolean alarming;
+
 	@Transient
 	private OnValueListener onValueListener;
 
@@ -221,12 +227,13 @@ public class Device implements Comparable<Device> {
 		if (null != onValueListener) {
 			onValueListener.onValueReceived(this, value);
 		}
-//		if(Math.abs(value - this.value) >= 0.01) {
-		this.value = value;
-		if (null != onValueListener) {
-			onValueListener.onValueChanged(this, value);
+		if (Math.abs(value - this.value) >= 0.01) {
+			this.value = value;
+
+			if (null != onValueListener) {
+				onValueListener.onValueChanged(this, value);
+			}
 		}
-//		}
 	}
 
 	public String getRemark() {
@@ -255,6 +262,17 @@ public class Device implements Comparable<Device> {
 		if (null != listValueHistory) {
 			this.listValueHistory = listValueHistory;
 		}
+	}
+
+	public boolean isAlarming() {
+		if (valueType == ValueType.ALARM) {
+			alarming = (value == alarmTriggerValue);
+		}
+		return alarming;
+	}
+
+	public void setAlarming(boolean alarming) {
+		this.alarming = alarming;
 	}
 
 	@Transient

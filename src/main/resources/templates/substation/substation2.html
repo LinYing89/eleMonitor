@@ -103,6 +103,7 @@
 							<div class="row">
 								<div th:each="valueDevice : ${listValueDevice}" class="col-auto">
 									<div class="ele-card align-self-center"
+										th:attr="data-dev-alarming=${valueDevice.alarming}"
 										th:id="|card-dev-${valueDevice.id}|">
 										<div class="row h-50">
 											<div class="col-4 d-flex justify-content-center">
@@ -201,7 +202,7 @@
 								<div th:each="valueGroup : ${listValueGroup}" class="col-auto">
 									<div class="ele-card align-self-center clickable"
 										th:id="|card-group-${valueGroup.id}|" data-toggle="modal"
-										th:attr="data-target=|#g${valueGroup.id}|">
+										th:attr="data-target=|#g${valueGroup.id}|, data-dev-alarming=${valueGroup.alarming}">
 										<div class="row">
 											<div th:if="${#lists.size(valueGroup.listDevice) > 0}"
 												class="col">
@@ -267,15 +268,15 @@
 												<span th:id="|value-dev-${ctrlDevice.id}|"
 													th:text="${ctrlDevice.valueString}"></span>
 												<div class="btn-group btn-group-sm btn-group-dev mt-4"
+													th:attr="data-id=${ctrlDevice.id}, data-value=${ctrlDevice.value}"
 													role="group">
 													<button type="button" th:id="|btn-dev-on-${ctrlDevice.id}|"
 														th:attr="data-id=${ctrlDevice.id}"
-														class="btn btn-outline-secondary"
-														th:classappend="btn-dev-on">打开</button>
-													<button type="button" th:attr="data-id=${ctrlDevice.id}"
+														class="btn btn-dev-on">打开</button>
+													<button type="button"
 														th:id="|btn-dev-off-${ctrlDevice.id}|"
-														class="btn btn-outline-secondary active"
-														th:classappend="btn-dev-off">关闭</button>
+														th:attr="data-id=${ctrlDevice.id}"
+														class="btn btn-dev-off">关闭</button>
 												</div>
 											</div>
 										</div>
@@ -303,9 +304,8 @@
 						<div class="col-3">
 							<p>事件信息</p>
 							<div class="event-card" id="div-event">
-								<ul th:each="event : ${listEvent}"
-									class="list-group list-group-flush small" id="ul-event">
-									<li class="list-group-item"
+								<ul class="list-group list-group-flush small" id="ul-event">
+									<li th:each="event : ${listEvent}" class="list-group-item"
 										th:text="|${#dates.format(event.eventTime, 'yy-MM-dd HH-mm-ss')} ${event.message}|">18-09-27
 										21:30:11 人体红外报警</li>
 								</ul>
@@ -497,15 +497,16 @@
 								<td th:text="${device.name}" class="align-middle p-1">1-A</td>
 								<td th:id="|value-dev-${device.id}|"
 									th:text="${device.valueString}" class="align-middle p-1">开</td>
-								<td class="p-1"><div class="btn-group btn-group-sm"
+								<td class="p-1"><div
+										class="btn-group btn-group-sm btn-group-switch"
+										th:attr="data-id=${device.id}, data-value=${device.value}"
 										role="group">
 										<button type="button" th:id="|btn-dev-on-group-${device.id}|"
 											th:attr="data-id=${device.id}"
-											class="btn btn-outline-secondary" th:classappend="btn-dev-on">打开</button>
+											class="btn btn-dev-on">打开</button>
 										<button type="button" th:id="|btn-dev-off-group-${device.id}|"
 											th:attr="data-id=${device.id}"
-											class="btn btn-outline-secondary active"
-											th:classappend="btn-dev-off">关闭</button>
+											class="btn btn-dev-off">关闭</button>
 									</div></td>
 								<td th:text="${device.remark}">A相</td>
 							</tr>

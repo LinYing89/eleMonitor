@@ -18,6 +18,10 @@ public class DeviceEventMessageService {
 		return deviceEventMessageRepository.findTodayEvent();
 	}
 	
+	public List<DeviceEventMessage> findTodayByDeviceId(long deviceId){
+		return deviceEventMessageRepository.findTodayByDeviceId(deviceId);
+	}
+	
 	public DeviceEventMessage add(DeviceEventMessage device) {
 		deviceEventMessageRepository.saveAndFlush(device);
 		return device;

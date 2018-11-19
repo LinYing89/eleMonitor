@@ -8,17 +8,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.bairock.eleMonitor.data.Station;
-import com.bairock.eleMonitor.repository.StationRepository;
+import com.bairock.eleMonitor.service.StationService;
 
 @Controller
 public class MapController {
 
 	@Autowired
-	private StationRepository stationRepository;
+	private StationService stationService;
 	
 	@GetMapping("/map")
 	public String map(Model model) {
-		List<Station> list = stationRepository.findAll();
+		List<Station> list = stationService.findAll();
 		model.addAttribute("listStation", list);
 		return "map";
 	}

@@ -34,6 +34,9 @@ public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 	private Date eventTime;
 	
 	private String message;
+	
+	@Transient
+	private boolean alarm;
 
 	@Transient
 	private String timeFormat;
@@ -70,6 +73,14 @@ public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 		this.message = message;
 	}
 	
+	public boolean isAlarm() {
+		return alarm;
+	}
+
+	public void setAlarm(boolean alarm) {
+		this.alarm = alarm;
+	}
+
 	public String getTimeFormat() {
 		return timeFormat;
 	}
