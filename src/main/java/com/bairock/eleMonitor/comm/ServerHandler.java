@@ -182,6 +182,9 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 			if(dev.getOnValueListener() == null) {
 				dev.setOnValueListener(new MyOnValueListener());
 			}
+			if(dev.getOnLinkageTriggeredListener() == null) {
+				dev.setOnLinkageTriggeredListener(new MyOnLinkageTriggeredListener());
+			}
 		}
 
 		try {

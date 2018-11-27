@@ -17,6 +17,8 @@ import com.bairock.eleMonitor.comm.MyOnStationStateChangedListener;
 import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.DeviceGroup;
+import com.bairock.eleMonitor.data.Effect;
+import com.bairock.eleMonitor.data.Linkage;
 import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
@@ -58,12 +60,25 @@ public class StationService {
 						if(d.isAlarming()) {
 							station.setState(StationState.ALARM);
 						}
+						for(Linkage linkage : d.getListLinkage()) {
+							cacheManager.getCache("linkage").put(linkage.getId(), linkage);
+							for(Effect effect : linkage.getListEffect()) {
+								cacheManager.getCache("effect").put(effect.getId(), effect);
+//								@SuppressWarnings("unused")
+								Device ed = effect.getDevice();
+								System.out.println(ed.getId() + " id");
+							}
+						}
 					}
 				}
 			}
 
 			for(DeviceGroup dg : substation.getListDeviceGroup()) {
 				cacheManager.getCache("deviceGroup").put(dg.getId(), dg);
+				dg.getListDevice();
+				for(Device dev : dg.getListDevice()) {
+					System.out.println(dev.getId() + " id");
+				}
 			}
 		}
 		return station;

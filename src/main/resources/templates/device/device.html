@@ -136,7 +136,7 @@
 									<td><a href="#" data-toggle="modal"
 										data-target="#addDeviceModal" data-option="edit"
 										th:attr="data-id=${device.id}, data-name=${device.name}, data-place=${device.place}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}, data-icon=${device.icon}">编辑
-									</a> <a href="#">设置阈值 </a><a href="#" class="del-device"
+									</a> <a href="#" th:href="|/linkage/${device.id}/0|">设置阈值 </a><a href="#" class="del-device"
 										th:href="|/device/del/${device.id}|">删除</a></td>
 								</tr>
 							</tbody>

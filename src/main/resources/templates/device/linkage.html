@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/linkage.css" />
+<title>连锁</title>
+</head>
+
+<!-- 传值 -->
+<!-- substation:Substation, device:Device, linkage:Linkage, listValueDevice:List, listCtrlDevice:List -->
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-1 shadow">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+
+		<ul class="nav mr-auto text-white">
+			<li class="nav-item dropdown"><a
+				class="nav-link dropdown-toggle text-white" href="#"
+				id="navbarDropdown" role="button" data-toggle="dropdown"
+				aria-haspopup="true" aria-expanded="false"> 数据监控 </a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="#" th:href="|/substation/${substation.station.id}/${substation.id}|">数据监控</a> <a
+						class="dropdown-item" href="#" th:href="|/valueHistory/${substation.id}/0|">数据分析</a>
+				</div></li>
+		</ul>
+	</nav>
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="nav-pills col-2 d-none d-md-block bg-dark sidebar">
+				<h6 id="p-address-name" th:text="${substation.name}"
+					class="p-2 text-muted">1号变电站</h6>
+				<h6 class="px-3 text-muted">数据节点列表</h6>
+				<div id="div-devices">
+					<a th:each="dev : ${listValueDevice}"
+						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white"
+						href="#" th:href="|/linkage/${dev.id}/0|"
+						th:classappend="${dev.id == device.id}? 'active'">设备</a> <a
+						th:each="dev : ${listCtrlDevice}"
+						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white"
+						href="#" th:href="|/linkage/${dev.id}/0|"
+						th:classappend="${dev.id == device.id}? 'active'">设备</a>
+				</div>
+			</nav>
+
+			<div class="col-10 ml-auto pl-0" role="main">
+				<div class="row ml-0" id="nav-path">
+					<nav aria-label="breadcrumb col">
+						<ol class="breadcrumb m-0">
+							<li class="breadcrumb-item"><a href="#"
+								th:href="|/substation/${substation.station.id}/${substation.id}|">首页</a></li>
+							<li class="breadcrumb-item"><a href="#"
+								th:href="|/msgManager/${substation.id}/${device.collector.msgManager.id}|">通信管理机</a></li>
+							<li class="breadcrumb-item"><a href="#">采集终端</a></li>
+							<li class="breadcrumb-item active" aria-current="page">阈值设置</li>
+						</ol>
+					</nav>
+					<div class="col-auto mr-2 align-self-center">
+						<button type="button" class="btn btn-primary ml-2 col-auto"
+							th:attr="data-device-id=${device.id}" data-toggle="modal"
+							data-option="add" data-target="#addLinkage">添加连锁</button>
+						<button th:if="${linkage}" type="button"
+							class="btn btn-primary ml-2 col-auto"
+							th:attr="data-linkage-id=${linkage.id}" data-toggle="modal"
+							data-option="add" data-target="#addEffect">添加受控设备</button>
+					</div>
+				</div>
+				<div th:if="${linkage}" class="row mt-2 ml-0">
+					<div class="col-3">
+						<div class="nav flex-column nav-pills" id="v-pills-tab"
+							role="tablist" aria-orientation="vertical">
+							<a th:each="link : ${device.listLinkage}" class="nav-link"
+								th:classappend="${link.id == linkage.id}? 'active'" href="#"
+								th:href="|#v-pills-${link.id}|" th:text="${link.strValue}"
+								data-toggle="pill" role="tab">&gt; 30</a>
+						</div>
+					</div>
+					<div class="col-9">
+						<div class="tab-content" id="v-pills-tabContent">
+							<div th:each="link : ${device.listLinkage}" id="v-pills-home"
+								th:id="|v-pills-${link.id}|" class="tab-pane fade show"
+								th:classappend="${link.id==linkage.id} ? 'active'"
+								role="tabpanel">
+								<div class="row m-2">
+									<div th:if="${link.alarming}"
+										class="alert alert-warning align-self-center mb-0 p-1"
+										role="alert">报警</div>
+									<a class="align-self-center ml-2" href="#" data-toggle="modal"
+										data-option="edit" data-target="#addLinkage"
+										th:attr="data-id=${link.id}, data-compareSymbol=${link.compareSymbol}, data-compareValue=${link.compareValue}, data-alarming=${link.alarming}">编辑</a>
+									<a class="align-self-center ml-2 del-linkage" href="#"
+										th:href="|/linkage/del/${link.id}|">删除</a>
+								</div>
+								<table class="table">
+									<thead>
+										<tr>
+											<th scope="col">位置</th>
+											<th scope="col">设备名称</th>
+											<th scope="col">动作</th>
+											<th scope="col">操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="effect : ${link.listEffect}">
+											<td th:text="${effect.device.place}">一号机柜</td>
+											<td th:text="${effect.device.name}">灯</td>
+											<td th:text="${effect.strValue}">开</td>
+											<td><a href="#" data-toggle="modal" data-option="edit"
+												th:attr="data-id=${effect.id}, data-device-id=${effect.device.id}, data-value=${effect.value}"
+												data-target="#addEffect">编辑</a> <a class="ml-2 del-effect"
+												href="#" th:href="|/effect/del/${effect.id}|">删除</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加连锁 -->
+	<div class="modal fade" id="addLinkage" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addLinkageModalTitle">添加连锁</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form class="pr-3" method="post">
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">比较符号</label> <select
+								class="form-control col-sm-9" required="required"
+								id="compareSymbol" name="compareSymbol">
+								<option value="0">&gt;(大于)</option>
+								<option value="1">=(等于)</option>
+								<option value="2">&lt;(小于)</option>
+							</select>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">比较值</label> <input
+								type="number" step="0.1" class="form-control col-sm-9"
+								name="compareValue" id="compareValue" required="required">
+						</div>
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input" id="alarming"
+								name="alarming"> <label class="form-check-label"
+								for="alarming">报警</label>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加受控设备 -->
+	<div class="modal fade" id="addEffect" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addEffectModalTitle">添加受控设备</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form class="pr-3" method="post">
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">选择设备</label> <select
+								id="select-device" class="form-control col-sm-9"
+								required="required" name="deviceId" multiple size="10">
+								<option th:each="dev : ${listCtrlDevice}" value="0"
+									th:value="${dev.id}" th:text="${dev.name}">空调</option>
+							</select>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">动作</label> <select
+								id="select-value" class="form-control col-sm-9"
+								required="required" name="value">
+								<option value="1.0">开</option>
+								<option value="0.0">关</option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script type="text/javascript" src="/js/linkage.js"></script>
+</body>
+
+</html>

@@ -77,6 +77,10 @@ public class Device implements Comparable<Device> {
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference("device_history")
 	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JsonManagedReference("device_linkage")
+	private List<Linkage> listLinkage = new ArrayList<>();
 
 	/**
 	 * 报警中
@@ -86,6 +90,8 @@ public class Device implements Comparable<Device> {
 
 	@Transient
 	private OnValueListener onValueListener;
+	@Transient
+	private OnLinkageTriggeredListener onLinkageTriggeredListener;
 
 	public long getId() {
 		return id;
@@ -229,6 +235,8 @@ public class Device implements Comparable<Device> {
 		}
 		if (Math.abs(value - this.value) >= 0.01) {
 			this.value = value;
+			//分析连锁, 先连锁, 连锁可能导致报警
+			analysisLinkage();
 
 			if (null != onValueListener) {
 				onValueListener.onValueChanged(this, value);
@@ -262,6 +270,22 @@ public class Device implements Comparable<Device> {
 		if (null != listValueHistory) {
 			this.listValueHistory = listValueHistory;
 		}
+	}
+
+	public OnLinkageTriggeredListener getOnLinkageTriggeredListener() {
+		return onLinkageTriggeredListener;
+	}
+
+	public void setOnLinkageTriggeredListener(OnLinkageTriggeredListener onLinkageTriggeredListener) {
+		this.onLinkageTriggeredListener = onLinkageTriggeredListener;
+	}
+
+	public List<Linkage> getListLinkage() {
+		return listLinkage;
+	}
+
+	public void setListLinkage(List<Linkage> listLinkage) {
+		this.listLinkage = listLinkage;
 	}
 
 	public boolean isAlarming() {
@@ -301,6 +325,36 @@ public class Device implements Comparable<Device> {
 		return valueString;
 	}
 
+	private void analysisLinkage() {
+		List<Effect> listEffect = new ArrayList<>();
+		boolean alarm = false;
+		for(Linkage linkage : listLinkage) {
+			if(linkage.compareResult()) {
+				if(linkage.isAlarming() && !alarm) {
+					alarm = true;
+				}
+				listEffect.addAll(linkage.getListEffect());
+			}
+		}
+		setAlarming(alarm);
+		if(!listEffect.isEmpty()) {
+			if(null != onLinkageTriggeredListener) {
+				onLinkageTriggeredListener.onLinkageTriggered(this, listEffect);
+			}
+		}
+	}
+	
+	public void addLinkage(Linkage linkage) {
+		if (null != linkage && !listLinkage.contains(linkage)) {
+			linkage.setDevice(this);
+			listLinkage.add(linkage);
+		}
+	}
+	
+	public void removeLinkage(Linkage linkage) {
+		listLinkage.remove(linkage);
+	}
+	
 	public void addEventMessage(DeviceEventMessage event) {
 		if (null != event && !listEventMessage.contains(event)) {
 			event.setDevice(this);
@@ -373,6 +427,16 @@ public class Device implements Comparable<Device> {
 		 * @param value
 		 */
 		void onValueReceived(Device device, float value);
+	}
+	
+	public interface OnLinkageTriggeredListener {
+		/**
+		 * 设备值改变
+		 * 
+		 * @param device
+		 * @param value
+		 */
+		void onLinkageTriggered(Device device, List<Effect> listEffect);
 	}
 
 	@Override

@@ -170,6 +170,20 @@ public class Substation {
 		}
 		return listDevices;
 	}
+	
+	public List<Device> findAllCtrlDevice() {
+		List<Device> listDevices = new ArrayList<>();
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					if (dev.getValueType() == ValueType.SWITCH) {
+						listDevices.add(dev);
+					}
+				}
+			}
+		}
+		return listDevices;
+	}
 
 	public List<Device> findCtrlDeviceNoGroup() {
 		List<Device> listDevices = new ArrayList<>();
@@ -193,6 +207,20 @@ public class Substation {
 			}
 		}
 		return listGroup;
+	}
+	
+	public List<Device> findAllValueDevice() {
+		List<Device> listDevices = new ArrayList<>();
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					if (dev.getValueType() != ValueType.SWITCH) {
+						listDevices.add(dev);
+					}
+				}
+			}
+		}
+		return listDevices;
 	}
 
 	public List<Device> findValueDeviceNoGroup() {

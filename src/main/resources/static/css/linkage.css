@@ -1,0 +1,64 @@
+#nav-station {
+	min-width: 200px;
+}
+
+.sidebar {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 100; /* Behind the navbar */
+	padding: 48px 0 0; /* Height of navbar */
+}
+
+#p-address-name {
+	background: black
+}
+
+[role="main"] {
+	padding-top: 46px; /* Space for fixed navbar */
+}
+
+#nav-path {
+	background-color: #e9ecef;
+}
+
+.station-title {
+	background-color: black;
+}
+
+.div-left-title {
+	background: #505258;
+}
+
+.title-icon {
+	width: 20px;
+	height: 20px;
+}
+
+caption {
+	caption-side: top;
+	text-align: center;
+}
+
+.icon-preview {
+	font-size: x-large;
+}
+
+.icon-main-preview {
+	font-size: 36px;
+}
+
+.icon-main-preview-group {
+	font-size: 24px;
+}
+
+#div-devices {
+	height:80%;
+	overflow-y: scroll;
+}
+
+#div-devices::-webkit-scrollbar {
+	/*隐藏滚轮 */
+	display: none;
+}
