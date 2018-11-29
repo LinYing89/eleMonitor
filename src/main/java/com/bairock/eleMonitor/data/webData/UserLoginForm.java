@@ -2,15 +2,15 @@ package com.bairock.eleMonitor.data.webData;
 
 public class UserLoginForm {
 
-	private String name;
+	private String username;
 	private String password;
 	private boolean rememberPsd;
 	
-	public String getName() {
-		return name;
+	public String getUserName() {
+		return username;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setUserName(String username) {
+		this.username = username;
 	}
 	public String getPassword() {
 		return password;

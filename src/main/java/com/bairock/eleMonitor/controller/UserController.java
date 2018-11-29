@@ -6,28 +6,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.bairock.eleMonitor.data.User;
 import com.bairock.eleMonitor.data.webData.UserLoginForm;
 import com.bairock.eleMonitor.repository.UserRepository;
 
 @Controller
-@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
 	
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public String login(HttpServletResponse httpServletResponse, @ModelAttribute UserLoginForm userLoginForm, Model model) {
-		User user = userRepository.findByNameAndPassword(userLoginForm.getName(), userLoginForm.getPassword());
+		User user = userRepository.findByNameAndPassword(userLoginForm.getUserName(), userLoginForm.getPassword());
 		if(null != user) {
 			
 			//保存名称cookie
-			Cookie cookieName = new Cookie("userName", userLoginForm.getName());
+			Cookie cookieName = new Cookie("userName", userLoginForm.getUserName());
 			cookieName.setPath("/");
 			cookieName.setMaxAge(Integer.MAX_VALUE);
 			httpServletResponse.addCookie(cookieName);
@@ -46,7 +44,7 @@ public class UserController {
 				httpServletResponse.addCookie(cookiePsd);
 			}
 			
-			if(userLoginForm.getName().equals("admin")) {
+			if(userLoginForm.getUserName().equals("admin")) {
 				//管理员
 				return "redirect:/station/mystations/" + user.getId() + "/true";
 			}else {

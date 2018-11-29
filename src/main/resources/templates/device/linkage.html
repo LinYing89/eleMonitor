@@ -61,7 +61,7 @@
 						<button type="button" class="btn btn-primary ml-2 col-auto"
 							th:attr="data-device-id=${device.id}" data-toggle="modal"
 							data-option="add" data-target="#addLinkage">添加连锁</button>
-						<button th:if="${linkage}" type="button"
+						<button th:if="${linkage}" type="button" id="btn-add-effect"
 							class="btn btn-primary ml-2 col-auto"
 							th:attr="data-linkage-id=${linkage.id}" data-toggle="modal"
 							data-option="add" data-target="#addEffect">添加受控设备</button>
@@ -71,7 +71,8 @@
 					<div class="col-3">
 						<div class="nav flex-column nav-pills" id="v-pills-tab"
 							role="tablist" aria-orientation="vertical">
-							<a th:each="link : ${device.listLinkage}" class="nav-link"
+							<a th:each="link : ${device.listLinkage}" class="nav-link a-linkage"
+								th:attr="data-linkage-id=${link.id}"
 								th:classappend="${link.id == linkage.id}? 'active'" href="#"
 								th:href="|#v-pills-${link.id}|" th:text="${link.strValue}"
 								data-toggle="pill" role="tab">&gt; 30</a>

@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.comm;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.bairock.eleMonitor.SpringUtil;
 import com.bairock.eleMonitor.Util;
 import com.bairock.eleMonitor.data.Device;
+import com.bairock.eleMonitor.data.Effect;
 import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.webData.AnalysisReceivedErrorResult;
 import com.bairock.eleMonitor.data.webData.NetMessageAnalysisResult;
@@ -18,6 +20,7 @@ import com.bairock.eleMonitor.data.webData.NetMessageSentResult;
 import com.bairock.eleMonitor.enums.NetMessageResultEnum;
 import com.bairock.eleMonitor.exception.NetMessageException;
 import com.bairock.eleMonitor.service.MsgManagerService;
+import com.bairock.eleMonitor.service.SendService;
 import com.bairock.eleMonitor.service.TestService;
 
 import io.netty.buffer.ByteBuf;
@@ -42,6 +45,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
 	private MsgManagerService msgManagerService = SpringUtil.getBean(MsgManagerService.class);
 	private TestService testService = SpringUtil.getBean(TestService.class);
+	private SendService sendService = SpringUtil.getBean(SendService.class);
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -81,62 +85,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 				result.addErrResult(errResult);
 				startOne = to;
 			}
-			
-//			int len = (req[0] << 8) | req[1];
-//			// 数据有效长度不包括长度字节数,通信管理机字节数和crc校验,长度字节数=2,通信管理机字节数=4, crc长度=2
-//			if (req.length != len + 8) {
-//				result.setCode(NetMessageResultEnum.ERR_LENGTH.getCode());
-//				result.setMessage(NetMessageResultEnum.ERR_LENGTH.getMessage());
-//				logger.error(NetMessageResultEnum.ERR_LENGTH.getMessage());
-//				testService.broadcastReceived(result);
-//				return;
-//			}
-//			int managerNum = (req[2] << 24) | (req[3] << 16) | (req[4] << 8) | req[5];
-//			MsgManager mm = msgManagerService.findByMsgManagerCode(managerNum);
-//
-//			if (mm == null) {
-//				result.setCode(NetMessageResultEnum.UNKNOW_MANAGER.getCode());
-//				result.setMessage(NetMessageResultEnum.UNKNOW_MANAGER.getMessage() + managerNum);
-//				logger.error(result.getMessage());
-//				testService.broadcastReceived(result);
-//				return;
-//			}
-//			msgManagerId = mm.getId();
-//			// 添加进map, 方便全局搜索
-//			if (!mapAdded) {
-//				mapAdded = true;
-//				channelMap.put(msgManagerId, this);
-//			}
-//			// 设置设备值监听器
-//			for (Device dev : mm.findAllDevice()) {
-//				if(dev.getOnValueListener() == null) {
-//					dev.setOnValueListener(new MyOnValueListener());
-//				}
-//			}
-//
-//			byte[] by = new byte[len];
-//			by = Arrays.copyOfRange(req, 6, req.length);
-//			try {
-//				byte[] byHead = Arrays.copyOfRange(req, 0, 6);
-//				result.setHead(Util.bytesToHexString(byHead));
-//				List<byte[]> list = mm.handler(by);
-//				for(byte[] byOne : list) {
-//					result.getListOne().add(Util.bytesToHexString(byOne));
-//				}
-//				testService.broadcastReceived(result);
-//			}catch(NetMessageException e) {
-////				e.printStackTrace();
-//				result.setCode(e.getCode());
-//				result.setMessage(e.getMessage());
-//				logger.error(e.getMessage());
-//				testService.broadcastReceived(result);
-//			}catch (Exception e) {
-//				e.printStackTrace();
-//				result.setCode(NetMessageResultEnum.UNKNOW.getCode());
-//				result.setMessage(e.getMessage());
-//				logger.error(e.getMessage());
-//				testService.broadcastReceived(result);
-//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			AnalysisReceivedErrorResult errResult = new AnalysisReceivedErrorResult();
@@ -192,6 +140,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 			for(byte[] by1 : list) {
 				errResult.getListOne().add(Util.bytesToHexString(by1));
 			}
+			
+			//查看触发的连锁
+			//处理完报文再查看那些连锁触发了, 是为了将同一通信机的设备报文合并为一条报文, 防止一次发送多条数据
+			List<Effect> listTriggeredEffect = new ArrayList<>();
+			for (Device dev : mm.findAllDevice()) {
+				listTriggeredEffect.addAll(dev.getListTriggedEffect());
+			}
+			sendEffect(listTriggeredEffect);
+			
 			//testService.broadcastReceived(result);
 		}catch(NetMessageException e) {
 //			e.printStackTrace();
@@ -221,9 +178,18 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		logger.info("channel " + ctx.channel().id().asShortText() + " is closed");
 	}
 
+	private void sendEffect(List<Effect> listEffect) {
+		sendService.ctrlEffectDevice(listEffect);
+	}
+	
 	public void send(byte[] by) {
 		if (null != channel) {
 			channel.writeAndFlush(Unpooled.copiedBuffer(by));
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -248,10 +214,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		return sentResult;
 	}
 
-	public static void main(String[] args) {
-		byte[] b = new byte[] { 0x00, 0, 1, 0 };
-		int managerNum = (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
-		System.out.println(managerNum + "?");
-	}
+//	public static void main(String[] args) {
+//		byte[] b = new byte[] { 0x00, 0, 1, 0 };
+//		int managerNum = (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];
+//		System.out.println(managerNum + "?");
+//	}
 
 }

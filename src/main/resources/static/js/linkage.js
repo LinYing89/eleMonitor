@@ -23,6 +23,16 @@ $(document).ready(function() {
 			return false;
 		});
 	});
+	
+	var aLinkage = $(".a-linkage");
+	aLinkage.each(function(){
+		$(this).click(function(){
+			var linkageId = $(this).data("linkage-id");
+			$("#btn-add-effect").attr("data-linkage-id", linkageId);
+			var o = $("#btn-add-effect");
+			console.info($("#btn-add-effect").data("linkage-id"));
+		});
+	});
 })
 
 $('#addLinkage').on('show.bs.modal', function(event) {

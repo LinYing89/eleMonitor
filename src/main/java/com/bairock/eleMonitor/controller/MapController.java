@@ -16,7 +16,7 @@ public class MapController {
 	@Autowired
 	private StationService stationService;
 	
-	@GetMapping("/map")
+	@GetMapping(value= {"/", "/map"})
 	public String map(Model model) {
 		List<Station> list = stationService.findAll();
 		model.addAttribute("listStation", list);

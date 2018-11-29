@@ -82,6 +82,9 @@ public class Device implements Comparable<Device> {
 	@JsonManagedReference("device_linkage")
 	private List<Linkage> listLinkage = new ArrayList<>();
 
+	@Transient
+	@JsonIgnore
+	private List<Effect> listTriggedEffect = new ArrayList<>();
 	/**
 	 * 报警中
 	 */
@@ -233,11 +236,15 @@ public class Device implements Comparable<Device> {
 		if (null != onValueListener) {
 			onValueListener.onValueReceived(this, value);
 		}
+		boolean changed = false;
 		if (Math.abs(value - this.value) >= 0.01) {
 			this.value = value;
-			//分析连锁, 先连锁, 连锁可能导致报警
-			analysisLinkage();
-
+			changed = true;
+		}
+		//分析连锁, 先连锁, 连锁可能导致报警
+		//不论值有没有改变, 都要检查连锁, 防止有漏掉的没有触发的连锁
+		analysisLinkage();
+		if(changed) {
 			if (null != onValueListener) {
 				onValueListener.onValueChanged(this, value);
 			}
@@ -299,6 +306,14 @@ public class Device implements Comparable<Device> {
 		this.alarming = alarming;
 	}
 
+	public List<Effect> getListTriggedEffect() {
+		return listTriggedEffect;
+	}
+	
+	public void clearListTriggedEffect() {
+		listTriggedEffect.clear();
+	}
+
 	@Transient
 	@JsonIgnore
 	public String getValueString() {
@@ -326,22 +341,23 @@ public class Device implements Comparable<Device> {
 	}
 
 	private void analysisLinkage() {
-		List<Effect> listEffect = new ArrayList<>();
+		clearListTriggedEffect();
+		//List<Effect> listEffect = new ArrayList<>();
 		boolean alarm = false;
 		for(Linkage linkage : listLinkage) {
 			if(linkage.compareResult()) {
 				if(linkage.isAlarming() && !alarm) {
 					alarm = true;
 				}
-				listEffect.addAll(linkage.getListEffect());
+				listTriggedEffect.addAll(linkage.getListEffect());
 			}
 		}
 		setAlarming(alarm);
-		if(!listEffect.isEmpty()) {
-			if(null != onLinkageTriggeredListener) {
-				onLinkageTriggeredListener.onLinkageTriggered(this, listEffect);
-			}
-		}
+//		if(!listEffect.isEmpty()) {
+//			if(null != onLinkageTriggeredListener) {
+//				onLinkageTriggeredListener.onLinkageTriggered(this, listEffect);
+//			}
+//		}
 	}
 	
 	public void addLinkage(Linkage linkage) {
