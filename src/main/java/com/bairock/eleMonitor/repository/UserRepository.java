@@ -6,6 +6,6 @@ import com.bairock.eleMonitor.data.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	public User findByName(String name);
-	public User findByNameAndPassword(String name, String password);
+	public User findByUsername(String name);
+	public User findByUsernameAndPassword(String name, String password);
 }

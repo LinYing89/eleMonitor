@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -56,6 +57,10 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 
 	public void setTime(Date time) {
 		this.time = time;
+	}
+	
+	public String timeStr() {
+		return new SimpleDateFormat("yy-MM-dd\nHH:mm:ss").format(time);
 	}
 
 	public float getValue() {

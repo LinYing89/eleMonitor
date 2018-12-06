@@ -21,7 +21,7 @@ public class UserService {
 	
 	@Cacheable(value="user", key="#name")
 	public User findByNameAndPassword(String name, String password) {
-		return userRepository.findByNameAndPassword(name, password);
+		return userRepository.findByUsernameAndPassword(name, password);
 	}
 	
 	@CachePut(value="user",key="#result.id")
@@ -31,7 +31,7 @@ public class UserService {
 	}
 	
 	public User editUser(User user) {
-		User userDb = self.findByNameAndPassword(user.getName(), user.getPassword());
+		User userDb = self.findByNameAndPassword(user.getUsername(), user.getPassword());
 		if(null != userDb) {
 			userDb.setPassword(user.getPassword());
 			userDb.setTel(user.getTel());

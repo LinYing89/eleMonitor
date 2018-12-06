@@ -21,7 +21,7 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public String login(HttpServletResponse httpServletResponse, @ModelAttribute UserLoginForm userLoginForm, Model model) {
-		User user = userRepository.findByNameAndPassword(userLoginForm.getUserName(), userLoginForm.getPassword());
+		User user = userRepository.findByUsernameAndPassword(userLoginForm.getUserName(), userLoginForm.getPassword());
 		if(null != user) {
 			
 			//保存名称cookie

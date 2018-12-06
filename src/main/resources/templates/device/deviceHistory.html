@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/root2.css" />
+<link rel="stylesheet" href="/css/deviceHistory.css" />
+<link rel="stylesheet" href="/css/bootstrap-select.css" />
+<title>数据分析</title>
+</head>
+
+<!-- 传值 -->
+<!-- substation:Substation, listValueDevice:List, listCtrlDevice:List -->
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-1 shadow">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+
+		<ul class="nav mr-auto text-white">
+			<li class="nav-item dropdown"><a
+				class="nav-link dropdown-toggle text-white" href="#"
+				id="navbarDropdown" role="button" data-toggle="dropdown"
+				aria-haspopup="true" aria-expanded="false"> 数据监控 </a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="#"
+						th:href="|/substation/${substation.station.id}/${substation.id}|">数据监控</a>
+					<a class="dropdown-item" href="#"
+						th:href="|/valueHistory/${substation.id}/0|">数据分析</a>
+				</div></li>
+		</ul>
+	</nav>
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="nav-pills col-2 d-none d-md-block bg-dark sidebar">
+				<h6 id="p-address-name" th:text="${substation.name}"
+					class="p-2 text-muted">1号变电站</h6>
+				<h6 class="px-3 text-muted">数据节点列表</h6>
+				<div id="div-devices">
+					<a th:each="dev : ${listValueDevice}"
+						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white"
+						href="#" th:href="|#div-chart-${dev.id}|">设备</a> <a
+						th:each="dev : ${listCtrlDevice}"
+						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white"
+						href="#" th:href="|#div-chart-${dev.id}|">设备</a>
+				</div>
+			</nav>
+
+			<div class="col-10 ml-auto pl-0 mb-5" role="main">
+				<div class="row ml-0" id="nav-path">
+					<nav aria-label="breadcrumb col">
+						<ol class="breadcrumb m-0">
+							<li class="breadcrumb-item"><a href="#"
+								th:href="|/substation/${substation.station.id}/${substation.id}|">首页</a></li>
+							<li class="breadcrumb-item active" aria-current="page">数据分析</li>
+						</ol>
+					</nav>
+				</div>
+				<div class="row mt-2 ml-0">
+					<div class="row w-100 ml-1">
+						<div class="col-auto"><span>选择设备:</span></div>
+						<div class="col-auto">
+							<select id="devices-selectpicker" multiple data-selected-text-format="count > 3">
+								<option th:each="dev : ${listValueDevice}" th:value="${dev.id}"
+									th:text="|${dev.place} - ${dev.name}|">Mustard</option>
+								<option th:each="dev : ${listCtrlDevice}" th:value="${dev.id}"
+									th:text="|${dev.place} - ${dev.name}|">Mustard</option>
+							</select>
+						</div>
+						<div class="col-auto"><button id="btn-create_charts" type="button" class="btn btn-primary">生成曲线</button></div>
+					</div>
+					<div th:if="${mainDevice}" id="div-main-chart"
+						class="w-100 div-chart" th:attr="data-dev-id=${mainDevice.id}"></div>
+				</div>
+				<div class="row mt-2 ml-0">
+					<div th:each="valueDevice : ${listValueDevice}"
+						class="col-auto w-50 div-chart-container mt-3">
+						<div th:id="|div-chart-${valueDevice.id}|" class="w-100 div-chart"
+							th:attr="data-dev-id=${valueDevice.id}, data-dev-name=${valueDevice.name}"></div>
+					</div>
+					<div th:each="ctrlDevice : ${listCtrlDevice}"
+						class="col-auto w-50 mt-4">
+						<div th:id="|div-chart-${ctrlDevice.id}|" class="w-100 div-chart"
+							th:attr="data-dev-id=${ctrlDevice.id}, data-dev-name=${ctrlDevice.name}"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script src="/js/bootstrap-select.js"></script>
+	<script src="/js/defaults-zh_CN.js"></script>
+	<script src="/js/echarts.js"></script>
+	<script type="text/javascript" src="/js/deviceHistory.js"></script>
+</body>
+
+</html>
