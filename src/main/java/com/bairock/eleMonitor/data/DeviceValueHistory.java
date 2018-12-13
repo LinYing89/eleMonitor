@@ -34,6 +34,8 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 	private Date time;
 	
 	private float value;
+	
+	private String deviceName = "";
 
 	public long getId() {
 		return id;
@@ -69,6 +71,17 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 
 	public void setValue(float value) {
 		this.value = value;
+	}
+
+	public String getDeviceName() {
+		if(null == deviceName) {
+			deviceName = "?";
+		}
+		return deviceName;
+	}
+
+	public void setDeviceName(String deviceName) {
+		this.deviceName = deviceName;
 	}
 
 	@Override

@@ -28,6 +28,8 @@ public class DeviceService {
 	@Autowired
 	private DeviceRepository deviceRepository;
 	@Autowired
+	private DeviceValueHistoryService deviceValueHistoryService;
+	@Autowired
 	private CollectorService collectorService;
 	
 	@Autowired
@@ -57,8 +59,11 @@ public class DeviceService {
 	public Device editDevice(long deviceId, Device device) {
 		Device res = self.findById(deviceId);
 		if(null != res) {
+			if(!res.getName().equals(device.getName())) {
+				res.setName(device.getName());
+				deviceValueHistoryService.update(res);
+			}
 			res.setPlace(device.getPlace());
-			res.setName(device.getName());
 			res.setBeginAddress(device.getBeginAddress());
 			res.setDataLength(device.getDataLength());
 			res.setByteOrder(device.getByteOrder());

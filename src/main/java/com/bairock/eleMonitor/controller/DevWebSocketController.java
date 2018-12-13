@@ -49,6 +49,5 @@ public class DevWebSocketController {
 		MsgManager msgManager = msgManagerService.findByMsgManagerId(msgManagerId);
 
 		sendService.configDev(msgManager);
-
 	}
 }

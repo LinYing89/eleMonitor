@@ -77,17 +77,17 @@ function addMarker(point, state, title) { // 创建图标对象
 	marker.setTitle(title);
 	map.addOverlay(marker);
 
-	marker.addEventListener("click", function(e) {
-		var opts = {
-			width : 250, // 信息窗口宽度
-			height : 100, // 信息窗口高度
-			offset : new BMap.Size(0, -42), // 便宜, 防止盖住marker
-			title : $(this)[0].getTitle()
-		// 信息窗口标题
-		}
-		var infoWindow = new BMap.InfoWindow("状态:正常", opts); // 创建信息窗口对象
-		this.openInfoWindow(infoWindow);
-	});
+//	marker.addEventListener("click", function(e) {
+//		var opts = {
+//			width : 250, // 信息窗口宽度
+//			height : 100, // 信息窗口高度
+//			offset : new BMap.Size(0, -42), // 便宜, 防止盖住marker
+//			title : $(this)[0].getTitle()
+//		// 信息窗口标题
+//		}
+//		var infoWindow = new BMap.InfoWindow("状态:正常", opts); // 创建信息窗口对象
+//		this.openInfoWindow(infoWindow);
+//	});
 	marker.addEventListener("dblclick", function(e) {
 		var title = $(this)[0].getTitle();
 		for (i in stations) {

@@ -28,11 +28,22 @@ public class SendService {
 		if (listEffect.isEmpty()) {
 			return;
 		}
-		MsgManager msgManager = listEffect.get(0).getDevice().getCollector().getMsgManager();
+		//如果状态一致不需要发送
+		List<Effect> listResultEffect = new ArrayList<>();
+		for (Effect effect : listEffect) {
+			if((int)effect.getDevice().getValue() != (int)effect.getValue()) {
+				listResultEffect.add(effect);
+			}
+		}
+		if (listResultEffect.isEmpty()) {
+			return;
+		}
+		
+		MsgManager msgManager = listResultEffect.get(0).getDevice().getCollector().getMsgManager();
 		byte[] byManagerCode = initMsgManagerCodeBytes(msgManager);
 
 		List<byte[]> listOneDeviceBytes = new ArrayList<>();
-		for (Effect effect : listEffect) {
+		for (Effect effect : listResultEffect) {
 			byte[] byOne = initOneDeviceCtrlBytes(effect.getDevice(), (int) effect.getValue());
 			listOneDeviceBytes.add(byOne);
 		}

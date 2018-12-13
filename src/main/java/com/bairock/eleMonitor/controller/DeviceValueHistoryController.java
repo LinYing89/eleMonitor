@@ -33,14 +33,14 @@ public class DeviceValueHistoryController {
 		Substation substation = substationService.findBySubstationId(substationId);
 		List<Device> listValueDevice = substation.findAllValueDevice();
 		List<Device> listCtrlDevice = substation.findAllCtrlDevice();
-		for (Device dev : listValueDevice) {
-			List<DeviceValueHistory> list = deviceValueHistoryController.findAllByDeviceId(dev.getId());
-			dev.setListValueHistory(list);
-		}
-		for (Device dev : listCtrlDevice) {
-			List<DeviceValueHistory> list = deviceValueHistoryController.findAllByDeviceId(dev.getId());
-			dev.setListValueHistory(list);
-		}
+//		for (Device dev : listValueDevice) {
+//			List<DeviceValueHistory> list = deviceValueHistoryController.findAllByDeviceId(dev.getId());
+//			dev.setListValueHistory(list);
+//		}
+//		for (Device dev : listCtrlDevice) {
+//			List<DeviceValueHistory> list = deviceValueHistoryController.findAllByDeviceId(dev.getId());
+//			dev.setListValueHistory(list);
+//		}
 		model.addAttribute("substation", substation);
 		model.addAttribute("listCtrlDevice", listCtrlDevice);
 		model.addAttribute("listValueDevice", listValueDevice);
@@ -74,20 +74,18 @@ public class DeviceValueHistoryController {
 	@ResponseBody
 	@GetMapping("/dev/{deviceId}")
 	public Object[][] getValueHistory(@PathVariable long deviceId) {
-		List<DeviceValueHistory> list = deviceValueHistoryController.findAllByDeviceId(deviceId);
+		List<DeviceValueHistory> list = deviceValueHistoryController.findTodayByDeviceId(deviceId);
 		if(null == list || list.isEmpty()) {
 			return new Object[0][0];
 		}
 		Collections.sort(list);
-		Object[][] values = new Object[3][list.size() + 1];
+		Object[][] values = new Object[2][list.size() + 1];
 		values[0][0] = "device";
 		values[1][0] = list.get(0).getDevice().getName();
-		values[2][0] = list.get(0).getDevice().getName() + "2";
 		for(int i=0; i<list.size(); i++) {
 			DeviceValueHistory history = list.get(i);
 			values[0][i + 1] = history.timeStr();
 			values[1][i + 1] = history.getValue();
-			values[2][i + 1] = history.getValue() + 20;
 		}
 		return values;
 	}
@@ -111,7 +109,7 @@ public class DeviceValueHistoryController {
 			long id = Long.parseLong(ids[i]);
 			List<DeviceValueHistory> list = deviceValueHistoryController.findAllByDeviceId(id);
 			if(null == list || list.isEmpty()) {
-				continue;
+				return chartData;
 			}
 			Collections.sort(list);
 			String devName = list.get(0).getDevice().getName();
@@ -119,14 +117,16 @@ public class DeviceValueHistoryController {
 			if(null == values) {
 				values = new Object[ids.length + 1][list.size() + 1];
 				values[0][0] = "device";
+				
+				//设置第0行为时间
+				for(int j=0; j<list.size(); j++) {
+					DeviceValueHistory history = list.get(j);
+					values[0][j + 1] = history.timeStr();
+				}
 			}
 			//设置每一行(除第0行)的第0列未设备名
 			values[i + 1][0] = devName;
-			//设置第0行为时间
-			for(int j=0; j<list.size(); j++) {
-				DeviceValueHistory history = list.get(j);
-				values[0][j + 1] = history.timeStr();
-			}
+			
 			//设置数值
 			for(int j=0; j<list.size(); j++) {
 				DeviceValueHistory history = list.get(j);
@@ -134,7 +134,6 @@ public class DeviceValueHistoryController {
 			}
 		}
 		chartData.setDataSet(values);
-		
 		return chartData;
 	}
 }

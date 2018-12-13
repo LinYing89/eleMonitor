@@ -7,6 +7,7 @@ public class ChartData {
 
 	private Object[][] dataSet;
 	private List<ChartSeries> listChartSeries = new ArrayList<>();
+	private boolean ended;
 	
 	public Object[][] getDataSet() {
 		return dataSet;
@@ -19,6 +20,12 @@ public class ChartData {
 	}
 	public void setListChartSeries(List<ChartSeries> listChartSeries) {
 		this.listChartSeries = listChartSeries;
+	}
+	public boolean isEnded() {
+		return ended;
+	}
+	public void setEnded(boolean ended) {
+		this.ended = ended;
 	}
 	
 }

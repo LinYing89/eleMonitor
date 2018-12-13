@@ -75,6 +75,7 @@ public class MyOnValueListener implements OnValueListener {
 		devHistory.setDevice(device);
 		devHistory.setTime(new Date());
 		devHistory.setValue(value);
+		devHistory.setDeviceName(device.getName());
 //		device.addValueHistory(devHistory);
 		historyService.add(devHistory);
 		
