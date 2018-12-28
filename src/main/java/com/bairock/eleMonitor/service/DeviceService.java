@@ -72,6 +72,7 @@ public class DeviceService {
 			res.setValueFormat(device.getValueFormat());
 			res.setCoefficient(device.getCoefficient());
 			res.setUnit(device.getUnit());
+			res.setDeviceCategory(device.getDeviceCategory());
 			res.setIcon(device.getIcon());
 			deviceRepository.saveAndFlush(res);
 		}

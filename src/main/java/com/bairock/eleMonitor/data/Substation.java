@@ -45,6 +45,10 @@ public class Substation {
 	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("substation_deviceGroup")
 	private List<DeviceGroup> listDeviceGroup = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "substation", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@JsonManagedReference("substation_doorCard")
+	private List<DoorCard> listDoorCard = new ArrayList<>();
 
 	// 是否激活,选中
 	@Transient
@@ -118,6 +122,14 @@ public class Substation {
 		}
 	}
 
+	public List<DoorCard> getListDoorCard() {
+		return listDoorCard;
+	}
+
+	public void setListDoorCard(List<DoorCard> listDoorCard) {
+		this.listDoorCard = listDoorCard;
+	}
+
 	public void addDeviceGroup(DeviceGroup devGroup) {
 		devGroup.setSubstation(this);
 		listDeviceGroup.add(devGroup);
@@ -126,6 +138,16 @@ public class Substation {
 	public void removeDeviceGroup(DeviceGroup devGroup) {
 		devGroup.setSubstation(null);
 		listDeviceGroup.remove(devGroup);
+	}
+	
+	public void addDoorCard(DoorCard doorCard) {
+		doorCard.setSubstation(this);
+		listDoorCard.add(doorCard);
+	}
+
+	public void removeDoorCard(DoorCard doorCard) {
+		doorCard.setSubstation(null);
+		listDoorCard.remove(doorCard);
 	}
 
 	public MsgManager findMsgManagerByCode(int code) {
@@ -255,6 +277,24 @@ public class Substation {
 			}
 		}
 		return listGroup;
+	}
+	
+	/**
+	 * 获取所有门控设备
+	 * @return
+	 */
+	public List<Device> findDoorDevice() {
+		List<Device> list = new ArrayList<>();
+		for (MsgManager manager : listMsgManager) {
+			for (Collector collector : manager.getListCollector()) {
+				for (Device dev : collector.getListDevice()) {
+					if (dev.getDeviceCategory() == DeviceCategory.DOOR) {
+						list.add(dev);
+					}
+				}
+			}
+		}
+		return list;
 	}
 	
 	public List<DeviceEventMessage> findDeviceEventMessages(){

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 传值 -->
+<!-- substation:Substation, listDoorCard -->
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/cardAdd.css" />
+<link rel="stylesheet" href="/css/cardusers.css" />
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.min.css">
+<link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet"
+	media="screen">
+
+<title>用户</title>
+
+</head>
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">电站智能辅助监控系统</a>
+	</nav>
+
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<h6
+						class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+						<span th:text="${substation.name}">变电站</span>
+					</h6>
+					<ul class="nav flex-column">
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="|/substation/${substation.station.id}/${substation.id}|">
+								首页 </a></li>
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="|/card/add/${substation.id}|"> 加卡 </a></li>
+						<li class="nav-item"><a class="nav-link active" href="#"
+							th:href="|/card/user/${substation.id}|">用户 </a></li>
+						<li class="nav-item"><a class="nav-link" href="#" th:href="|/doorCardHistory/history/${substation.id}/1/0|">纪录 </a></li>
+						<li class="nav-item"><a class="nav-link" href="#">配置</a></li>
+					</ul>
+				</div>
+			</nav>
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<table class="table">
+					<caption>用户列表</caption>
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">卡号</th>
+							<th scope="col">姓名</th>
+							<th scope="col">权限</th>
+							<th scope="col">时限</th>
+							<th scope="col">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="doorCard : ${listDoorCard}">
+							<td th:text="${doorCard.cardNum}">卡号</td>
+							<td th:text="${doorCard.username}">姓名</td>
+							<td>
+								<ul class="list-group list-group-flush">
+									<li th:each="doorAuthority : ${doorCard.listDoorAuthority}"
+										class="list-group-item"
+										th:text="|${doorAuthority.device.name} : ${doorAuthority.doorCardAuthority.text}|"></li>
+								</ul>
+							</td>
+							<td th:text="${doorCard.limitTimeStr}">时限</td>
+							<td class="row"><a href="#" data-toggle="modal"
+								data-target="#editCardUser" data-option="edit"
+								th:attr="data-id=${doorCard.id}, data-card-num=${doorCard.cardNum}, data-username=${doorCard.username}, data-limit-time-start=${doorCard.limitTimeStartStr}, data-limit-time-end=${doorCard.limitTimeEndStr}, data-substation-id=${substation.id}">编辑
+							</a> <a href="#" th:href="|/card/del/${doorCard.id}|">&nbsp;删除</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 编辑门卡信息 -->
+	<div class="modal fade" id="editCardUser" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">编辑用户</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form class="pr-3" method="post"
+						th:action="|/card/add/${substation.id}|">
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">卡号</label> <input
+								type="text" class="form-control col-sm-9" name="cardNum"
+								id="cardNum">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">姓名</label> <input
+								type="text" class="form-control col-sm-9" name="username"
+								id="username" required="required">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">时限开始时间</label> <input
+								id="limitTimeStart" name="limitTimeStart" size="14" type="text"
+								readonly value="2018-12-26 09:00"
+								class="form_datetime form-control col-sm-9">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">时限结束时间</label> <input
+								id="limitTimeEnd" name="limitTimeEnd" size="14" type="text"
+								readonly value="2018-12-26 09:00"
+								class="form_datetime form-control col-sm-9">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">权限</label>
+							<div id="ul-authyority" class="col-sm-9">
+								<div>
+									<label class="col-6 col-form-label">门控1</label> <input
+										type="text" name="listDoorAuthority[0].deviceId" value="0">
+									<select class="form-control col-6"
+										name="listDoorAuthority[0].doorCardAuthority">
+										<option value="ENABLE">允许</option>
+										<option value="DISABLE">禁止</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script src="/js/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+	<script src="/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
+
+	<script type="text/javascript" src="/js/cardUsers.js"></script>
+</body>
+</html>

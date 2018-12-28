@@ -6,7 +6,11 @@
 <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
 <link rel="stylesheet" href="/css/root2.css" />
 <link rel="stylesheet" href="/css/deviceHistory.css" />
-<link rel="stylesheet" href="/css/bootstrap-select.css" />
+
+<!-- <link rel="stylesheet" href="/css/bootstrap-select.css" /> -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.min.css">
+
 <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet"
 	media="screen">
 <title>数据分析</title>
@@ -38,15 +42,15 @@
 			<nav class="nav-pills col-2 d-none d-md-block bg-dark sidebar">
 				<h6 id="p-address-name" th:text="${substation.name}"
 					class="p-2 text-muted">1号变电站</h6>
-<!-- 				<h6 class="px-3 text-muted">数据节点列表</h6> -->
-<!-- 				<div id="div-devices"> -->
-<!-- 					<a th:each="dev : ${listValueDevice}" -->
-<!-- 						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white" -->
-<!-- 						href="#" th:href="|#div-chart-${dev.id}|">设备</a> <a -->
-<!-- 						th:each="dev : ${listCtrlDevice}" -->
-<!-- 						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white" -->
-<!-- 						href="#" th:href="|#div-chart-${dev.id}|">设备</a> -->
-<!-- 				</div> -->
+				<!-- 				<h6 class="px-3 text-muted">数据节点列表</h6> -->
+				<!-- 				<div id="div-devices"> -->
+				<!-- 					<a th:each="dev : ${listValueDevice}" -->
+				<!-- 						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white" -->
+				<!-- 						href="#" th:href="|#div-chart-${dev.id}|">设备</a> <a -->
+				<!-- 						th:each="dev : ${listCtrlDevice}" -->
+				<!-- 						th:text="|${dev.place} - ${dev.name}|" class="nav-link text-white" -->
+				<!-- 						href="#" th:href="|#div-chart-${dev.id}|">设备</a> -->
+				<!-- 				</div> -->
 			</nav>
 
 			<div class="col-10 ml-auto pl-0 mb-5" role="main">
@@ -60,8 +64,9 @@
 					</nav>
 				</div>
 				<form class="form-inline p-2">
-					<label class="mr-1">选择设备:</label> <select id="devices-selectpicker" multiple
-						data-style="btn-info" data-selected-text-format="count > 2">
+					<label class="mr-1">选择设备:</label> <select id="devices-selectpicker"
+						multiple data-style="btn-info"
+						data-selected-text-format="count > 2">
 						<option th:each="dev : ${listValueDevice}" th:value="${dev.id}"
 							th:text="|${dev.place} - ${dev.name}|">Mustard</option>
 						<option th:each="dev : ${listCtrlDevice}" th:value="${dev.id}"
@@ -69,11 +74,23 @@
 					</select>
 					<div class="form-group">
 						<label for="dtp_input2" class="col-md-2 control-label">从:</label>
-						<input id="datetime_start" size="14" type="text"readonly class="form_datetime form-control">
+						<input id="datetime_start" size="14" type="text" readonly
+							class="form_datetime form-control">
 					</div>
 					<div class="form-group">
 						<label for="dtp_input2" class="col-md-2 control-label">到:</label>
-						<input id="datetime_end" size="14" type="text" readonly class="form_datetime form-control">
+						<input id="datetime_end" size="14" type="text" readonly
+							class="form_datetime form-control">
+					</div>
+					<div class="form-group">
+						<label class="control-label mr-1">间隔:</label> <select
+							id="select-datatime-interval" class="form-control">
+							<option value="1">1分钟</option>
+							<option value="5" selected="selected">5分钟</option>
+							<option value="15">15分钟</option>
+							<option value="30">30分钟</option>
+							<option value="60">1小时</option>
+						</select>
 					</div>
 					<div class="col-auto">
 						<button type="button" id="btn-create-charts"
@@ -95,7 +112,8 @@
 						class="w-100 div-chart" th:attr="data-dev-id=${mainDevice.id}"></div>
 				</div>
 				<div class="row ml-3 mr-2">
-					<table id="table_value_history" class="table table-striped table-sm">
+					<table id="table_value_history"
+						class="table table-striped table-sm">
 						<caption>历史纪录报表</caption>
 					</table>
 				</div>
@@ -107,13 +125,19 @@
 	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
 	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
 
-	<script src="/js/bootstrap-select.js"></script>
-	<script src="/js/defaults-zh_CN.js"></script>
+<!-- 	<script src="/js/bootstrap-select.js"></script> -->
+<!-- 	<script src="/js/defaults-zh_CN.js"></script> -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/bootstrap-select.min.js"></script>
+	<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/i18n/defaults-zh_CN.min.js"></script>
+
 	<script src="/js/echarts.js"></script>
 	<script src="/js/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
 	<script src="/js/bootstrap-datetimepicker.zh-CN.js" charset="UTF-8"></script>
-	<script type="text/javascript" src="/js/deviceHistory.js"></script>
-	
+	<script type="text/javascript" src="/js/deviceHistory2.js"></script>
+
 </body>
 
 </html>

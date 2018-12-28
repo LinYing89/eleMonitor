@@ -31,6 +31,27 @@ public interface DeviceValueHistoryRepository extends JpaRepository<DeviceValueH
 	@Query(value="select * from device_value_history e where time>:startTime and time<:endTime and device_id=:deviceId order by time limit :mylimit", nativeQuery = true)
 	List<DeviceValueHistory> findByStartTimeAndEndTimeAndDeviceIdAndLimit(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("deviceId") long deviceId, @Param("mylimit") int mylimit);
 	
+	/**
+	 * 获取开始时间和结束时间内的第一条数据
+	 * @param startTime
+	 * @param endTime
+	 * @param deviceId
+	 * @return
+	 */
+	@Query(value="select * from device_value_history e where time>=:startTime and time<:endTime and device_id=:deviceId limit 1", nativeQuery = true)
+	List<DeviceValueHistory> findByStartTimeAndEndTimeAndDeviceIdAndOne(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("deviceId") long deviceId);
+	
+	/**
+	 * 调用mysql存储方法, 获取抽样数据, 存储方法在mysql数据库中, 通过workbeach可以看到
+	 * @param deviceId
+	 * @param startTime
+	 * @param endTime
+	 * @param interval 抽样数据间隔时间
+	 * @return
+	 */
+	@Query(value="call proc_intervalHistory(:deviceId, :startTime, :endTime, :interval)", nativeQuery = true)
+	List<DeviceValueHistory> findByStartTimeAndEndTimeAndDeviceIdInterval(@Param("deviceId") long deviceId, @Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("interval") int interval);
+	
 	@Modifying
 	@Transactional
 	@Query(value="update device_value_history set device_name = :deviceName where device_id=:deviceId", nativeQuery = true)

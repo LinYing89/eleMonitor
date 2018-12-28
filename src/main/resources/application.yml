@@ -3,12 +3,13 @@ server:
 spring: 
   datasource:
     url: jdbc:mysql://localhost:3306/eleMonitor?useSSL=false
-    username: root
+    username: root #用户名
     password: root
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: true
     properties:
       hibernate: 

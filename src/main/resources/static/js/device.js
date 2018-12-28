@@ -42,6 +42,7 @@ $('#addDeviceModal').on('show.bs.modal', function(event) {
 		var valueFormat = target.data('valueformat')
 		var valueType = target.data('valuetype')
 		var alarmValue = target.data('alarmvalue')
+		var category = target.data('category')
 		var icon = target.data('icon')
 		
 		modal.find('#name').val(name)
@@ -54,6 +55,7 @@ $('#addDeviceModal').on('show.bs.modal', function(event) {
 		modal.find('#valueFormat').val(valueFormat)
 		modal.find('#select-value-type').val(valueType)
 		modal.find('#select-alarm-trigger-value').val(alarmValue)
+		modal.find('#deviceCategory').val(category)
 		iconPicker.setIcon(icon);
 		
 		if(valueType=="ALARM"){

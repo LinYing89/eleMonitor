@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" />
+<link rel="stylesheet" href="/css/root3.css" />
+
+<title>门卡管理</title>
+
+</head>
+
+<!-- substation:Substation, pageCountArry:int[](总页数), page:int(当前页), cardNum(卡号):String, listDoorCardHistory:List -->
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-1 shadow">
+		<a class="navbar-brand" href="#">电站智能辅助监控系统</a>
+	</nav>
+
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<h6
+						class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+						<span th:text="${substation.name}">变电站</span>
+					</h6>
+					<ul class="nav flex-column">
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="|/substation/${substation.station.id}/${substation.id}|">
+								首页 </a></li>
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="|/card/add/${substation.id}|"> 加卡 </a></li>
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="|/card/user/${substation.id}|">用户 </a></li>
+						<li class="nav-item"><a class="nav-link active" href="#">纪录
+						</a></li>
+						<li class="nav-item"><a class="nav-link" href="#">配置</a></li>
+					</ul>
+				</div>
+			</nav>
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<form class="form-inline">
+					<div class="form-group mb-2">
+						<label for="dtp_input2" class="control-label">卡号:</label> <input
+							id="input_card_num" size="16" type="text" class="form-control ml-2" th:value="${cardNum}">
+					</div>
+					<button id="btn_search" class="btn btn-primary mb-2 ml-2" th:attr="data-substation-id=${substationId}">查询</button>
+				</form>
+				<table class="table table-sm">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">卡号</th>
+							<th scope="col">姓名</th>
+							<th scope="col">状态</th>
+							<th scope="col">时间</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="doorCardHistory : ${listDoorCardHistory}">
+							<td th:text="${doorCardHistory.cardNum}">卡号</td>
+							<td th:text="${doorCardHistory.cardUsername}">姓名</td>
+							<td th:text="${doorCardHistory.state}">状态</td>
+							<td th:text="${doorCardHistory.noteTime}">时间</td>
+						</tr>
+					</tbody>
+				</table>
+				<nav aria-label="Page navigation example">
+					<ul class="pagination justify-content-end">
+						<li class="page-item" th:attr="disabled=${page==1}?'true':'false'"><a
+							class="page-link" href="#" aria-label="Previous"> <span
+								aria-hidden="true">&laquo;</span>
+						</a></li>
+						<li th:each="pageNum : ${pageCountArry}" class="page-item"
+							th:classappend="${pageNum == page}?'active'"><a
+							class="page-link" href="#" th:href="|/doorCardHistory/history/${substation.id}/${pageNum}/${cardNum}|" th:text="${pageNum}">1</a></li>
+						<li class="page-item"><a class="page-link" href="#"
+							aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+						</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	
+	<script src="/js/cardHistory.js"></script>
+</body>
+</html>

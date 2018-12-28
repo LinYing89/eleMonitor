@@ -135,8 +135,9 @@
 									<td th:text="${device.unit}">℃</td>
 									<td><a href="#" data-toggle="modal"
 										data-target="#addDeviceModal" data-option="edit"
-										th:attr="data-id=${device.id}, data-name=${device.name}, data-place=${device.place}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}, data-icon=${device.icon}">编辑
-									</a> <a href="#" th:href="|/linkage/${device.id}/0|">设置阈值 </a><a href="#" class="del-device"
+										th:attr="data-id=${device.id}, data-name=${device.name}, data-place=${device.place}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}, data-category=${device.deviceCategory}, data-icon=${device.icon}">编辑
+									</a> <a href="#" th:href="|/linkage/${device.id}/0|">设置阈值 </a><a
+										href="#" class="del-device"
 										th:href="|/device/del/${device.id}|">删除</a></td>
 								</tr>
 							</tbody>
@@ -171,7 +172,8 @@
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-3 col-form-label">设备位置</label> <input
-								type="text" class="form-control col-sm-9" name="place" id="place">
+								type="text" class="form-control col-sm-9" name="place"
+								id="place">
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-3 col-form-label">数据地址</label> <input
@@ -190,16 +192,16 @@
 						</div>
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">数据类型</label>
-							<select class="form-control col-sm-9" required="required" id="select-value-type"
-								name="valueType">
+							<select class="form-control col-sm-9" required="required"
+								id="select-value-type" name="valueType">
 								<option value="SWITCH">开关量</option>
 								<option value="ALARM">报警</option>
 								<option value="VALUE">数值量</option>
 							</select>
 						</div>
 						<div class="form-group row" id="div-alarm-value">
-							<label class="col-sm-3 col-form-label">报警值</label>
-							<select class="form-control col-sm-9" required="required"
+							<label class="col-sm-3 col-form-label">报警值</label> <select
+								class="form-control col-sm-9" required="required"
 								name="alarmTriggerValue" id="select-alarm-trigger-value">
 								<option value="1" selected="selected">1</option>
 								<option value="0">0</option>
@@ -222,9 +224,16 @@
 							<input type="text" class="form-control col-sm-9" id="unit"
 								name="unit">
 						</div>
-						<div class="form-group">
-							<label for="substationName">图标</label> <select
-								class="form-control" id="myselect" name="icon">
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">设备类别</label> <select
+								class="form-control col-sm-9" name="deviceCategory" id="deviceCategory">
+								<option value="DEFAULT">无</option>
+								<option value="DOOR">门控</option>
+							</select>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">图标</label> <select
+								class="form-control col-sm-9" id="myselect" name="icon">
 								<option value="icon-device">icon-device</option>
 								<option value="icon-SF6">icon-SF6</option>
 								<option value="icon-door">icon-door</option>

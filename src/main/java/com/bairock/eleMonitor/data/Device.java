@@ -61,6 +61,8 @@ public class Device implements Comparable<Device> {
 	private String remark = "";
 
 	private float value;
+	
+	private DeviceCategory deviceCategory = DeviceCategory.DEFAULT;
 
 	@ManyToOne
 	@JsonIgnore
@@ -200,6 +202,14 @@ public class Device implements Comparable<Device> {
 
 	public void setSortIndex(int sortIndex) {
 		this.sortIndex = sortIndex;
+	}
+
+	public DeviceCategory getDeviceCategory() {
+		return deviceCategory;
+	}
+
+	public void setDeviceCategory(DeviceCategory deviceCategory) {
+		this.deviceCategory = deviceCategory;
 	}
 
 	public int getSortIndexInGroup() {
