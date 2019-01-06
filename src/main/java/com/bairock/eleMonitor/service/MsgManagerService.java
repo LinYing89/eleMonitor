@@ -76,22 +76,39 @@ public class MsgManagerService {
 		return msgManager;
 	}
 
-//	@CachePut(value = "msgmanager", condition = "#result!=null", key = "#result.code")
-	public MsgManager editMsgManager(long msgManagerId, MsgManager msgManager) {
-		MsgManager res = self.findByMsgManagerId(msgManagerId);
-		if (null != res) {
-			if (res.getCode() != msgManager.getCode()) {
-				// 如果改变了通信机的编号, 则要查询有没有已存在的同号的通信机
-				if (codeIsHaved(msgManager.getCode())) {
-					// 已有同号的通信机
-					return null;
-				}
-			}
+	@CachePut(value = "msgmanager", condition = "#result!=null", key = "#result.code")
+	public MsgManager editMsgManager(int oldCode, MsgManager msgManager) {
+		MsgManager res = self.findByMsgManagerCode(oldCode);
+		if(oldCode == msgManager.getCode()) {
 			res.setName(msgManager.getName());
-			res.setCode(msgManager.getCode());
 			res.setPlace(msgManager.getPlace());
 			msgManagerRepository.saveAndFlush(res);
+		}else {
+			if(codeIsHaved(msgManager.getCode())) {
+				// 已有同号的通信机
+				return null;
+			}else {
+				res.setName(msgManager.getName());
+				res.setCode(msgManager.getCode());
+				res.setPlace(msgManager.getPlace());
+				msgManagerRepository.saveAndFlush(res);
+				//删除旧缓存, 防止保留旧的编号, 导致通信机号重复
+				cacheManager.getCache("msgmanager").evict(oldCode);
+			}
 		}
+//		if (null != res) {
+//			if (res.getCode() != msgManager.getCode()) {
+//				// 如果改变了通信机的编号, 则要查询有没有已存在的同号的通信机
+//				if (codeIsHaved(msgManager.getCode())) {
+//					// 已有同号的通信机
+//					return null;
+//				}
+//			}
+//			res.setName(msgManager.getName());
+//			res.setCode(msgManager.getCode());
+//			res.setPlace(msgManager.getPlace());
+//			msgManagerRepository.saveAndFlush(res);
+//		}
 		return res;
 	}
 

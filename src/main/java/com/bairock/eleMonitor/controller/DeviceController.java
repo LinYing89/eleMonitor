@@ -34,13 +34,13 @@ public class DeviceController {
 	@PostMapping("/{collectorId}")
 	public String addDevice(@PathVariable long collectorId, @ModelAttribute Device device) {
 		deviceService.addDevice(collectorId, device);
-		return "redirect:/device/" + collectorId;
+		return "redirect:/collector/find/" + collectorId;
 	}
 	
 	@PostMapping("/edit/{deviceId}")
 	public String editDevice(@PathVariable long deviceId, @ModelAttribute Device device) {
 		Device res = deviceService.editDevice(deviceId, device);
-		return "redirect:/device/" + res.getCollector().getId();
+		return "redirect:/collector/find/" + res.getCollector().getId();
 	}
 	
 	@GetMapping("/del/{deviceId}")
@@ -54,6 +54,6 @@ public class DeviceController {
 		collector.removeDevice(device);
 		
 		deviceService.deleteDevice(device);
-		return "redirect:/device/" + collector.getId();
+		return "redirect:/collector/find/" + collector.getId();
 	}
 }

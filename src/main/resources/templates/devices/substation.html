@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 传值 -->
+<!-- substation:Substation-->
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<!-- <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" /> -->
+<link href="/bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/devices/deviceRoot.css" />
+
+<title>用户</title>
+
+</head>
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">电站智能辅助监控系统</a>
+	</nav>
+
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<h6 hidden="hidden"
+						class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+						<span id="substationName" th:text="${substation.name}"
+							th:attr="data-substation-id=${substation.id}">变电站</span>
+					</h6>
+					<div class="nav flex-column nav-pills">
+						<a class="nav-link" href="#"
+							th:href="|/substation/${substation.station.id}/${substation.id}|">首页</a>
+						<a class="nav-link active" href="#"
+							th:href="|/msgManager/${substation.id}|"
+							th:text="${substation.name}">变电站</a>
+					</div>
+
+					<div id="tree-devices"></div>
+				</div>
+			</nav>
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<div class="row">
+					<button type="button" class="btn btn-primary ml-4"
+						data-toggle="modal" data-option="add"
+						th:attr="data-substation-id=${substation.id}"
+						data-target="#editMsgManagerModal">添加通信机</button>
+					<a class="align-self-center ml-2" href="#" th:href="|/devGroup/${substation.id}/0|">数据组管理</a>
+				</div>
+				<table class="table mt-2">
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">编号</th>
+							<th scope="col">名称</th>
+							<th scope="col">位置</th>
+							<th scope="col">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="mm : ${substation.listMsgManager}">
+							<td th:text="${mm.code}">编码</td>
+							<td th:text="${mm.name}">名称</td>
+							<td th:text="${mm.place}">位置</td>
+							<td><a href="#" data-toggle="modal"
+								data-target="#editMsgManagerModal" data-option="edit"
+								th:attr="data-id=${mm.id}, data-code=${mm.code}, data-name=${mm.name}, data-place=${mm.place}">编辑
+							</a><a class="del-msg-manager" href="#"
+								th:href="|/msgManager/del/${mm.id}|">删除</a></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加通信机 -->
+	<div class="modal fade" id="editMsgManagerModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editMsgManagerModalTitle">添加通信机</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/msgManager/${substationId}|" method="post"
+						id="form-add-msgmanager">
+						<div class="form-group">
+							<label for="substationName">通信管理机名称</label> <input type="text"
+								class="form-control" id="manager-name" name="name"
+								required="required">
+						</div>
+						<div class="form-group">
+							<label for="substationName">通信管理机编号</label> <input type="text"
+								class="form-control" id="manager-code" name="code"
+								required="required">
+						</div>
+
+						<div class="form-group">
+							<label for="substationName">通信管理机位置</label> <input type="text"
+								class="form-control" id="manager-place" name="place">
+						</div>
+						<div class="form-group">
+							<span id="manager-code-repeated" class="text-danger"></span>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script type="text/javascript" src="/js/bootstrap-treeview.js"></script>
+	<script type="text/javascript" src="/js/devices/devicesRoot.js"></script>
+	<script type="text/javascript" src="/js/devices/substation.js"></script>
+</body>
+</html>

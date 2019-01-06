@@ -26,6 +26,15 @@ public class CollectorController {
 	@Autowired
 	private MsgManagerService msgManagerService;
 	
+	@GetMapping("/find/{collectorId}")
+	public String getCollectorDevices(@PathVariable long collectorId, Model model) {
+		Collector collector = collectorService.findById(collectorId);
+		model.addAttribute("substation", collector.getMsgManager().getSubstation());
+		model.addAttribute("msgManager", collector.getMsgManager());
+		model.addAttribute("collector", collector);
+		return "devices/collector";
+	}
+	
 	@GetMapping("/{msgManagerId}/{collectorId}")
 	public String getCollector(@PathVariable long msgManagerId, @PathVariable long collectorId, Model model) {
 		MsgManager msgManager = msgManagerService.findByMsgManagerId(msgManagerId);
@@ -54,7 +63,7 @@ public class CollectorController {
 		return "device/msgManager";
 	}
 	
-	@PostMapping("/{msgManagerId}")
+	@PostMapping("/add/{msgManagerId}")
 	public String addCollector(@PathVariable long msgManagerId, @ModelAttribute Collector collector) {
 		Collector res = collectorService.addCollector(msgManagerId, collector);
 		Substation substation = res.getMsgManager().getSubstation();

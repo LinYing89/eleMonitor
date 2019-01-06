@@ -1,0 +1,12 @@
+.sidebar {
+/*   padding: 0; Height of navbar */
+}
+.list-group-item {
+    padding: 0.5rem .2rem;
+}
+.sidebar .nav-link.active {
+  color: white;
+}
+[role="main"] {
+  padding-top: 26px; /* Space for fixed navbar */
+}

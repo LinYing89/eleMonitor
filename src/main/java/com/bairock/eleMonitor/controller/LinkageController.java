@@ -46,7 +46,7 @@ public class LinkageController {
 		model.addAttribute("device", device);
 		model.addAttribute("listValueDevice", substation.findAllValueDevice());
 		model.addAttribute("listCtrlDevice", substation.findAllCtrlDevice());
-		return "device/linkage";
+		return "devices/linkage";
 	}
 	
 	@PostMapping("/add/{deviceId}")

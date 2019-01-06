@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 传值 -->
+<!-- substation:Substation, msgManager:MsgManager, collector:Collector(选中的采集终端)-->
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<!-- <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" /> -->
+<link href="/bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/icomoon/deviceicon.css" />
+
+<!-- styles -->
+<!-- base | always include -->
+<link rel="stylesheet" type="text/css"
+	href="/css/fontIconPicker/jquery.fonticonpicker.min.css">
+<!-- <link rel="stylesheet" type="text/css" -->
+<!-- 	href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/base/jquery.fonticonpicker.min.css"> -->
+<!-- optional themes | no need to include default theme -->
+<!--<link rel="stylesheet" type="text/css" href="https://unpkg.com/@fonticonpicker/fonticonpicker/dist/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">-->
+
+<link rel="stylesheet" type="text/css"
+	href="/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">
+	
+<link rel="stylesheet" href="/css/devices/deviceRoot.css" />
+
+<title>采集终端</title>
+
+</head>
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">电站智能辅助监控系统</a>
+	</nav>
+
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<h6 hidden="hidden"
+						class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+						<span id="substationName" th:text="${substation.name}"
+							th:attr="data-substation-id=${substation.id}, data-msgmanager-id=${msgManager.id}">变电站</span>
+					</h6>
+					<div class="nav flex-column nav-pills">
+						<a class="nav-link" href="#"
+							th:href="|/substation/${substation.station.id}/${substation.id}|">首页</a>
+						<a class="nav-link" href="#"
+							th:href="|/msgManager/${substation.id}|"
+							th:text="${substation.name}">变电站</a>
+					</div>
+
+					<div id="tree-devices" data-device-type="collector"
+						th:attr="data-device-id=${collector.id}"></div>
+				</div>
+			</nav>
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<form class="form-inline p-2">
+					<div class="form-group">
+						<label class="control-label">名称:</label>&nbsp; <label
+							class="control-label" th:text="${collector.name}">名称</label>
+					</div>
+					<div class="form-group ml-4">
+						<label class="control-label">起始地址:</label>&nbsp; <label
+							class="control-label" th:text="${collector.beginAddress}">起始地址</label>
+					</div>
+					<div class="form-group ml-4">
+						<label class="control-label">数据长度:</label>&nbsp; <label
+							class="control-label" th:text="${collector.dataLength}">数据长度</label>
+					</div>
+					<button type="button" class="btn btn-primary ml-4"
+						th:attr="data-collector-id=${collector.id}" data-toggle="modal"
+						data-option="add" data-target="#editDeviceModal">添加数据节点</button>
+				</form>
+
+				<table class="table">
+					<caption>采集点数据列表</caption>
+					<thead class="thead-light">
+						<tr>
+							<th scope="col">图标</th>
+							<th scope="col">位置</th>
+							<th scope="col">数据名称</th>
+							<th scope="col">数据地址</th>
+							<th scope="col">数据宽度</th>
+							<th scope="col">字节顺序</th>
+							<th scope="col">数据类型</th>
+							<th scope="col">数据格式</th>
+							<th scope="col">系数</th>
+							<th scope="col">单位</th>
+							<th scope="col">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="device : ${collector.listDevice}">
+							<td><span th:classappend="${device.icon}"></span></td>
+							<td th:text="${device.place}">温度</td>
+							<td th:text="${device.name}">温度</td>
+							<td th:text="${device.beginAddress}">1</td>
+							<td th:text="${device.dataLength}">2</td>
+							<td th:text="${device.byteOrder}">12</td>
+							<td th:text="${device.valueType.info}">浮点数</td>
+							<td th:text="${device.valueFormat.info}">绝对值</td>
+							<td th:text="${device.coefficient}">0.01</td>
+							<td th:text="${device.unit}">℃</td>
+							<td><a href="#" data-toggle="modal"
+								data-target="#editDeviceModal" data-option="edit"
+								th:attr="data-id=${device.id}, data-name=${device.name}, data-place=${device.place}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}, data-category=${device.deviceCategory}, data-icon=${device.icon}">编辑
+							</a> <a href="#" th:href="|/linkage/${device.id}/0|">设置阈值 </a><a
+								href="#" class="del-device" th:href="|/device/del/${device.id}|">删除</a></td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加设备 -->
+	<div class="modal fade" id="editDeviceModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addDeviceModalTitle">添加设备</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form class="pr-3" th:action="|/device/${collector.id}|"
+						method="post">
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">设备名称</label> <input
+								type="text" class="form-control col-sm-9" name="name" id="name"
+								required="required">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">设备位置</label> <input
+								type="text" class="form-control col-sm-9" name="place"
+								id="place">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">数据地址</label> <input
+								type="text" class="form-control col-sm-9" name="beginAddress"
+								id="beginAddress" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">数据宽度</label>
+							<input type="text" class="form-control col-sm-9" id="dataLength"
+								name="dataLength" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">字节顺序</label>
+							<input type="text" class="form-control col-sm-9" id="byteOrder"
+								name="byteOrder" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">数据类型</label>
+							<select class="form-control col-sm-9" required="required"
+								id="select-value-type" name="valueType">
+								<option value="SWITCH">开关量</option>
+								<option value="ALARM">报警</option>
+								<option value="VALUE">数值量</option>
+							</select>
+						</div>
+						<div class="form-group row" id="div-alarm-value">
+							<label class="col-sm-3 col-form-label">报警值</label> <select
+								class="form-control col-sm-9" required="required"
+								name="alarmTriggerValue" id="select-alarm-trigger-value">
+								<option value="1" selected="selected">1</option>
+								<option value="0">0</option>
+							</select>
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">数据格式</label>
+							<select class="form-control col-sm-9" required="required"
+								name="valueFormat" id="valueFormat">
+								<option value="ABS">绝对值</option>
+							</select>
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">系数</label>
+							<input type="text" class="form-control col-sm-9" id="coefficient"
+								name="coefficient" required="required">
+						</div>
+						<div class="form-group row">
+							<label for="substationName" class="col-sm-3 col-form-label">单位</label>
+							<input type="text" class="form-control col-sm-9" id="unit"
+								name="unit">
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">设备类别</label> <select
+								class="form-control col-sm-9" name="deviceCategory"
+								id="deviceCategory">
+								<option value="DEFAULT">无</option>
+								<option value="DOOR">门控</option>
+							</select>
+						</div>
+						<div class="form-group row">
+							<label class="col-sm-3 col-form-label">图标</label> <select
+								class="form-control col-sm-9" id="myselect" name="icon">
+								<option value="icon-device">icon-device</option>
+								<option value="icon-SF6">icon-SF6</option>
+								<option value="icon-door">icon-door</option>
+								<option value="icon-pump">icon-pump</option>
+								<option value="icon-doorsensor">icon-doorsensor</option>
+								<option value="icon-line-tem">icon-line-tem</option>
+								<option value="icon-light">icon-light</option>
+								<option value="icon-tem">icon-tem</option>
+								<option value="icon-gas">icon-gas</option>
+								<option value="icon-alarm">icon-alarm</option>
+								<option value="icon-dehumidity">icon-dehumidity</option>
+								<option value="icon-fan">icon-fan</option>
+								<option value="icon-aircondition">icon-aircondition</option>
+								<option value="icon-water-level">icon-water-level</option>
+								<option value="icon-infrared">icon-infrared</option>
+								<option value="icon-hoco">icon-hoco</option>
+								<option value="icon-humidity">icon-humidity</option>
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/js/bootstrap-treeview.js"></script>
+
+	<script src="/js/jquery.fonticonpicker.js"></script>
+
+	<script type="text/javascript" src="/js/devices/devicesRoot.js"></script>
+	<script type="text/javascript" src="/js/devices/collector.js"></script>
+
+	<script type="text/javascript">
+		// Make sure to fire only when the DOM is ready
+		var iconPicker;
+		$(document).ready(function($) {
+			iconPicker = $('#myselect').fontIconPicker({
+				theme : 'fip-bootstrap',
+				emptyIcon : false,
+			});
+
+		});
+	</script>
+</body>
+</html>
