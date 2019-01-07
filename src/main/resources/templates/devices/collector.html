@@ -23,7 +23,7 @@
 
 <link rel="stylesheet" type="text/css"
 	href="/css/themes/bootstrap-theme/jquery.fonticonpicker.bootstrap.min.css">
-	
+
 <link rel="stylesheet" href="/css/devices/deviceRoot.css" />
 
 <title>采集终端</title>
@@ -120,9 +120,9 @@
 	</div>
 
 	<!-- Modal 添加设备 -->
-	<div class="modal fade" id="editDeviceModal" tabindex="-1"
-		role="dialog" aria-hidden="true">
-		<div class="modal-dialog" role="document">
+	<div class="modal fade bd-example-modal-lg" id="editDeviceModal"
+		tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="addDeviceModalTitle">添加设备</h5>
@@ -134,40 +134,53 @@
 				<div class="modal-body">
 					<form class="pr-3" th:action="|/device/${collector.id}|"
 						method="post">
-						<div class="form-group row">
-							<label class="col-sm-3 col-form-label">设备名称</label> <input
-								type="text" class="form-control col-sm-9" name="name" id="name"
-								required="required">
+
+						<div class="form-row">
+							<div class="form-group col-4">
+								<label class="col-form-label">数据地址</label> <input type="text"
+									class="form-control" name="beginAddress" id="beginAddress"
+									required="required">
+							</div>
+							<div class="form-group col-4">
+								<label class="col-form-label">数据宽度</label> <input type="text"
+									class="form-control" id="dataLength" name="dataLength"
+									required="required">
+							</div>
+							<div class="form-group col-4">
+								<label class="col-form-label">字节顺序</label> <input type="text"
+									class="form-control" id="byteOrder" name="byteOrder"
+									required="required">
+							</div>
 						</div>
-						<div class="form-group row">
-							<label class="col-sm-3 col-form-label">设备位置</label> <input
-								type="text" class="form-control col-sm-9" name="place"
-								id="place">
+						<div class="form-row">
+							<div class="form-group col-6">
+								<label class="col-form-label">设备名称</label> <input type="text"
+									class="form-control" name="name" id="name" required="required">
+							</div>
+							<div class="form-group col-6">
+								<label class="col-form-label">设备位置</label> <input type="text"
+									class="form-control" name="place" id="place">
+							</div>
 						</div>
-						<div class="form-group row">
-							<label class="col-sm-3 col-form-label">数据地址</label> <input
-								type="text" class="form-control col-sm-9" name="beginAddress"
-								id="beginAddress" required="required">
+						<div class="form-row">
+							<div class="form-group col-6">
+								<label class="col-form-label">数据类型</label> <select
+									class="form-control" required="required" id="select-value-type"
+									name="valueType">
+									<option value="SWITCH">开关量</option>
+									<option value="ALARM">报警</option>
+									<option value="VALUE">数值量</option>
+								</select>
+							</div>
+							<div class="form-group col-6">
+								<label class="col-form-label">数据格式</label> <select
+									class="form-control" required="required" name="valueFormat"
+									id="valueFormat">
+									<option value="ABS">绝对值</option>
+								</select>
+							</div>
 						</div>
-						<div class="form-group row">
-							<label for="substationName" class="col-sm-3 col-form-label">数据宽度</label>
-							<input type="text" class="form-control col-sm-9" id="dataLength"
-								name="dataLength" required="required">
-						</div>
-						<div class="form-group row">
-							<label for="substationName" class="col-sm-3 col-form-label">字节顺序</label>
-							<input type="text" class="form-control col-sm-9" id="byteOrder"
-								name="byteOrder" required="required">
-						</div>
-						<div class="form-group row">
-							<label for="substationName" class="col-sm-3 col-form-label">数据类型</label>
-							<select class="form-control col-sm-9" required="required"
-								id="select-value-type" name="valueType">
-								<option value="SWITCH">开关量</option>
-								<option value="ALARM">报警</option>
-								<option value="VALUE">数值量</option>
-							</select>
-						</div>
+
 						<div class="form-group row" id="div-alarm-value">
 							<label class="col-sm-3 col-form-label">报警值</label> <select
 								class="form-control col-sm-9" required="required"
@@ -176,53 +189,53 @@
 								<option value="0">0</option>
 							</select>
 						</div>
-						<div class="form-group row">
-							<label for="substationName" class="col-sm-3 col-form-label">数据格式</label>
-							<select class="form-control col-sm-9" required="required"
-								name="valueFormat" id="valueFormat">
-								<option value="ABS">绝对值</option>
-							</select>
+
+						<div class="form-row">
+							<div class="form-group col-6">
+								<label class="col-form-label">系数</label> <input type="text"
+									class="form-control" id="coefficient" name="coefficient"
+									required="required">
+							</div>
+							<div class="form-group col-6">
+								<label class="col-form-label">单位</label> <input type="text"
+									class="form-control" id="unit" name="unit">
+							</div>
 						</div>
-						<div class="form-group row">
-							<label for="substationName" class="col-sm-3 col-form-label">系数</label>
-							<input type="text" class="form-control col-sm-9" id="coefficient"
-								name="coefficient" required="required">
+
+						<div class="form-row">
+							<div class="form-group col-6">
+								<label class="col-form-label">设备类别</label> <select
+									class="form-control" name="deviceCategory" id="deviceCategory">
+									<option value="DEFAULT">无</option>
+									<option value="DOOR">门控</option>
+								</select>
+							</div>
+							<div class="form-group col-6">
+								<label class="col-form-label col-12">图标</label> <select
+									class="form-control" id="myselect" name="icon">
+									<option value="icon-device">icon-device</option>
+									<option value="icon-SF6">icon-SF6</option>
+									<option value="icon-door">icon-door</option>
+									<option value="icon-pump">icon-pump</option>
+									<option value="icon-doorsensor">icon-doorsensor</option>
+									<option value="icon-line-tem">icon-line-tem</option>
+									<option value="icon-light">icon-light</option>
+									<option value="icon-tem">icon-tem</option>
+									<option value="icon-gas">icon-gas</option>
+									<option value="icon-alarm">icon-alarm</option>
+									<option value="icon-dehumidity">icon-dehumidity</option>
+									<option value="icon-fan">icon-fan</option>
+									<option value="icon-aircondition">icon-aircondition</option>
+									<option value="icon-water-level">icon-water-level</option>
+									<option value="icon-infrared">icon-infrared</option>
+									<option value="icon-hoco">icon-hoco</option>
+									<option value="icon-humidity">icon-humidity</option>
+								</select>
+							</div>
 						</div>
-						<div class="form-group row">
-							<label for="substationName" class="col-sm-3 col-form-label">单位</label>
-							<input type="text" class="form-control col-sm-9" id="unit"
-								name="unit">
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-3 col-form-label">设备类别</label> <select
-								class="form-control col-sm-9" name="deviceCategory"
-								id="deviceCategory">
-								<option value="DEFAULT">无</option>
-								<option value="DOOR">门控</option>
-							</select>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-3 col-form-label">图标</label> <select
-								class="form-control col-sm-9" id="myselect" name="icon">
-								<option value="icon-device">icon-device</option>
-								<option value="icon-SF6">icon-SF6</option>
-								<option value="icon-door">icon-door</option>
-								<option value="icon-pump">icon-pump</option>
-								<option value="icon-doorsensor">icon-doorsensor</option>
-								<option value="icon-line-tem">icon-line-tem</option>
-								<option value="icon-light">icon-light</option>
-								<option value="icon-tem">icon-tem</option>
-								<option value="icon-gas">icon-gas</option>
-								<option value="icon-alarm">icon-alarm</option>
-								<option value="icon-dehumidity">icon-dehumidity</option>
-								<option value="icon-fan">icon-fan</option>
-								<option value="icon-aircondition">icon-aircondition</option>
-								<option value="icon-water-level">icon-water-level</option>
-								<option value="icon-infrared">icon-infrared</option>
-								<option value="icon-hoco">icon-hoco</option>
-								<option value="icon-humidity">icon-humidity</option>
-							</select>
-						</div>
+
+
+
 						<button type="submit" class="btn btn-primary">提交</button>
 					</form>
 				</div>

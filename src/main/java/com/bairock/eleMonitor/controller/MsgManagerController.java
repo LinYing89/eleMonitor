@@ -1,27 +1,5 @@
 package com.bairock.eleMonitor.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.bairock.eleMonitor.data.Collector;
-import com.bairock.eleMonitor.data.Device;
-import com.bairock.eleMonitor.data.MsgManager;
-import com.bairock.eleMonitor.data.Substation;
-import com.bairock.eleMonitor.data.webData.DeviceTreeNode;
-import com.bairock.eleMonitor.data.webData.FormResult;
-import com.bairock.eleMonitor.service.MsgManagerService;
-import com.bairock.eleMonitor.service.SubstationService;
-
 /**
  * 通信管理机
  * @author 44489

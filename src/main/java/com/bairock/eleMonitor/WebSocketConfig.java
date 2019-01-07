@@ -1,15 +1,13 @@
 package com.bairock.eleMonitor;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import com.bairock.eleMonitor.comm.DeviceHistoryWSHandler;
 
-@Configuration
-@EnableWebSocket
+//@Configuration
+//@EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
 	@Override

@@ -11,7 +11,7 @@
 <link href="/bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/devices/deviceRoot.css" />
 
-<title>用户</title>
+<title>设备</title>
 
 </head>
 
@@ -43,21 +43,12 @@
 			</nav>
 
 			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<ul class="nav nav-tabs">
-					<li class="nav-item"><a class="nav-link active" href="#"
-						th:href="|/msgManager/${substation.id}|">通信机</a></li>
-					<li class="nav-item"><a class="nav-link" href="#"
-						th:href="|/devGroup/${substation.id}/0|">数据组</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">位置</a></li>
-				</ul>
-
 				<div class="row">
-					<button type="button" class="btn btn-info ml-4 mt-4"
+					<button type="button" class="btn btn-primary ml-4"
 						data-toggle="modal" data-option="add"
 						th:attr="data-substation-id=${substation.id}"
 						data-target="#editMsgManagerModal">添加通信机</button>
-					<a class="align-self-center ml-2" href="#"
-						th:href="|/devGroup/${substation.id}/0|">数据组管理</a>
+					<a class="align-self-center ml-2" href="#" th:href="|/devGroup/${substation.id}/0|">数据组管理</a>
 				</div>
 				<table class="table mt-2">
 					<thead class="thead-light">

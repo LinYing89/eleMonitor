@@ -1,4 +1,4 @@
-package com.bairock.eleMonitor.controller;
+package com.bairock.eleMonitor.controller.devices;
 
 import java.util.List;
 

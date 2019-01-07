@@ -61,13 +61,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		try {
 			byte[] req = new byte[m.readableBytes()];
 			m.readBytes(req);
+//			MyClient.getIns().send(req);
 			String strMsg = Util.bytesToHexString(req);
 			result.setData(strMsg);
 			logger.info(strMsg);
 			
 			int startOne = 0;
-			while(startOne < req.length) {
-				int len = req[startOne] << 8 | req[startOne + 1];
+			while(startOne + 1 < req.length) {
+				int len = Util.bytesToInt(new byte[] {req[startOne], req[startOne + 1]});
+//				int len = req[startOne] << 8 | req[startOne + 1];
 				//一个报文的结束位置
 				int to = len + 8 + startOne;
 				if(to > req.length) {
@@ -108,14 +110,25 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		by = Arrays.copyOfRange(byOne, 6, byOne.length);
 		byte[] byHead = Arrays.copyOfRange(byOne, 0, 6);
 		errResult.setHead(Util.bytesToHexString(byHead));
-		
-		int managerNum = (byOne[2] << 24) | (byOne[3] << 16) | (byOne[4] << 8) | byOne[5];
+		int managerNum = Util.bytesToInt(new byte[] {byOne[2], byOne[3], byOne[4], byOne[5]});
+//		int managerNum = (byOne[2] << 24) | (byOne[3] << 16) | (byOne[4] << 8) | byOne[5];
 		MsgManager mm = msgManagerService.findByMsgManagerCode(managerNum);
 
 		if (mm == null) {
 			errResult.setCode(NetMessageResultEnum.UNKNOW_MANAGER.getCode());
 			errResult.setMessage(NetMessageResultEnum.UNKNOW_MANAGER.getMessage() + managerNum);
 			logger.error(errResult.getMessage());
+			List<byte[]> list;
+			try {
+				list = MsgManager.analysisEveryOrder(by);
+				for(byte[] by1 : list) {
+					errResult.getListOne().add(Util.bytesToHexString(by1));
+				}
+			} catch (Exception e) {
+				errResult.setCode(NetMessageResultEnum.UNKNOW.getCode());
+				errResult.setMessage(e.getMessage());
+//				e.printStackTrace();
+			}
 			//testService.broadcastReceived(result);
 			return errResult;
 		}

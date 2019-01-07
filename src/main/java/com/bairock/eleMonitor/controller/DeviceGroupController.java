@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.DeviceGroup;
@@ -56,7 +58,15 @@ public class DeviceGroupController {
 			}
 		}
 
-		return "device/deviceGroup";
+		return "devices/devGroup";
+	}
+	
+	@ResponseBody
+	@GetMapping("/{substationId}")
+	public List<Device> findDeviceNoGroup(@PathVariable long substationId){
+		Substation substation = substationService.findBySubstationId(substationId);
+		List<Device> listDevice = substation.findDeviceNoGroup();
+		return listDevice;
 	}
 
 	@PostMapping("/{substationId}")
@@ -74,9 +84,14 @@ public class DeviceGroupController {
 	@GetMapping("/del/{devGroupId}")
 	public String deleteDevGroup(@PathVariable long devGroupId, Model model) {
 		DeviceGroup res = deviceGroupService.findById(devGroupId);
+		List<Device> listDev = new ArrayList<>(res.getListDevice());
+		res.removeAllDevice();
+		for(Device dev : listDev) {
+			deviceService.update(dev);
+		}
 		Substation station = res.getSubstation();
-		deviceGroupService.deleteDeviceGroup(res);
 		station.removeDeviceGroup(res);
+		deviceGroupService.deleteDeviceGroup(res);
 		return "redirect:/devGroup/" + station.getId() + "/0";
 	}
 

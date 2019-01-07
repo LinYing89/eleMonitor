@@ -30,4 +30,12 @@ public class Util {
 		BigDecimal b = new BigDecimal(f);
 		return b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 	}
+	
+	public static int bytesToInt(byte[] by) {
+		int value = 0;
+		for (int i = 0; i < by.length; i++) {
+			value = value << 8 | (by[i] & 0xff);
+		}
+		return value;
+	}
 }

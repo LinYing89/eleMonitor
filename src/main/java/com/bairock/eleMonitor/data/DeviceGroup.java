@@ -141,6 +141,13 @@ public class DeviceGroup {
 		device.setDeviceGroup(null);
 		listDevice.remove(device);
 	}
+	
+	public void removeAllDevice() {
+		List<Device> list = new ArrayList<>(listDevice);
+		for(Device dev : list) {
+			removeDevice(dev);
+		}
+	}
 
 	public void sortDevices() {
 		Collections.sort(listDevice, Comparator.comparing(Device::getSortIndexInGroup));

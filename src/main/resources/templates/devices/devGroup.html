@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 传值 -->
+<!-- substation:Substation, devGroup: DeviceGroup-->
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<!-- <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" /> -->
+<link href="/bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/devices/deviceRoot.css" />
+
+<title>数据组管理</title>
+
+</head>
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">电站智能辅助监控系统</a>
+	</nav>
+
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<h6 hidden="hidden"
+						class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+						<span id="substationName" th:text="${substation.name}"
+							th:attr="data-substation-id=${substation.id}">变电站</span>
+					</h6>
+					<div class="nav flex-column nav-pills">
+						<a class="nav-link" href="#"
+							th:href="|/substation/${substation.station.id}/${substation.id}|">首页</a>
+						<a class="nav-link active" href="#"
+							th:href="|/msgManager/${substation.id}|"
+							th:text="${substation.name}">变电站</a>
+					</div>
+
+					<div id="tree-devices"></div>
+				</div>
+			</nav>
+
+			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+				<ul class="nav nav-tabs">
+					<li class="nav-item"><a class="nav-link" href="#"
+						th:href="|/msgManager/${substation.id}|">通信机</a></li>
+					<li class="nav-item"><a class="nav-link active" href="#"
+						th:href="|/devGroup/${substation.id}/0|">数据组</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">位置</a></li>
+				</ul>
+
+				<div class="row mt-4">
+					<div class="col-3">
+						<button type="button" class="btn btn-info mb-2"
+							data-toggle="modal" data-option="add"
+							th:attr="data-substation-id=${substation.id}"
+							data-target="#editDevGroupModal">添加数据组</button>
+
+						<div class="nav flex-column nav-pills" aria-orientation="vertical">
+							<a th:each="group : ${substation.listDeviceGroup}"
+								class="nav-link" href="#"
+								th:href="|/devGroup/${substation.id}/${group.id}|"
+								th:classappend="${group.id == devGroup.id}? 'active'"
+								th:text="${group.name}">组名</a>
+						</div>
+					</div>
+
+					<div class="col-9">
+						<div class="row">
+							<a class="align-self-center ml-4" href="#" data-toggle="modal"
+								data-option="edit"
+								th:attr="data-id=${devGroup.id}, data-name=${devGroup.name}, data-value-type=${devGroup.valueType}, data-line-tem=${devGroup.lineTem}"
+								data-target="#editDevGroupModal">编辑</a> <a
+								class="align-self-center ml-2" href="#" id="del-dev-group"
+								th:href="|/devGroup/del/${devGroup.id}|" data-stationid="">删除</a>
+							<button type="button" class="btn btn-info mb-2 ml-2"
+								th:attr="data-dev-group-id=${devGroup.id}" data-toggle="modal"
+								data-option="add" data-target="#addDevice">添加数据节点</button>
+						</div>
+
+						<table th:if="${devGroup}" class="table">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">数据位置</th>
+									<th scope="col">数据名称</th>
+									<th scope="col">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="device : ${devGroup.listDevice}">
+									<td th:text="${device.place}">1号机柜</td>
+									<td th:text="${device.name}">采集终端</td>
+									<td class="row"><a href="#"
+										th:href="|/devGroup/del/device/${devGroup.id}/${device.id}|">删除
+									</a><a href="#" class="ml-1"
+										th:href="|/devGroup/move/device/0/${devGroup.id}/${device.id}|">上移
+									</a><a href="#" class="ml-1"
+										th:href="|/devGroup/move/device/1/${devGroup.id}/${device.id}|">下移
+									</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加组 -->
+	<div class="modal fade" id="editDevGroupModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addDevGroupModalTitle">添加组</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/devGroup/${substation.id}|" method="post">
+						<div class="form-group">
+							<label for="substationName">设备组名称</label> <input type="text"
+								class="form-control" id="name" name="name" required="required">
+						</div>
+						<div class="form-group">
+							<label for="substationName">设备类型</label> <select
+								class="form-control" id="valueType" name="valueType">
+								<option value="VALUE">数值量</option>
+								<option value="ALARM">报警</option>
+								<option value="SWITCH">开关量</option>
+							</select>
+						</div>
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input" id="lineTem"
+								name="lineTem"> <label class="form-check-label"
+								for="lineTem">电缆测温组</label>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加设备 -->
+	<div class="modal fade" id="addDevice" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="addDevTitle">选择节点数据</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div th:if="${devGroup}" class="modal-body">
+					<form th:action="|/devGroup/add/device/${devGroup.id}|"
+						method="post">
+						<div class="form-group">
+							<label for="substationName">节点数据列表</label> <select multiple
+								size="10" class="form-control" id="deviceId" name="deviceId">
+								<!-- 								<option th:each="device : ${listDevice}" th:value="${device.id}" -->
+								<!-- 									th:text="${device.name}">设备名</option> -->
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+
+	<script type="text/javascript" src="/js/bootstrap-treeview.js"></script>
+	<script type="text/javascript" src="/js/devices/devicesRoot.js"></script>
+	<script type="text/javascript" src="/js/devices/devGroup.js"></script>
+</body>
+</html>

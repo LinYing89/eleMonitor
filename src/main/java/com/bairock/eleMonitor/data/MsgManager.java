@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.bairock.eleMonitor.Util;
 import com.bairock.eleMonitor.enums.NetMessageResultEnum;
 import com.bairock.eleMonitor.exception.NetMessageException;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -157,7 +158,8 @@ public class MsgManager {
 			//int beginAddress = byAllData[index] << 8 | byAllData[index + 1];
 			index += 2;
 			// 数据长度,索引4,长度2
-			int dataLen = byAllData[index] << 8 | byAllData[index + 1];
+			int dataLen = Util.bytesToInt(new byte[] {byAllData[index], byAllData[index + 1]});
+//			int dataLen = byAllData[index] << 8 | byAllData[index + 1];
 			if(dataLen == 0) {
 				throw new NetMessageException(NetMessageResultEnum.DATA_LENGTH_ZERO);
 			}
@@ -182,6 +184,46 @@ public class MsgManager {
 					c.handler(byteData);
 				}
 			}
+		}
+		return list;
+	}
+	
+	public static List<byte[]> analysisEveryOrder(byte[] by) throws Exception{
+
+		// 去掉校验码
+		byte[] byAllData = Arrays.copyOfRange(by, 0, by.length - 2);
+
+		int index = 0;
+		int oneStart = 0;
+		List<byte[]> list = new ArrayList<>();
+
+		while (index < byAllData.length) {
+			oneStart = index;
+			// 总线号,索引0,长度1
+			index += 1;
+			// 采集终端号,索引1,长度1
+			//byte collectorCode = byAllData[index];
+			index += 1;
+			// 起始编号(地址),索引2,长度2
+			//int beginAddress = byAllData[index] << 8 | byAllData[index + 1];
+			index += 2;
+			// 数据长度,索引4,长度2
+			int dataLen = Util.bytesToInt(new byte[] {byAllData[index], byAllData[index + 1]});
+//			int dataLen = byAllData[index] << 8 | byAllData[index + 1];
+			if(dataLen == 0) {
+				return list;
+//				throw new NetMessageException(NetMessageResultEnum.DATA_LENGTH_ZERO);
+			}
+			index += 2;
+			// 数据,索引6, 长度dataLen
+			//byte[] byteData = Arrays.copyOfRange(byAllData, index, index + dataLen - 1);
+			//值类型
+			//byte[] byValueType = Arrays.copyOfRange(byAllData, index + dataLen - 1, index + dataLen);
+			index += dataLen;
+//			index += 1;
+			
+			byte[] byOne = Arrays.copyOfRange(byAllData, oneStart, index);
+			list.add(byOne);
 		}
 		return list;
 	}
