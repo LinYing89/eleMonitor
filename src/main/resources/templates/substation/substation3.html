@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <!-- 传值 -->
-<!-- substation:Substation-->
+<!-- station:Station. substation: Substation-->
 
 <head>
 <meta charset="UTF-8">
@@ -10,6 +10,10 @@
 <!-- <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" /> -->
 <link href="/bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/devices/deviceRoot.css" />
+<link rel="stylesheet" href="/css/devices/substation3.css" />
+<!-- <link rel="stylesheet" href="/css/substation.css" /> -->
+
+<link rel="stylesheet" href="/css/icomoon/deviceicon.css" />
 
 <title>设备</title>
 
@@ -17,101 +21,447 @@
 
 <body>
 	<nav
-		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-sm">
 		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<div class="w-100">
+				<ul class="navbar-nav px-3">
+					<li class="nav-item"><a class="nav-link" href="/map">地图</a></li>
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false"> 电力数据 </a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">电站数据</a> <a
+								class="dropdown-item" href="#"
+								th:href="|/valueHistory/${substation.id}/0|">数据分析</a>
+						</div></li>
+					<li class="nav-item"><a class="nav-link" target="_blank"
+						href="/test/netMessage/received">网络数据测试</a></li>
+				</ul>
+			</div>
+			<ul class="navbar-nav px-3">
+				<li class="nav-item dropdown text-nowrap"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> admin </a>
+					<div class="dropdown-menu dropdown-menu-right"
+						aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">个人资料</a> <a
+							class="dropdown-item" href="#"
+							th:href="|/valueHistory/${substation.id}/0|">退出</a>
+					</div></li>
+			</ul>
+		</div>
+
 	</nav>
 
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<nav class="col-md-2 d-none d-md-block bg-light sidebar">
 				<div class="sidebar-sticky">
-					<h6 hidden="hidden"
-						class="sidebar-heading px-3 mt-4 mb-1 text-muted">
-						<span id="substationName" th:text="${substation.name}"
-							th:attr="data-substation-id=${substation.id}">变电站</span>
-					</h6>
-					<div class="nav flex-column nav-pills">
-						<a class="nav-link" href="#"
-							th:href="|/substation/${substation.station.id}/${substation.id}|">首页</a>
-						<a class="nav-link active" href="#"
-							th:href="|/msgManager/${substation.id}|"
-							th:text="${substation.name}">变电站</a>
-					</div>
+					<h3
+						class="sidebar-heading mt-2 mb-1 text-muted row justify-content-between pl-4 pr-4">
+						<div>
+							<svg class="feather feather-home" fill="none"
+								stroke="currentColor" stroke-linecap="round"
+								stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+								width="24" height="24">
+							<path
+									d="M 3 9 l 9 -7 l 9 7 v 11 a 2 2 0 0 1 -2 2 H 5 a 2 2 0 0 1 -2 -2 Z" />
+							<polyline points="9,22 9,12 15,12 15,22" /></svg>
+							<span id="stationName" th:text="${station.name}">变电站</span>
+						</div>
+						<a class="align-items-center text-muted" data-toggle="modal"
+							href="#" data-target="#editSubstationModal" data-option="add"
+							th:attr="data-station-id=${station.id}"> <svg
+								xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+								viewBox="0 0 24 24" fill="none" stroke="currentColor"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+								class="feather feather-plus-circle">
+								<circle cx="12" cy="12" r="10"></circle>
+								<line x1="12" y1="8" x2="12" y2="16"></line>
+								<line x1="8" y1="12" x2="16" y2="12"></line></svg>
+						</a>
+					</h3>
 
-					<div id="tree-devices"></div>
+					<div id="tree-devices" data-device-type="station"
+						th:attr="data-station-id=${station.id}, data-device-id=${substation.id}"></div>
 				</div>
 			</nav>
 
 			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<div class="row">
-					<button type="button" class="btn btn-primary ml-4"
-						data-toggle="modal" data-option="add"
-						th:attr="data-substation-id=${substation.id}"
-						data-target="#editMsgManagerModal">添加通信机</button>
-					<a class="align-self-center ml-2" href="#" th:href="|/devGroup/${substation.id}/0|">数据组管理</a>
+				<div class="row h-100">
+					<div class="col-9">
+						<div class="shadow-sm p-2 mt-2 bg-white rounded row"
+							id="main_title">
+							<a href="#" data-toggle="modal" data-option="edit"
+								th:attr="data-station-id=${station.id}, data-substation-id=${substation.id}, data-name=${substation.name}"
+								data-target="#editSubstationModal">编辑</a> <a href="#"
+								class="ml-2" id="del-substation"
+								th:href="'/substation/del/' + ${substation.id}"
+								data-stationid="">删除</a>
+						</div>
+						<div class="shadow-sm p-2 mt-3 bg-white rounded row">
+							<div th:each="valueDevice : ${listValueDevice}" class="col-auto pl-2 pr-2">
+								<div class="ele-card align-self-center"
+									th:attr="data-dev-alarming=${valueDevice.alarming}"
+									th:id="|card-dev-${valueDevice.id}|">
+									<div class="row h-50">
+										<div class="col-4 d-flex justify-content-center">
+											<span
+												class="img-dev align-self-center ml-2 icon-main-preview"
+												th:classappend="${valueDevice.icon}"></span>
+										</div>
+										<div class="col-8 d-flex justify-content-center">
+											<div class="align-self-center">
+												<span class="align-self-center"
+													th:id="|value-dev-${valueDevice.id}|"
+													th:text="${valueDevice.valueString}">正常</span> <span
+													th:text="${valueDevice.unit}"></span>
+											</div>
+										</div>
+									</div>
+									<div class="row h-50">
+										<div class="col-12 d-flex justify-content-center">
+											<span class="align-self-center" th:text="${valueDevice.name}">烟雾探测</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div th:each="lineForm : ${listLineTemFormGroup}"
+								class="col-auto pl-2 pr-2">
+								<div class="ele-card align-self-center clickable"
+									th:id="|card-group-${lineForm.id}|" data-toggle="modal"
+									th:attr="data-target=|#g${lineForm.id}|">
+									<div class="row">
+										<div
+											th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceA!=null)}"
+											class="col">
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center icon-main-preview-group"
+													th:classappend="${lineForm.listLineTemForm[0].deviceA.icon}"></span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:id="|value-group-${lineForm.listLineTemForm[0].deviceA.id}|"
+													th:text="${lineForm.listLineTemForm[0].deviceA.valueString}">26.5</span>
+												<!-- 													<span class="align-self-center" -->
+												<!-- 														th:text="${lineForm.listLineTemForm[0].deviceA.unit}">%</span> -->
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center dev-name-group"
+													th:text="${lineForm.listLineTemForm[0].deviceA.name}">温度</span>
+											</div>
+										</div>
+										<div
+											th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceB!=null)}"
+											class="col">
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center icon-main-preview-group"
+													th:classappend="${lineForm.listLineTemForm[0].deviceB.icon}"></span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:id="|value-group-${lineForm.listLineTemForm[0].deviceB.id}|"
+													th:text="${lineForm.listLineTemForm[0].deviceB.valueString}">26.5</span>
+												<!-- 													<span class="align-self-center" -->
+												<!-- 														th:text="${lineForm.listLineTemForm[0].deviceB.unit}">%</span> -->
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center dev-name-group"
+													th:text="${lineForm.listLineTemForm[0].deviceB.name}">温度</span>
+											</div>
+										</div>
+										<div
+											th:if="${(#lists.size(lineForm.listLineTemForm) &gt; 0) and (lineForm.listLineTemForm[0].deviceC!=null)}"
+											class="col">
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center icon-main-preview-group"
+													th:classappend="${lineForm.listLineTemForm[0].deviceC.icon}"></span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:id="|value-group-${lineForm.listLineTemForm[0].deviceC.id}|"
+													th:text="${lineForm.listLineTemForm[0].deviceC.valueString}">26.5</span>
+												<!-- 													<span class="align-self-center" -->
+												<!-- 														th:text="${lineForm.listLineTemForm[0].deviceC.unit}">%</span> -->
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center dev-name-group"
+													th:text="${lineForm.listLineTemForm[0].deviceC.name}">温度</span>
+											</div>
+										</div>
+									</div>
+									<div class="row mt-2">
+										<div class="col-12 d-flex justify-content-center">
+											<span class="align-self-center" th:text="${lineForm.name}">温湿度</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div th:each="valueGroup : ${listValueGroup}" class="col-auto pl-2 pr-2">
+								<div class="ele-card align-self-center clickable"
+									th:id="|card-group-${valueGroup.id}|" data-toggle="modal"
+									th:attr="data-target=|#g${valueGroup.id}|, data-dev-alarming=${valueGroup.alarming}">
+									<div class="row">
+										<div th:if="${#lists.size(valueGroup.listDevice) > 0}"
+											class="col">
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center icon-main-preview-group"
+													th:classappend="${valueGroup.listDevice[0].icon}"></span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:id="|value-group-${valueGroup.listDevice[0].id}|"
+													th:text="${valueGroup.listDevice[0].valueString}">26.5</span>
+												<span class="align-self-center"
+													th:text="${valueGroup.listDevice[0].unit}">%</span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center dev-name-group"
+													th:text="${valueGroup.listDevice[0].name}">温度</span>
+											</div>
+										</div>
+										<div th:if="${#lists.size(valueGroup.listDevice) > 1}"
+											class="col">
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center icon-main-preview-group"
+													th:classappend="${valueGroup.listDevice[1].icon}"></span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center"
+													th:id="|value-group-${valueGroup.listDevice[1].id}|"
+													th:text="${valueGroup.listDevice[1].valueString}">26.5</span>
+												<span class="align-self-center"
+													th:text="${valueGroup.listDevice[1].unit}">%</span>
+											</div>
+											<div class="w-100 d-flex justify-content-center">
+												<span class="align-self-center dev-name-group"
+													th:text="${valueGroup.listDevice[1].name}">温度</span>
+											</div>
+										</div>
+									</div>
+									<div class="row mt-2">
+										<div class="col-12 d-flex justify-content-center">
+											<span class="align-self-center" th:text="${valueGroup.name}">温湿度</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="shadow-sm p-2 mt-3 bg-white rounded row">
+							<div th:each="ctrlDevice : ${listCtrlDevice}" class="col-auto pl-2 pr-2">
+								<div class="ele-card align-self-center">
+									<div class="row">
+										<div class="col">
+											<div class="row">
+												<span class="col-12 text-center img-dev icon-main-preview"
+													th:classappend="${ctrlDevice.icon}"></span>
+											</div>
+											<div class="dev-name row align-item-end">
+												<span class="col-12 text-center"
+													th:text="${ctrlDevice.name}">空调</span>
+											</div>
+										</div>
+										<div class="col">
+											<span th:id="|value-dev-${ctrlDevice.id}|"
+												th:text="${ctrlDevice.valueString}"></span>
+											<div class="btn-group btn-group-sm btn-group-dev mt-4"
+												th:attr="data-id=${ctrlDevice.id}, data-value=${ctrlDevice.value}"
+												role="group">
+												<button type="button" th:id="|btn-dev-on-${ctrlDevice.id}|"
+													th:attr="data-id=${ctrlDevice.id}" class="btn btn-dev-on">打开</button>
+												<button type="button" th:id="|btn-dev-off-${ctrlDevice.id}|"
+													th:attr="data-id=${ctrlDevice.id}" class="btn btn-dev-off">关闭</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div th:each="ctrlGroup : ${listCtrlGroup}" class="col-auto pl-2 pr-2">
+								<div class="ele-card align-self-center clickable"
+									data-toggle="modal" th:attr="data-target=|#g${ctrlGroup.id}|">
+									<div class="row">
+										<div class="col">
+											<div class="row">
+												<span class="col-12 text-center img-dev icon-main-preview"
+													th:classappend="${ctrlGroup.icon}"></span>
+											</div>
+											<div class="dev-name row align-item-end">
+												<span class="col-12 text-center" th:text="${ctrlGroup.name}">门控</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-3 pr-0">
+						<div class="shadow-sm bg-light ml-1 h-100 w-100">
+						</div>
+					</div>
 				</div>
-				<table class="table mt-2">
-					<thead class="thead-light">
-						<tr>
-							<th scope="col">编号</th>
-							<th scope="col">名称</th>
-							<th scope="col">位置</th>
-							<th scope="col">操作</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="mm : ${substation.listMsgManager}">
-							<td th:text="${mm.code}">编码</td>
-							<td th:text="${mm.name}">名称</td>
-							<td th:text="${mm.place}">位置</td>
-							<td><a href="#" data-toggle="modal"
-								data-target="#editMsgManagerModal" data-option="edit"
-								th:attr="data-id=${mm.id}, data-code=${mm.code}, data-name=${mm.name}, data-place=${mm.place}">编辑
-							</a><a class="del-msg-manager" href="#"
-								th:href="|/msgManager/del/${mm.id}|">删除</a></td>
-						</tr>
-					</tbody>
-				</table>
 
 			</div>
 		</div>
 	</div>
 
-	<!-- Modal 添加通信机 -->
-	<div class="modal fade" id="editMsgManagerModal" tabindex="-1"
+	<!-- Modal 添加变电站 -->
+	<div class="modal fade" id="editSubstationModal" tabindex="-1"
 		role="dialog" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="editMsgManagerModalTitle">添加通信机</h5>
+					<h5 class="modal-title" id="editSubstationModalTitle">添加变电站</h5>
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<form th:action="|/msgManager/${substationId}|" method="post"
-						id="form-add-msgmanager">
+					<form th:action="|/substation/${stationId}|" method="post">
 						<div class="form-group">
-							<label for="substationName">通信管理机名称</label> <input type="text"
-								class="form-control" id="manager-name" name="name"
+							<label>变电站名称</label> <input type="text" class="form-control"
+								id="substation_name" name="name" placeholder="变电站名称"
 								required="required">
-						</div>
-						<div class="form-group">
-							<label for="substationName">通信管理机编号</label> <input type="text"
-								class="form-control" id="manager-code" name="code"
-								required="required">
-						</div>
-
-						<div class="form-group">
-							<label for="substationName">通信管理机位置</label> <input type="text"
-								class="form-control" id="manager-place" name="place">
-						</div>
-						<div class="form-group">
-							<span id="manager-code-repeated" class="text-danger"></span>
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>
 					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 环境组 -->
+	<div th:each="group : ${listValueGroup}" class="modal fade"
+		th:id="|g${group.id}|" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" th:text="${group.name}">组名</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">位置</th>
+								<th scope="col">名称</th>
+								<th scope="col">值</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="device : ${group.listDevice}">
+								<td class="p-1" th:text="${device.place}">1-A</td>
+								<td class="p-1" th:text="${device.name}">1-A</td>
+								<td class="p-1"><span th:id="|value-dev-${device.id}|"
+									th:text="${device.value}">30.5℃</span><span
+									th:text="${device.unit}"></span></td>
+								<td class="p-1" th:text="${device.remark}">A相</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 电缆温度组 -->
+	<div th:each="group : ${listLineTemFormGroup}" class="modal fade"
+		th:id="|g${group.id}|" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" th:text="${group.name}">组名</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">位置</th>
+								<th scope="col">A相</th>
+								<th scope="col">B相</th>
+								<th scope="col">C相</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="lineForm : ${group.listLineTemForm}">
+								<td class="p-1" th:text="${lineForm.place}">1-A</td>
+								<td class="p-1"><span
+									th:id="|value-dev-${lineForm.deviceA.id}|"
+									th:text="${lineForm.deviceA.value}">30.5℃</span><span
+									th:text="${lineForm.deviceA.unit}"></span></td>
+								<td class="p-1"><span
+									th:id="|value-dev-${lineForm.deviceB.id}|"
+									th:text="${lineForm.deviceB.value}">30.5℃</span><span
+									th:text="${lineForm.deviceB.unit}"></span></td>
+								<td class="p-1"><span
+									th:id="|value-dev-${lineForm.deviceC.id}|"
+									th:text="${lineForm.deviceC.value}">30.5℃</span><span
+									th:text="${lineForm.deviceC.unit}"></span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 控制组 -->
+	<div th:each="group : ${listCtrlGroup}" class="modal fade"
+		th:id="|g${group.id}|" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" th:text="${group.name}">组名</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<table class="table">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">名称</th>
+								<th scope="col">状态</th>
+								<th scope="col">操作</th>
+								<th scope="col">备注</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="device : ${group.listDevice}">
+								<td th:text="${device.name}" class="align-middle p-1">1-A</td>
+								<td th:id="|value-dev-${device.id}|"
+									th:text="${device.valueString}" class="align-middle p-1">开</td>
+								<td class="p-1"><div
+										class="btn-group btn-group-sm btn-group-switch"
+										th:attr="data-id=${device.id}, data-value=${device.value}"
+										role="group">
+										<button type="button" th:id="|btn-dev-on-group-${device.id}|"
+											th:attr="data-id=${device.id}" class="btn btn-dev-on">打开</button>
+										<button type="button" th:id="|btn-dev-off-group-${device.id}|"
+											th:attr="data-id=${device.id}" class="btn btn-dev-off">关闭</button>
+									</div></td>
+								<td th:text="${device.remark}">A相</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -122,7 +472,12 @@
 	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
 
 	<script type="text/javascript" src="/js/bootstrap-treeview.js"></script>
-	<script type="text/javascript" src="/js/devices/devicesRoot.js"></script>
-	<script type="text/javascript" src="/js/devices/substation.js"></script>
+	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+
+	<script type="text/javascript" src="/js/jquery.color-2.1.2.min.js"></script>
+
+	<script type="text/javascript" src="/js/devices/substation3.js"></script>
+	<!-- 		<script type="text/javascript" src="/js/devices/substation.js"></script> -->
 </body>
 </html>

@@ -39,7 +39,7 @@ public class Substation {
 
 	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("substation_msgmanager")
-	private List<MsgManager> listMsgManager;
+	private List<MsgManager> listMsgManager = new ArrayList<>();
 
 	// 设备组集合
 	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)

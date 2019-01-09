@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class Station {
 	private double lat;
 	private double lng;
 	private String tel;
+	//备注
 	private String remark;
 	//状态, 0正常, 1离线, 2异常/报警
 	@Transient
@@ -50,7 +52,7 @@ public class Station {
 	
 	@OneToMany(mappedBy="station", cascade=CascadeType.ALL, orphanRemoval=true)
 	@JsonManagedReference("station_substation")
-	private List<Substation> listSubstation;
+	private List<Substation> listSubstation = new ArrayList<>();
 	
 	@Transient
 	private OnStateChangedListener onStateChangedListener;

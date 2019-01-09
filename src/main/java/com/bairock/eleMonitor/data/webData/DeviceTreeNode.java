@@ -4,11 +4,18 @@ import java.util.List;
 
 public class DeviceTreeNode {
 
+	private String type;
 	private String text;
 	private String href;
 	private long deviceId;
 	private List<DeviceTreeNode> nodes;
 	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getText() {
 		return text;
 	}

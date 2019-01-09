@@ -15,11 +15,14 @@ public class MapController {
 
 	@Autowired
 	private StationService stationService;
-	
-	@GetMapping(value= {"/", "/map"})
+
+//	@GetMapping(value = { "/", "/map" })
 	public String map(Model model) {
 		List<Station> list = stationService.findAll();
+		if (list.size() > 0) {
+			model.addAttribute("station", list.get(0));
+		}
 		model.addAttribute("listStation", list);
-		return "map";
+		return "map/map";
 	}
 }

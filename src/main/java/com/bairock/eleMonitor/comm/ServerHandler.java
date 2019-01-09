@@ -61,7 +61,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		try {
 			byte[] req = new byte[m.readableBytes()];
 			m.readBytes(req);
-//			MyClient.getIns().send(req);
+			MyClient.getIns().send(req);
 			String strMsg = Util.bytesToHexString(req);
 			result.setData(strMsg);
 			logger.info(strMsg);

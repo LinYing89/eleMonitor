@@ -5,40 +5,65 @@ var stompClient;
 
 $(document).ready(function() {
 
+	$.get('/station/find/treeNode/allStation/').done(function(treeData) {
+		initTreeData(treeData);
+		$('#tree-devices').treeview({
+			data : treeData,
+			 enableLinks : true,
+			showBorder : false,
+			backColor : '#00000000',
+			levels : 1,
+			onNodeSelected : function(event, data) {
+				console.info('?' + data.href);
+//				var stationInfo = $('#station_info');
+//				var url = "/station/info/" + data.deviceId;
+//				stationInfo.load(url);
+				$('#station_info').load("/station/info/" + data.deviceId);
+				var stationNode;
+				if(data.type == 'substation'){
+					stationNode = $('#tree-devices').treeview('getParent', data);
+				}else{
+					stationNode = data;
+				}
+				var point = new BMap.Point(stationNode.lng, stationNode.lat);
+				map.centerAndZoom(point, 15);
+				// window.location.href = data.href;
+			}
+		});
+	});
+
 	try {
 		initMap();
 	} catch (e) {
 	}
 
 	initWebSocket();
-
-	var address = $(".btn-station");
-	address.each(function() {
-		var stationId = $(this).data("id");
-		// 添加到站点数组
-		stations.push(new station(stationId, $(this).text()));
-		$(this).dblclick(function() {
-			console.log($(this).text());
-			// $(location).prop('href', 'ele/ele.html');
-			window.location.href = "/substation/" + stationId + "/0";
-		});
-		$(this).click(function() {
-			console.log($(this).text());
-			var lng = $(this).data("addr").lng;
-			var lat = $(this).data("addr").lat;
-			var point = new BMap.Point(lng, lat);
-			if (null != map) {
-				map.centerAndZoom(point, 15);
-			}
-		});
-
-		// 在地图上添加标记点
-		var lng = $(this).data("addr").lng;
-		var lat = $(this).data("addr").lat;
-		var state = $(this).data("state");
-		addMarker(new BMap.Point(lng, lat), state, $(this).text());
-	})
+	
+	$("#del_station").click(function(){
+		var r = confirm("确认删除站点吗?");
+		if (r == true) {
+			var url = $(this).attr("href");
+			window.location.href=url;
+		} 
+		return false;
+	});
 });
+
+function initTreeData(treeData) {
+	var deviceId = $('#tree-devices').data('device-id');
+	for ( var i in treeData) {
+		var station = treeData[i];
+		var lng = station.lng;
+		var lat = station.lat;
+		var state = $(this).data("stateCode");
+		stations.push(new mapStation(station.deviceId, station.text));
+		addMarker(new BMap.Point(lng, lat), state, station.text);
+		
+		if (isNodeToSelected(station, deviceId)) {
+			return;
+		}
+	}
+}
 
 function initMap() {
 	map = new BMap.Map("container");
@@ -77,17 +102,17 @@ function addMarker(point, state, title) { // 创建图标对象
 	marker.setTitle(title);
 	map.addOverlay(marker);
 
-//	marker.addEventListener("click", function(e) {
-//		var opts = {
-//			width : 250, // 信息窗口宽度
-//			height : 100, // 信息窗口高度
-//			offset : new BMap.Size(0, -42), // 便宜, 防止盖住marker
-//			title : $(this)[0].getTitle()
-//		// 信息窗口标题
-//		}
-//		var infoWindow = new BMap.InfoWindow("状态:正常", opts); // 创建信息窗口对象
-//		this.openInfoWindow(infoWindow);
-//	});
+	// marker.addEventListener("click", function(e) {
+	// var opts = {
+	// width : 250, // 信息窗口宽度
+	// height : 100, // 信息窗口高度
+	// offset : new BMap.Size(0, -42), // 便宜, 防止盖住marker
+	// title : $(this)[0].getTitle()
+	// // 信息窗口标题
+	// }
+	// var infoWindow = new BMap.InfoWindow("状态:正常", opts); // 创建信息窗口对象
+	// this.openInfoWindow(infoWindow);
+	// });
 	marker.addEventListener("dblclick", function(e) {
 		var title = $(this)[0].getTitle();
 		for (i in stations) {
@@ -103,12 +128,12 @@ function addMarker(point, state, title) { // 创建图标对象
 function initImage(state) {
 	var img;
 	if (state == 0) {
-		img = "img/marker_green.png";
+		img = "/img/marker_green.png";
 	} else if (state == 1) {
-		img = "img/marker_yellow.png";
+		img = "/img/marker_yellow.png";
 	} else {
 		// img = "img/marker_red.png";
-		img = "img/alarm.gif";
+		img = "/img/alarm.gif";
 	}
 	return img;
 }
@@ -162,7 +187,36 @@ function handlerState(obj) {
 	}
 }
 
-function station(id, name) {
+function mapStation(id, name) {
 	this.id = id;
 	this.name = name;
 }
+
+$('#editStationModal').on('show.bs.modal', function(event) {
+	var modal = $(this)
+	var target = $(event.relatedTarget) // Button that triggered the modal
+	var title = modal.find('#editStationModalTitle');
+	if (target.data('option') == 'add') {
+		title.text("添加站点");
+		var msgManagerId = target.data('msg-manager-id');
+		modal.find('form').attr('action', '/station/add');
+	} else {
+		title.text("编辑站点");
+		var id = target.data('station-id');
+		var name = target.data('name');
+		var address = target.data('address');
+		var lat = target.data('lat');
+		var lng = target.data('lng');
+		var tel = target.data('tel');
+		var remark = target.data('remark');
+		
+		modal.find('#station_name').val(name);
+		modal.find('#station_address').val(address);
+		modal.find('#station_lat').val(lat);
+		modal.find('#station_lng').val(lng);
+		modal.find('#station_tel').val(tel);
+		modal.find('#station_remark').val(remark);
+
+		modal.find('form').attr('action', '/station/edit/' + id);
+	}
+});

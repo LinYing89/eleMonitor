@@ -11,13 +11,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.data.LineTemFormGroup;
+import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
+import com.bairock.eleMonitor.data.webData.DeviceTreeNode;
 import com.bairock.eleMonitor.service.StationService;
 import com.bairock.eleMonitor.service.SubstationService;
 
@@ -101,7 +105,43 @@ public class SubstationController {
 //			}
 		}
 		
-		return "substation/substation2";
+		return "substation/substation3";
+	}
+	
+	@ResponseBody
+	@GetMapping("/allDevice/{stationId}")
+	public List<DeviceTreeNode> getDeviceTree(@PathVariable long stationId) {
+		List<DeviceTreeNode> list = new ArrayList<>();
+		Station station = stationService.findStation(stationId);
+		List<Substation> listSubstation = station.getListSubstation();
+		for(Substation substation : listSubstation) {
+			DeviceTreeNode dtnSubstation = new DeviceTreeNode();
+			list.add(dtnSubstation);
+			dtnSubstation.setText(substation.getName());
+			dtnSubstation.setHref("/substation/" + stationId + "/" + substation.getId());
+			dtnSubstation.setDeviceId(substation.getId());
+			
+			List<DeviceTreeNode> listMsgManager = new ArrayList<>();
+			for(MsgManager mm : substation.getListMsgManager()) {
+				DeviceTreeNode dtn = new DeviceTreeNode();
+				listMsgManager.add(dtn);
+				dtn.setText(mm.getName());
+				dtn.setHref("/msgManager/" + substation.getId() + "/" + mm.getId());
+				dtn.setDeviceId(mm.getId());
+				List<DeviceTreeNode> listCollector = new ArrayList<>();
+				for(Collector c : mm.getListCollector()) {
+					DeviceTreeNode dtnCollector = new DeviceTreeNode();
+					listCollector.add(dtnCollector);
+					dtnCollector.setText(c.getName());
+					dtnCollector.setHref("/collector/find/"+c.getId());
+					dtnCollector.setDeviceId(c.getId());
+				}
+				dtn.setNodes(listCollector);
+			}
+			dtnSubstation.setNodes(listMsgManager);
+		}
+		
+		return list;
 	}
 	
 	@GetMapping("/reload/{stationId}/{substationId}")
