@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 设备事件信息
@@ -40,6 +42,10 @@ public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 
 	@Transient
 	private String timeFormat;
+	
+	@Transient
+	@JsonIgnore
+	private SimpleDateFormat SimpleDateFormat = new SimpleDateFormat("yy-MM-dd HH-mm-ss");
 	
 	public long getId() {
 		return id;
@@ -82,6 +88,9 @@ public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 	}
 
 	public String getTimeFormat() {
+		if(null == timeFormat || timeFormat.isEmpty()) {
+			this.timeFormat = SimpleDateFormat.format(eventTime);
+		}
 		return timeFormat;
 	}
 

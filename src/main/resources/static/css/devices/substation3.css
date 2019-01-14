@@ -4,7 +4,7 @@
 
 [role="main"] {
 	height: calc(100vh - 26px);
-	background-color: #EFF4FA;
+	background-color: #E6EDEF;
 }
 
 .icon-main-preview {
@@ -42,3 +42,20 @@
 .btn-group-dev{
 	margin-top: 20px;
 }
+
+.btn_ctrl{
+	padding-left : 4px !important;
+	padding-right : 4px !important;
+}
+
+#div-event {
+  top: 0;
+  height: calc(100vh - 100px);
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+/* #div-event { */
+/*   overflow-x: hidden; */
+/*   overflow-y: auto; Scrollable contents if viewport is shorter than content. */
+/* } */

@@ -2,7 +2,9 @@ package com.bairock.eleMonitor.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,11 +14,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.bairock.eleMonitor.Util;
 import com.bairock.eleMonitor.enums.NetMessageResultEnum;
 import com.bairock.eleMonitor.exception.NetMessageException;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
@@ -45,6 +49,16 @@ public class MsgManager {
 	@OneToMany(mappedBy = "msgManager", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("msgmanager_collector")
 	private List<Collector> listCollector = new ArrayList<Collector>();
+	
+	//通信机状态
+	@Transient
+	@JsonIgnore
+	private MsgManagerState msgManagerState = MsgManagerState.OFFLINE;
+	
+	//状态改变监听器集合
+	@Transient
+	@JsonIgnore
+	private Set<OnMsgManagerStateChangedListener> stMsgManagerStateListener = new HashSet<>();;
 
 	public long getId() {
 		return id;
@@ -84,6 +98,19 @@ public class MsgManager {
 
 	public void setSubstation(Substation substation) {
 		this.substation = substation;
+	}
+
+	public MsgManagerState getMsgManagerState() {
+		return msgManagerState;
+	}
+
+	public void setMsgManagerState(MsgManagerState msgManagerState) {
+		if(this.msgManagerState != msgManagerState) {
+			this.msgManagerState = msgManagerState;
+			for(OnMsgManagerStateChangedListener listener : stMsgManagerStateListener) {
+				listener.onMsgManagerStateChanged(this, msgManagerState);
+			}
+		}
 	}
 
 	public List<Collector> getListCollector() {
@@ -136,6 +163,14 @@ public class MsgManager {
 			listDevice.addAll(c.getListDevice());
 		}
 		return listDevice;
+	}
+	
+	public void addMsgManagerStateChangedListener(OnMsgManagerStateChangedListener onMsgManagerStateChangedListener) {
+		stMsgManagerStateListener.add(onMsgManagerStateChangedListener);
+	}
+	
+	public void removeMsgManagerStateChangedListener(OnMsgManagerStateChangedListener onMsgManagerStateChangedListener) {
+		stMsgManagerStateListener.remove(onMsgManagerStateChangedListener);
 	}
 
 	public List<byte[]> handler(byte[] by) throws Exception{
@@ -226,5 +261,14 @@ public class MsgManager {
 			list.add(byOne);
 		}
 		return list;
+	}
+	
+	/**
+	 * 通信机状态改变监听器
+	 * @author 44489
+	 *
+	 */
+	public interface OnMsgManagerStateChangedListener{
+		void onMsgManagerStateChanged(MsgManager msgManager, MsgManagerState state);
 	}
 }

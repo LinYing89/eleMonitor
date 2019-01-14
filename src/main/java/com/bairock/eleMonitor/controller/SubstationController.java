@@ -144,6 +144,16 @@ public class SubstationController {
 		return list;
 	}
 	
+	@RequestMapping("/info/{substationId}")
+	public String getSubtationInfo(@PathVariable long substationId, Model model) {
+		Substation substation = substationService.findBySubstationId(substationId);
+		int[] stateCount = substation.findMsgManagerStateCount();
+		model.addAttribute("substation", substation);
+		model.addAttribute("msgSuccessCount", stateCount[0]);
+		model.addAttribute("msgOfflineCount", stateCount[1]);
+		return "/map/map::substation_info";
+	}
+	
 	@GetMapping("/reload/{stationId}/{substationId}")
 	public String reload(@PathVariable long stationId, @PathVariable long substationId) {
 		substationService.reloadCache(substationId);

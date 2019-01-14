@@ -41,7 +41,7 @@ public class Station {
 	private String remark;
 	//状态, 0正常, 1离线, 2异常/报警
 	@Transient
-	private StationState state = StationState.NORMAL;
+	private StationState state = StationState.OFFLINE;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registerTime;
@@ -126,17 +126,20 @@ public class Station {
 	}
 	
 	public void refreshState() {
+		//substation有一个报警, 则station为报警
+		//否则substation有一个离线, 则station为离线
+		//否则station为正常
 		for(Substation substation : listSubstation) {
-			for(MsgManager mm : substation.getListMsgManager()) {
-				for(Collector c : mm.getListCollector()) {
-					for(Device d : c.getListDevice()) {
-						if(d.isAlarming()) {
-							setState(StationState.ALARM);
-							return;
-						}
-					}
-				}
+			StationState ss = substation.refreshState();
+			
+			if(ss == StationState.ALARM) {
+				setState(StationState.ALARM);
+				return;
+			}else if(ss == StationState.OFFLINE) {
+				setState(StationState.OFFLINE);
+				return;
 			}
+			
 		}
 		setState(StationState.NORMAL);
 	}
@@ -154,6 +157,7 @@ public class Station {
 	public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
 		this.onStateChangedListener = onStateChangedListener;
 	}
+	
 	public Substation addSubstation(Substation substation) {
 		if(null == substation) {
 			return null;

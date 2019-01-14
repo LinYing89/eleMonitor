@@ -37,7 +37,7 @@
 						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
 						role="button" data-toggle="dropdown" aria-haspopup="true"
 						aria-expanded="false"> 电力数据 </a>
-						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<div th:if="${substation}" class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<a class="dropdown-item" href="#">电站数据</a> <a
 								class="dropdown-item" href="#"
 								th:href="|/valueHistory/${substation.id}/0|">数据分析</a>
@@ -54,8 +54,7 @@
 					<div class="dropdown-menu dropdown-menu-right"
 						aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="#">个人资料</a> <a
-							class="dropdown-item" href="#"
-							th:href="|/valueHistory/${substation.id}/0|">退出</a>
+							class="dropdown-item" href="#">退出</a>
 					</div></li>
 			</ul>
 		</div>
@@ -91,13 +90,13 @@
 						</a>
 					</h3>
 
-					<div id="tree-devices" data-device-type="station"
+					<div th:if="${substation}" id="tree-devices" data-device-type="station"
 						th:attr="data-station-id=${station.id}, data-device-id=${substation.id}"></div>
 				</div>
 			</nav>
 
 			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<div class="row h-100">
+				<div th:if="${substation}" class="row h-100">
 					<div class="col-9">
 						<div class="shadow-sm p-2 mt-2 bg-white rounded row"
 							id="main_title">
@@ -107,6 +106,7 @@
 								class="ml-2" id="del-substation"
 								th:href="'/substation/del/' + ${substation.id}"
 								data-stationid="">删除</a>
+								<a href="#" class="ml-2" th:href="|/msgManager/${substation.id}|">设备管理</a>
 						</div>
 						<div class="shadow-sm p-2 mt-3 bg-white rounded row">
 							<div th:each="valueDevice : ${listValueDevice}" class="col-auto pl-2 pr-2">
@@ -270,16 +270,16 @@
 													th:text="${ctrlDevice.name}">空调</span>
 											</div>
 										</div>
-										<div class="col">
-											<span th:id="|value-dev-${ctrlDevice.id}|"
+										<div class="col pl-0">
+											<span th:id="|value-dev-${ctrlDevice.id}|" class="w-100"
 												th:text="${ctrlDevice.valueString}"></span>
 											<div class="btn-group btn-group-sm btn-group-dev mt-4"
 												th:attr="data-id=${ctrlDevice.id}, data-value=${ctrlDevice.value}"
 												role="group">
 												<button type="button" th:id="|btn-dev-on-${ctrlDevice.id}|"
-													th:attr="data-id=${ctrlDevice.id}" class="btn btn-dev-on">打开</button>
+													th:attr="data-id=${ctrlDevice.id}" class="btn btn-dev-on btn_ctrl">打开</button>
 												<button type="button" th:id="|btn-dev-off-${ctrlDevice.id}|"
-													th:attr="data-id=${ctrlDevice.id}" class="btn btn-dev-off">关闭</button>
+													th:attr="data-id=${ctrlDevice.id}" class="btn btn-dev-off btn_ctrl">关闭</button>
 											</div>
 										</div>
 									</div>
@@ -304,7 +304,18 @@
 						</div>
 					</div>
 					<div class="col-3 pr-0">
-						<div class="shadow-sm bg-light ml-1 h-100 w-100">
+						<div class="shadow-sm bg-light ml-1 h-90 w-100 p-2">
+							<h6 class="text-muted">事件信息</h6>
+							<div id="div-event">
+							<table class="table table-sm">
+							  <tbody id="tbody-event">
+							    <tr th:each="event : ${listEvent}">
+							      <td th:text="|${#dates.format(event.eventTime, 'yy-MM-dd HH-mm-ss')}">时间</td>
+							      <td th:text="${event.message}">事件</td>
+							    </tr>
+							  </tbody>
+							</table>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -105,3 +105,7 @@
 	overflow-y: scroll;
 	overflow-x: scroll;
 }
+.btn_ctrl{
+	padding-left : 4px;
+	padding-right : 4px;
+}

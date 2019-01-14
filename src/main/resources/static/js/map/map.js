@@ -2,35 +2,9 @@ var map;
 // 站点数组, 点击marker时遍历
 var stations = new Array();
 var stompClient;
+var stationStateChart
 
 $(document).ready(function() {
-
-	$.get('/station/find/treeNode/allStation/').done(function(treeData) {
-		initTreeData(treeData);
-		$('#tree-devices').treeview({
-			data : treeData,
-			 enableLinks : true,
-			showBorder : false,
-			backColor : '#00000000',
-			levels : 1,
-			onNodeSelected : function(event, data) {
-				console.info('?' + data.href);
-//				var stationInfo = $('#station_info');
-//				var url = "/station/info/" + data.deviceId;
-//				stationInfo.load(url);
-				$('#station_info').load("/station/info/" + data.deviceId);
-				var stationNode;
-				if(data.type == 'substation'){
-					stationNode = $('#tree-devices').treeview('getParent', data);
-				}else{
-					stationNode = data;
-				}
-				var point = new BMap.Point(stationNode.lng, stationNode.lat);
-				map.centerAndZoom(point, 15);
-				// window.location.href = data.href;
-			}
-		});
-	});
 
 	try {
 		initMap();
@@ -38,30 +12,22 @@ $(document).ready(function() {
 	}
 
 	initWebSocket();
+
+	initStationChart();
 	
-	$("#del_station").click(function(){
-		var r = confirm("确认删除站点吗?");
-		if (r == true) {
-			var url = $(this).attr("href");
-			window.location.href=url;
-		} 
-		return false;
+	$("#select_map_style").change(function(){
+		var valueType = $(this).val();
+		var mapStyle={ style : valueType }  
+		map.setMapStyle(mapStyle);
 	});
 });
 
-function initTreeData(treeData) {
-	var deviceId = $('#tree-devices').data('device-id');
-	for ( var i in treeData) {
-		var station = treeData[i];
-		var lng = station.lng;
-		var lat = station.lat;
-		var state = $(this).data("stateCode");
-		stations.push(new mapStation(station.deviceId, station.text));
-		addMarker(new BMap.Point(lng, lat), state, station.text);
-		
-		if (isNodeToSelected(station, deviceId)) {
-			return;
-		}
+// 删除站点
+function delStation(stationId){
+	var r = confirm("确认删除站点吗?");
+	if (r == true) {
+		var url = '/station/del/' + stationId;
+		window.location.href = url;
 	}
 }
 
@@ -78,6 +44,8 @@ function initMap() {
 	var opts = {
 		anchor : BMAP_ANCHOR_BOTTOM_RIGHT
 	}
+// var mapStyle={ style : "midnight" }
+// map.setMapStyle(mapStyle);
 	// ctrl.anchor = BMAP_ANCHOR_BOTTOM_RIGHT;
 	map.addControl(new BMap.NavigationControl(opts));
 	map.addControl(new BMap.ScaleControl());
@@ -85,6 +53,9 @@ function initMap() {
 	map.addControl(new BMap.MapTypeControl());
 	map.setCurrentCity("连云港"); // 仅当设置城市信息时，MapTypeControl的切换功能才能可用
 
+	// 测试维护
+	addEngineer(new BMap.Point(119.236, 34.613), "张三");
+	addEngineer(new BMap.Point(119.246, 34.613), "李四");
 	// addMarker(point, 0);
 	// addMarker(new BMap.Point(119.236, 34.613), 1);
 	// addMarker(new BMap.Point(119.246, 34.613), 2);
@@ -123,6 +94,18 @@ function addMarker(point, state, title) { // 创建图标对象
 		}
 
 	});
+}
+
+function addEngineer(point, title){
+	var img = "/img/engineer.png";
+	var myIcon = new BMap.Icon(img, new BMap.Size(32, 32), {
+		anchor : new BMap.Size(32, 32),
+	});
+	var marker = new BMap.Marker(point, {
+		icon : myIcon
+	});
+	marker.setTitle(title);
+	map.addOverlay(marker);
 }
 
 function initImage(state) {
@@ -177,14 +160,29 @@ function handlerState(obj) {
 			break;
 		}
 	}
-
-	if (state == 0) {
-		$("#s" + id).css("color", "black");
-	} else if (state == 1) {
-		$("#s" + id).css("color", "yellow");
-	} else {
-		$("#s" + id).css("color", "red");
-	}
+	$.get("/station/find/stationstateCount").done(function(data){
+		var chartData = new Array();
+		for(var i in data){
+			var count = data[i];
+			var valueName;
+			var color;
+			if(i==0){
+				valueName = "正常" + count;
+				color = '#71C671';
+			}else if(i==1){
+				valueName = "离线" + count;
+//				color = '#dc3545';
+				color = '#FF7F00';
+			}else{
+				valueName = "异常" + count;
+//				color = '#FF7F00';
+				color = '#dc3545';
+			}
+			var state = {value:count, name:valueName, itemStyle : {color : color}};
+			chartData.push(state);
+		}
+		setStationChartData(chartData);
+	});
 }
 
 function mapStation(id, name) {
@@ -209,7 +207,7 @@ $('#editStationModal').on('show.bs.modal', function(event) {
 		var lng = target.data('lng');
 		var tel = target.data('tel');
 		var remark = target.data('remark');
-		
+
 		modal.find('#station_name').val(name);
 		modal.find('#station_address').val(address);
 		modal.find('#station_lat').val(lat);
@@ -219,4 +217,85 @@ $('#editStationModal').on('show.bs.modal', function(event) {
 
 		modal.find('form').attr('action', '/station/edit/' + id);
 	}
+});
+
+function initStationChart() {
+	// var chart = $('#div-station-chart');
+	var domChart = document.getElementById('div-station-chart');
+	var normalCount = domChart.getAttribute('data-station-normal');
+	var offlineCount = domChart.getAttribute('data-station-offline');
+	var alarmCount = domChart.getAttribute('data-station-alarm');
+	stationStateChart = echarts.init(domChart);
+	option = {
+		// 全局调色盘。#28a745(success)
+//		color : [ '#71C671', '#dc3545', '#FF7F00' ],
+		title : {
+	        subtext: '站点状态'
+	    },
+		tooltip : {
+			trigger : 'item'
+		},
+
+		series : [ {
+			name : '状态',
+			type : 'pie',
+			radius : '60%',
+			center : [ '50%', '50%' ],
+			data : [ {
+				itemStyle : {
+					color : '#71C671'
+				},
+				value : normalCount,
+				name : '正常' + normalCount
+			}, {
+				itemStyle : {
+					color : '#dc3545'
+				},
+				value : alarmCount,
+				name : '异常' + alarmCount
+			}, {
+				itemStyle : {
+					color : '#FF7F00'
+				},
+				value : offlineCount,
+				name : '离线' + offlineCount
+			} ]
+		} ]
+	};
+	stationStateChart.setOption(option);
+}
+
+function setStationChartData(data) {
+	var option = {
+//			color : [ '#71C671', '#dc3545', '#FF7F00' ],
+			series : [ {
+				data : data
+			} ]
+		};
+	stationStateChart.setOption(option);
+}
+
+$('#stationInfoModal').on('show.bs.modal', function(event) {
+	var modal = $(this)
+	var target = $(event.relatedTarget) // Button that triggered the modal
+	var title = target.data('name');
+	var address = target.data('address');
+	var lng = target.data('lng');
+	var lat = target.data('lat');
+	var tel = target.data('tel');
+	var remark = target.data('remark');
+
+	modal.find('#stationInfoModalTitle').text('');
+	modal.find('#modal_address').text('');
+	modal.find('#modal_lat').text('');
+	modal.find('#modal_lng').text('');
+	modal.find('#modal_tel').text('');
+	modal.find('#modal_remark').text('');
+	
+	modal.find('#stationInfoModalTitle').text(title);
+	modal.find('#modal_address').text(address);
+	modal.find('#modal_lat').text(lat);
+	modal.find('#modal_lng').text(lng);
+	modal.find('#modal_tel').text(tel);
+	modal.find('#modal_remark').text(remark);
 });

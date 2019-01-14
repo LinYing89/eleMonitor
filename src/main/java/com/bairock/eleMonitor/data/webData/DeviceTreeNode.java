@@ -9,6 +9,7 @@ public class DeviceTreeNode {
 	private String href;
 	private long deviceId;
 	private List<DeviceTreeNode> nodes;
+	private String[] tags = new String[1];
 	
 	public String getType() {
 		return type;
@@ -40,5 +41,14 @@ public class DeviceTreeNode {
 	public void setNodes(List<DeviceTreeNode> nodes) {
 		this.nodes = nodes;
 	}
+	public String[] getTags() {
+		return tags;
+	}
+	public void setTags(String[] tags) {
+		this.tags = tags;
+	}
 	
+	public void setTag(String tag) {
+		tags[0] = tag;
+	}
 }

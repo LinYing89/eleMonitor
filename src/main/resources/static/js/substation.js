@@ -152,25 +152,33 @@ function handlerDevState(message) {
 function handlerDevEvent(message) {
 	var devEvent = JSON.parse(message.body);
 	console.info(devEvent.message);
-	var li = $('<li class="list-group-item">' + devEvent.timeFormat + ' '
-			+ devEvent.message + '</li>');
-	li.css({
-		color : "#FF4500",
-		fontWeight : "bold"
-	});
-	$("#ul-event").prepend(li);
-	newEventColorAnim(li);
+	
+	var tr = $('<tr></tr>');
+	var td1 = $('<td>' + devEvent.timeFormat + '</td>');
+	var td2 = $('<td>' + devEvent.message + '</td>');
+	tr.prepend(td1);
+	tr.prepend(td2);
+	$("#tbody-event").prepend(tr);
+	
+//	var li = $('<li class="list-group-item">' + devEvent.timeFormat + ' '
+//			+ devEvent.message + '</li>');
+//	li.css({
+//		color : "#FF4500",
+//		fontWeight : "bold"
+//	});
+//	$("#ul-event").prepend(li);
+	newEventColorAnim(tr);
 }
 
 function changeSwitchBtnActive(devValue, devId) {
 	if (devValue == 1) {
-		$("#btn-dev-on-" + devId).attr("class", "btn active btn-outline-success")
-		$("#btn-dev-off-" + devId).attr("class", "btn btn-outline-success")
+		$("#btn-dev-on-" + devId).attr("class", "btn active btn-outline-success btn_ctrl")
+		$("#btn-dev-off-" + devId).attr("class", "btn btn-outline-success btn_ctrl")
 //		$("#btn-dev-on-" + devId).addClass("active");
 //		$("#btn-dev-off-" + devId).removeClass("active");
 	} else {
-		$("#btn-dev-on-" + devId).attr("class", "btn btn-outline-secondary")
-		$("#btn-dev-off-" + devId).attr("class", "btn active btn-outline-secondary")
+		$("#btn-dev-on-" + devId).attr("class", "btn btn-outline-secondary btn_ctrl")
+		$("#btn-dev-off-" + devId).attr("class", "btn active btn-outline-secondary btn_ctrl")
 //		$("#btn-dev-on-" + devId).removeClass("active");
 //		$("#btn-dev-off-" + devId).addClass("active");
 	}

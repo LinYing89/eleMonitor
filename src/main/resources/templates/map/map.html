@@ -32,7 +32,7 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<div class="w-100">
 				<ul class="navbar-nav px-3">
-					<li class="nav-item"><a class="nav-link" href="/map">地图</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">系统设置</a></li>
 					<li class="nav-item"><a class="nav-link" target="_blank"
 						href="/test/netMessage/received">网络数据测试</a></li>
 				</ul>
@@ -63,37 +63,95 @@
 					<div id="tree-devices"
 						th:attr="${station} ? data-device-id=${station.id}"></div>
 				</div>
-				<div class="sidebar-bottom"></div>
+				<div class="sidebar-bottom">
+					<div id="div-station-chart"
+						th:attr="data-station-normal=${stationStateCount[0]}, data-station-offline=${stationStateCount[1]}, data-station-alarm=${stationStateCount[2]}"></div>
+				</div>
 			</div>
 
 			<div role="main" class="col-10 ml-sm-auto">
 				<div class="row h-100 no-gutters">
 					<div class="col">
 						<div id="container" class="h-100 w-100"></div>
+						<div id="div_float_map" class="rounded">
+							<select id="select_map_style">
+								<option value='normal'>标准</option>
+								<option value='midnight'>午夜蓝</option>
+								<option value='googlelite'>精简</option>
+							</select>
+						</div>
 					</div>
-					<div class="col-3 pr-0">
+					<div id="div-right" class="col-3 pr-0">
 						<div class="shadow-sm rounded bg-light ml-2 p-2">
-							<form id="station_info" th:if="${station}" th:fragment="station_info">
+							<form id="station_info" th:if="${station}"
+								th:fragment="station_info">
 								<div class="form-group row mb-1">
-									<label class="col-4 pr-0">站点名称:</label> <label class="col"
-										th:text="${station.name}">Email</label>
+									<label class="col-4 pr-0 text-muted">站点名称:</label> <label
+										class="col" th:text="${station.name}">Email</label>
 								</div>
 								<div class="form-group row mb-1">
-									<label class="col-4 pr-0">地址:</label> <label class="col"
-										th:text="${station.address}">Email</label>
+									<label class="col-4 pr-0 text-muted">地址:</label> <label
+										class="col" th:text="${station.address}">Email</label>
 								</div>
 								<div class="form-group row mb-1">
-									<label class="col-4 pr-0">变电站数:</label> <label class="col"
-										th:text="${#lists.size(station.listSubstation)}">Email</label>
+									<label class="col-4 pr-0 text-muted">变电站数:</label> <label
+										class="col" th:text="${#lists.size(station.listSubstation)}">Email</label>
 								</div>
 								<div class="form-group row mb-1">
 									<a class="col-auto pr-0" href="#" data-toggle="modal"
 										data-target="#editStationModal" data-option="edit"
 										th:attr="data-station-id=${station.id}, data-name=${station.name}, data-address=${station.address}, data-lat=${station.lat}, data-lng=${station.lng}, data-tel=${station.tel}, data-remark=${station.remark}">编辑</a>
-									<a id="del_station" class="col-auto pr-0" href="#" th:href="|/station/del/${station.id}|">删除</a> <a
-										class="col-auto pr-0" href="#">详细</a>
+									<a id="del_station" class="col-auto pr-0" href="#"
+										th:href="|javascript:delStation(${station.id})|">删除</a> <a
+										class="col-auto pr-0" href="#" data-toggle="modal"
+										data-target="#stationInfoModal" th:attr="data-name=${station.name}, data-address=${station.address}, data-lat=${station.lat}, data-lng=${station.lng}, data-tel=${station.tel}, data-remark=${station.remark}">详细信息</a>
 								</div>
 							</form>
+						</div>
+						<div id="div_substation_info"
+							class="shadow-sm rounded bg-light ml-2 mt-2 p-2">
+							<div id="substation_info" th:fragment="substation_info">
+								<form th:if="${substation}">
+									<div class="form-group row mb-1">
+										<label class="col-4 pr-0 text-muted">变电站名:</label> <label
+											class="col" th:text="${substation.name}">名称</label>
+									</div>
+									<hr class="mt-0 mb-2">
+									<div class="form-group row mb-1">
+										<div class="col-4 pr-0">
+											<label class="text-muted">通信机数:</label> <label
+												th:text="${#lists.size(substation.listMsgManager)}">1</label>
+										</div>
+										<div class="col-4 pr-0 text-success">
+											<label>正常:</label> <label th:text="${msgSuccessCount}">1</label>
+										</div>
+										<div class="col-4 pr-0 text-warning">
+											<label>离线:</label> <label th:text="${msgOfflineCount}">1</label>
+										</div>
+									</div>
+								</form>
+								<table th:if="${substation}" class="table-sm w-100">
+									<tr th:each="mm : ${substation.listMsgManager}"
+										th:classappend="${mm.msgManagerState.code == 0} ? text-success : text-warning">
+										<td th:text="${mm.name}">名称</td>
+										<td th:text="${mm.code}">编号</td>
+										<td th:text="${mm.msgManagerState.text}">状态</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="shadow-sm rounded bg-light ml-2 mt-2 p-2 h-50">
+							<h6 class="text-muted">维护人员信息</h6>
+							<ul class="list-group list-group-flush">
+								<li class="list-group-item">
+									<div>张三</div>
+									<div class="text-muted">lat:119.236 &nbsp; lng:34.613</div>
+								</li>
+								<li class="list-group-item">
+									<div>李四</div>
+									<div class="text-muted">lat:119.246 &nbsp; lng:34.613</div>
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -147,6 +205,41 @@
 		</div>
 	</div>
 
+	<!-- Modal 站点详细信息 -->
+	<div class="modal fade" id="stationInfoModal" tabindex="-1"
+		role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="stationInfoModalTitle">站点名</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label>地址:</label> <label id="modal_address">地址</label>
+						</div>
+						<div class="form-group">
+							<label>经度:</label> <label id="modal_lng">经度</label>
+						</div>
+						<div class="form-group">
+							<label>纬度:</label> <label id="modal_lat">纬度</label>
+						</div>
+						<div class="form-group">
+							<label>电话:</label> <label id="modal_tel">电话</label>
+						</div>
+						<div class="form-group">
+							<label>备注:</label> <label id="modal_remark">备注</label>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
 	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
 	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
@@ -155,9 +248,12 @@
 	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
 	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
 
+	<script src="/js/echarts.js"></script>
+
 	<script type="text/javascript"
 		src="http://api.map.baidu.com/api?v=2.0&ak=NKchMp8WcewEGsfQTk904IR4ndH917r4"></script>
 	<script src="/js/treeNode.js"></script>
-	<script src="/js/map.js"></script>
+	<script src="/js/map/mapTreeView.js"></script>
+	<script src="/js/map/map.js"></script>
 </body>
 </html>

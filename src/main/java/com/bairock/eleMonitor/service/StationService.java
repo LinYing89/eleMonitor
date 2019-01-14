@@ -20,6 +20,7 @@ import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.data.Effect;
 import com.bairock.eleMonitor.data.Linkage;
 import com.bairock.eleMonitor.data.MsgManager;
+import com.bairock.eleMonitor.data.MsgManagerState;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
 import com.bairock.eleMonitor.enums.StationState;
@@ -34,35 +35,38 @@ public class StationService {
 	private StationRepository stationRepository;
 	@Autowired
 	private CacheManager cacheManager;
-	
+
 	/**
 	 * 获取一个站对象
+	 * 
 	 * @param stationId
 	 * @return
 	 */
-	@Cacheable(value="station", key="#stationId")
+	@Cacheable(value = "station", key = "#stationId")
 	public Station findStation(long stationId) {
 		Optional<Station> option = stationRepository.findById(stationId);
 		Station station = option.orElse(null);
-		if(null == station) {
+		if (null == station) {
 			return null;
 		}
 		cacheManager.getCache("station").put(station.getId(), station);
 		station.setOnStateChangedListener(new MyOnStationStateChangedListener());
-		for(Substation substation : station.getListSubstation()) {
+		for (Substation substation : station.getListSubstation()) {
 			cacheManager.getCache("substation").put(substation.getId(), substation);
-			for(MsgManager m : substation.getListMsgManager()) {
+			for (MsgManager m : substation.getListMsgManager()) {
 				cacheManager.getCache("msgmanager").put(m.getCode(), m);
-				for(Collector c : m.getListCollector()) {
+				for (Collector c : m.getListCollector()) {
 					cacheManager.getCache("collector").put(c.getId(), c);
-					for(Device d : c.getListDevice()) {
+					for (Device d : c.getListDevice()) {
 						cacheManager.getCache("device").put(d.getId(), d);
-						if(d.isAlarming()) {
-							station.setState(StationState.ALARM);
+						if (m.getMsgManagerState() != MsgManagerState.OFFLINE) {
+							if (d.isAlarming()) {
+								station.setState(StationState.ALARM);
+							}
 						}
-						for(Linkage linkage : d.getListLinkage()) {
+						for (Linkage linkage : d.getListLinkage()) {
 							cacheManager.getCache("linkage").put(linkage.getId(), linkage);
-							for(Effect effect : linkage.getListEffect()) {
+							for (Effect effect : linkage.getListEffect()) {
 								cacheManager.getCache("effect").put(effect.getId(), effect);
 //								@SuppressWarnings("unused")
 								Device ed = effect.getDevice();
@@ -73,50 +77,50 @@ public class StationService {
 				}
 			}
 
-			for(DeviceGroup dg : substation.getListDeviceGroup()) {
+			for (DeviceGroup dg : substation.getListDeviceGroup()) {
 				cacheManager.getCache("deviceGroup").put(dg.getId(), dg);
 				dg.getListDevice();
-				for(Device dev : dg.getListDevice()) {
+				for (Device dev : dg.getListDevice()) {
 					System.out.println(dev.getId() + " id");
 				}
 			}
 		}
 		return station;
 	}
-	
+
 	public List<Station> findAllByUserId(long userId) {
 		List<Station> listDb = stationRepository.findAllByUserId(userId);
 		List<Station> list = new ArrayList<Station>();
-		for(Station station : listDb) {
+		for (Station station : listDb) {
 			Station s = self.findStation(station.getId());
-			if(null != s) {
+			if (null != s) {
 				list.add(s);
 			}
 		}
 		return list;
 	}
-	
-	public List<Station> findAll(){
+
+	public List<Station> findAll() {
 		List<Station> listDb = stationRepository.findAll();
 		List<Station> list = new ArrayList<Station>();
-		for(Station station : listDb) {
+		for (Station station : listDb) {
 			Station s = self.findStation(station.getId());
-			if(null != s) {
+			if (null != s) {
 				list.add(s);
 			}
 		}
 		return list;
 	}
-	
-	@CachePut(value = "station",key="#result.id")
-	public Station save(Station station){
+
+	@CachePut(value = "station", key = "#result.id")
+	public Station save(Station station) {
 		return stationRepository.saveAndFlush(station);
 	}
-	
+
 //	@CachePut(value = "station",key="#result.id")
 	public Station edit(long stationId, Station station) {
 		Station res = self.findStation(stationId);
-		if(null != res) {
+		if (null != res) {
 			res.setName(station.getName());
 			res.setAddress(station.getAddress());
 			res.setLat(station.getLat());
@@ -127,9 +131,9 @@ public class StationService {
 		}
 		return res;
 	}
-	
-	@CacheEvict(value = "station", key="#stationId")
-	public void deleteById(long stationId){
+
+	@CacheEvict(value = "station", key = "#stationId")
+	public void deleteById(long stationId) {
 		stationRepository.deleteById(stationId);
 	}
 }

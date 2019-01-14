@@ -14,6 +14,8 @@ import com.bairock.eleMonitor.Util;
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.Effect;
 import com.bairock.eleMonitor.data.MsgManager;
+import com.bairock.eleMonitor.data.MsgManager.OnMsgManagerStateChangedListener;
+import com.bairock.eleMonitor.data.MsgManagerState;
 import com.bairock.eleMonitor.data.webData.AnalysisReceivedErrorResult;
 import com.bairock.eleMonitor.data.webData.NetMessageAnalysisResult;
 import com.bairock.eleMonitor.data.webData.NetMessageSentResult;
@@ -32,6 +34,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
 	public ChannelHandlerContext channel;
 	public long msgManagerId = 0;
+	private MsgManager msgManager;
 
 	// 是否已添加进map, 只有在第一次收到通信机id时将handler存入map, 之后此值为true
 	private boolean mapAdded = false;
@@ -112,34 +115,43 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		errResult.setHead(Util.bytesToHexString(byHead));
 		int managerNum = Util.bytesToInt(new byte[] {byOne[2], byOne[3], byOne[4], byOne[5]});
 //		int managerNum = (byOne[2] << 24) | (byOne[3] << 16) | (byOne[4] << 8) | byOne[5];
-		MsgManager mm = msgManagerService.findByMsgManagerCode(managerNum);
+		if(msgManager == null) {
+			MsgManager mm = msgManagerService.findByMsgManagerCode(managerNum);
 
-		if (mm == null) {
-			errResult.setCode(NetMessageResultEnum.UNKNOW_MANAGER.getCode());
-			errResult.setMessage(NetMessageResultEnum.UNKNOW_MANAGER.getMessage() + managerNum);
-			logger.error(errResult.getMessage());
-			List<byte[]> list;
-			try {
-				list = MsgManager.analysisEveryOrder(by);
-				for(byte[] by1 : list) {
-					errResult.getListOne().add(Util.bytesToHexString(by1));
+			if (mm == null) {
+				errResult.setCode(NetMessageResultEnum.UNKNOW_MANAGER.getCode());
+				errResult.setMessage(NetMessageResultEnum.UNKNOW_MANAGER.getMessage() + managerNum);
+				logger.error(errResult.getMessage());
+				List<byte[]> list;
+				try {
+					list = MsgManager.analysisEveryOrder(by);
+					for(byte[] by1 : list) {
+						errResult.getListOne().add(Util.bytesToHexString(by1));
+					}
+				} catch (Exception e) {
+					errResult.setCode(NetMessageResultEnum.UNKNOW.getCode());
+					errResult.setMessage(e.getMessage());
+//					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				errResult.setCode(NetMessageResultEnum.UNKNOW.getCode());
-				errResult.setMessage(e.getMessage());
-//				e.printStackTrace();
+				//testService.broadcastReceived(result);
+				return errResult;
+			}else {
+				msgManager = mm;
+//				msgManager.setMsgManagerState(MsgManagerState.SUCCESS);
+				//添加状态监听器
+				msgManager.addMsgManagerStateChangedListener(onMsgManagerStateChangedListener);
+				msgManager.setMsgManagerState(MsgManagerState.SUCCESS);
 			}
-			//testService.broadcastReceived(result);
-			return errResult;
 		}
-		msgManagerId = mm.getId();
+		
+		msgManagerId = msgManager.getId();
 		// 添加进map, 方便全局搜索
 		if (!mapAdded) {
 			mapAdded = true;
 			channelMap.put(msgManagerId, this);
 		}
 		// 设置设备值监听器
-		for (Device dev : mm.findAllDevice()) {
+		for (Device dev : msgManager.findAllDevice()) {
 			if(dev.getOnValueListener() == null) {
 				dev.setOnValueListener(new MyOnValueListener());
 			}
@@ -149,7 +161,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		try {
-			List<byte[]> list = mm.handler(by);
+			List<byte[]> list = msgManager.handler(by);
 			for(byte[] by1 : list) {
 				errResult.getListOne().add(Util.bytesToHexString(by1));
 			}
@@ -157,7 +169,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 			//查看触发的连锁
 			//处理完报文再查看那些连锁触发了, 是为了将同一通信机的设备报文合并为一条报文, 防止一次发送多条数据
 			List<Effect> listTriggeredEffect = new ArrayList<>();
-			for (Device dev : mm.findAllDevice()) {
+			for (Device dev : msgManager.findAllDevice()) {
 				listTriggeredEffect.addAll(dev.getListTriggedEffect());
 			}
 			sendEffect(listTriggeredEffect);
@@ -188,12 +200,25 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
 		ctx.close();
+		if(null != msgManager) {
+			msgManager.setMsgManagerState(MsgManagerState.OFFLINE);
+		}
 		logger.info("channel " + ctx.channel().id().asShortText() + " is closed");
 	}
 
 	private void sendEffect(List<Effect> listEffect) {
 		sendService.ctrlEffectDevice(listEffect);
 	}
+	
+	//通信机连接状态改变监听器
+	private OnMsgManagerStateChangedListener onMsgManagerStateChangedListener = new OnMsgManagerStateChangedListener(){
+
+		@Override
+		public void onMsgManagerStateChanged(MsgManager msgManager, MsgManagerState state) {
+			msgManager.getSubstation().getStation().refreshState();
+		}
+		
+	};
 	
 	public void send(byte[] by) {
 		if (null != channel) {
