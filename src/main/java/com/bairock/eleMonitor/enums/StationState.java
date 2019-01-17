@@ -9,7 +9,8 @@ public enum StationState {
 
 	NORMAL(0, "正常"),
 	OFFLINE(1, "离线"),
-	ALARM(2, "报警");
+	ALARM(2, "报警"),
+	UNSET(3, "未配置");
 	
 	private int code;
 	private String message;

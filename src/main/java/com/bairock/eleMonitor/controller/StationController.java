@@ -53,20 +53,7 @@ public class StationController {
 				}
 			}
 		}
-		int[] stationStateCount = new int[3];
-		for (Station s : list) {
-			switch (s.getState()) {
-			case NORMAL:
-				stationStateCount[0]++;
-				break;
-			case OFFLINE:
-				stationStateCount[1]++;
-				break;
-			case ALARM:
-				stationStateCount[2]++;
-				break;
-			}
-		}
+		int[] stationStateCount = getStationStateCount(list);
 		model.addAttribute("stationStateCount", stationStateCount);
 		model.addAttribute("listStation", list);
 		return "map/map";
@@ -77,17 +64,27 @@ public class StationController {
 	@GetMapping("/find/stationstateCount")
 	public int[] findStationstateCount() {
 		List<Station> list = stationService.findAll();
-		int[] stationStateCount = new int[3];
+		int[] stationStateCount = getStationStateCount(list);
+		return stationStateCount;
+	}
+	
+	//获取所有站点状态统计
+	private int[] getStationStateCount(List<Station> list) {
+		int[] stationStateCount = new int[4];
 		for (Station s : list) {
+			s.refreshState();
 			switch (s.getState()) {
-			case NORMAL:
+			case ALARM:
 				stationStateCount[0]++;
 				break;
 			case OFFLINE:
 				stationStateCount[1]++;
 				break;
-			case ALARM:
+			case UNSET:
 				stationStateCount[2]++;
+				break;
+			case NORMAL:
+				stationStateCount[3]++;
 				break;
 			}
 		}
@@ -103,6 +100,7 @@ public class StationController {
 		List<StationTreeNode> listNode = new ArrayList<>();
 		List<Station> listStation = stationService.findAll();
 		for (Station station : listStation) {
+//			station.refreshState();
 			StationTreeNode dtnStation = new StationTreeNode();
 			listNode.add(dtnStation);
 			dtnStation.setType("station");

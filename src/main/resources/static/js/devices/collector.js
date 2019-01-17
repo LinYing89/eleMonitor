@@ -33,7 +33,7 @@ $('#editDeviceModal').on('show.bs.modal', function(event) {
 		title.text("编辑设备");
 		var id = target.data('id')
 		var name = target.data('name')
-		var place = target.data('place')
+		var placeId = target.data('place-id')
 		var beginAddress = target.data('beginaddress')
 		var dataLength = target.data('datalength')
 		var byteOrder = target.data('byteorder')
@@ -46,7 +46,7 @@ $('#editDeviceModal').on('show.bs.modal', function(event) {
 		var icon = target.data('icon')
 		
 		modal.find('#name').val(name)
-		modal.find('#place').val(place)
+		modal.find('#place-id').val(placeId)
 		modal.find('#beginAddress').val(beginAddress)
 		modal.find('#dataLength').val(dataLength)
 		modal.find('#byteOrder').val(byteOrder)

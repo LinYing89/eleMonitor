@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
 import com.bairock.eleMonitor.data.DeviceEventMessage;
+import com.bairock.eleMonitor.data.Place;
 import com.bairock.eleMonitor.data.webData.DevWebData;
 import com.bairock.eleMonitor.repository.DeviceRepository;
 
@@ -50,6 +51,11 @@ public class DeviceService {
 		if(null == collector) {
 			return null;
 		}
+		long placeId = device.getPlace().getId();
+		Place place = collector.getMsgManager().getSubstation().findByPlaceId(placeId);
+		
+		device.setPlace(place);
+		
 		collector.addDevice(device);
 		deviceRepository.saveAndFlush(device);
 		return device;
@@ -63,7 +69,10 @@ public class DeviceService {
 				res.setName(device.getName());
 				deviceValueHistoryService.update(res);
 			}
-			res.setPlace(device.getPlace());
+			long placeId = device.getPlace().getId();
+			Place place = res.getCollector().getMsgManager().getSubstation().findByPlaceId(placeId);
+			
+			res.setPlace(place);
 			res.setBeginAddress(device.getBeginAddress());
 			res.setDataLength(device.getDataLength());
 			res.setByteOrder(device.getByteOrder());

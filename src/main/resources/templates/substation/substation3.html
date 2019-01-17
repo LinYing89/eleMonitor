@@ -36,9 +36,9 @@
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
 						role="button" data-toggle="dropdown" aria-haspopup="true"
-						aria-expanded="false"> 电力数据 </a>
+						aria-expanded="false"> 数据监控 </a>
 						<div th:if="${substation}" class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="#">电站数据</a> <a
+							<a class="dropdown-item" href="#">数据监控</a> <a
 								class="dropdown-item" href="#"
 								th:href="|/valueHistory/${substation.id}/0|">数据分析</a>
 						</div></li>
@@ -97,6 +97,8 @@
 
 			<div role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 				<div th:if="${substation}" class="row h-100">
+
+					<!-- 数据区域 -->
 					<div class="col-9">
 						<div class="shadow-sm p-2 mt-2 bg-white rounded row"
 							id="main_title">
@@ -303,6 +305,7 @@
 							</div>
 						</div>
 					</div>
+					<!-- 事件列表 -->
 					<div class="col-3 pr-0">
 						<div class="shadow-sm bg-light ml-1 h-90 w-100 p-2">
 							<h6 class="text-muted">事件信息</h6>
@@ -374,7 +377,7 @@
 						</thead>
 						<tbody>
 							<tr th:each="device : ${group.listDevice}">
-								<td class="p-1" th:text="${device.place}">1-A</td>
+								<td class="p-1" th:text="${device.place.name}">1-A</td>
 								<td class="p-1" th:text="${device.name}">1-A</td>
 								<td class="p-1"><span th:id="|value-dev-${device.id}|"
 									th:text="${device.value}">30.5℃</span><span
@@ -412,7 +415,7 @@
 						</thead>
 						<tbody>
 							<tr th:each="lineForm : ${group.listLineTemForm}">
-								<td class="p-1" th:text="${lineForm.place}">1-A</td>
+								<td class="p-1" th:text="${lineForm.place.name}">1-A</td>
 								<td class="p-1"><span
 									th:id="|value-dev-${lineForm.deviceA.id}|"
 									th:text="${lineForm.deviceA.value}">30.5℃</span><span

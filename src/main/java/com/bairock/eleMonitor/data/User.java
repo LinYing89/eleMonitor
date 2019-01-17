@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -26,6 +27,10 @@ public class User {
 	@OneToMany(mappedBy="user", cascade=CascadeType.REMOVE, orphanRemoval=true)
 	@JsonManagedReference("user_station")
 	private List<Station> listStation = new ArrayList<>();
+	
+	//角色集合
+	@ManyToMany
+    private List<SysRole> roles;
 	
 	public long getId() {
 		return id;
@@ -56,6 +61,12 @@ public class User {
 	}
 	public void setListStation(List<Station> listStation) {
 		this.listStation = listStation;
+	}
+	public List<SysRole> getRoles() {
+		return roles;
+	}
+	public void setRoles(List<SysRole> roles) {
+		this.roles = roles;
 	}
 	
 }

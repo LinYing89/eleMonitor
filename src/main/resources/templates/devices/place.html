@@ -48,34 +48,30 @@
 						th:href="|/msgManager/${substation.id}|">通信机</a></li>
 					<li class="nav-item"><a class="nav-link" href="#"
 						th:href="|/devGroup/${substation.id}/0|">数据组</a></li>
-					<li class="nav-item"><a class="nav-link" href="#" th:href="|/substation/page/place/${substation.id}|">位置</a></li>
+					<li class="nav-item"><a class="nav-link" href="|/substation/page/place/${substation.id}|">位置</a></li>
 				</ul>
 
 				<div class="row">
 					<button type="button" class="btn btn-info ml-4 mt-4"
 						data-toggle="modal" data-option="add"
 						th:attr="data-substation-id=${substation.id}"
-						data-target="#editMsgManagerModal">添加通信机</button>
+						data-target="#editPlaceModal">添加位置</button>
 				</div>
 				<table class="table mt-2">
 					<thead class="thead-light">
 						<tr>
-							<th scope="col">编号</th>
 							<th scope="col">名称</th>
-							<th scope="col">位置</th>
 							<th scope="col">操作</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="mm : ${substation.listMsgManager}">
-							<td th:text="${mm.code}">编码</td>
-							<td th:text="${mm.name}">名称</td>
-							<td th:text="${mm.place}">位置</td>
+						<tr th:each="p : ${substation.listPlace}">
+							<td th:text="${p.name}">名称</td>
 							<td><a href="#" data-toggle="modal"
-								data-target="#editMsgManagerModal" data-option="edit"
-								th:attr="data-id=${mm.id}, data-code=${mm.code}, data-name=${mm.name}, data-place=${mm.place}">编辑
-							</a><a class="del-msg-manager" href="#"
-								th:href="|/msgManager/del/${mm.id}|">删除</a></td>
+								data-target="#editPlaceModal" data-option="edit"
+								th:attr="data-id=${p.id}, data-name=${p.name}">编辑
+							</a><a class="del-place" href="#"
+								th:href="|/substation/del/place/${p.id}|">删除</a></td>
 						</tr>
 					</tbody>
 				</table>
@@ -84,38 +80,24 @@
 		</div>
 	</div>
 
-	<!-- Modal 添加通信机 -->
-	<div class="modal fade" id="editMsgManagerModal" tabindex="-1"
+	<!-- Modal 添加位置 -->
+	<div class="modal fade" id="editPlaceModal" tabindex="-1"
 		role="dialog" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="editMsgManagerModalTitle">添加通信机</h5>
+					<h5 class="modal-title" id="editPlaceModalTitle">添加位置</h5>
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<form th:action="|/msgManager/${substationId}|" method="post"
-						id="form-add-msgmanager">
+					<form th:action="|/msgManager/${substationId}|" method="post">
 						<div class="form-group">
-							<label for="substationName">通信管理机名称</label> <input type="text"
-								class="form-control" id="manager-name" name="name"
+							<label>位置</label> <input type="text"
+								class="form-control" id="place-name" name="name"
 								required="required">
-						</div>
-						<div class="form-group">
-							<label for="substationName">通信管理机编号</label> <input type="text"
-								class="form-control" id="manager-code" name="code"
-								required="required">
-						</div>
-
-						<div class="form-group">
-							<label for="substationName">通信管理机位置</label> <input type="text"
-								class="form-control" id="manager-place" name="place">
-						</div>
-						<div class="form-group">
-							<span id="manager-code-repeated" class="text-danger"></span>
 						</div>
 						<button type="submit" class="btn btn-primary">提交</button>
 					</form>
@@ -130,6 +112,6 @@
 
 	<script type="text/javascript" src="/js/bootstrap-treeview.js"></script>
 	<script type="text/javascript" src="/js/devices/devicesRoot.js"></script>
-	<script type="text/javascript" src="/js/devices/substation.js"></script>
+	<script type="text/javascript" src="/js/devices/place.js"></script>
 </body>
 </html>

@@ -19,9 +19,11 @@ import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.data.LineTemFormGroup;
 import com.bairock.eleMonitor.data.MsgManager;
+import com.bairock.eleMonitor.data.Place;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
 import com.bairock.eleMonitor.data.webData.DeviceTreeNode;
+import com.bairock.eleMonitor.service.PlaceService;
 import com.bairock.eleMonitor.service.StationService;
 import com.bairock.eleMonitor.service.SubstationService;
 
@@ -38,6 +40,8 @@ public class SubstationController {
 	private SubstationService substationService;
 	@Autowired
 	private StationService stationService;
+	@Autowired
+	private PlaceService placeService;
 	
 	/**
 	 * 获取站点下所有变电站
@@ -105,7 +109,8 @@ public class SubstationController {
 //			}
 		}
 		
-		return "substation/substation3";
+//		return "substation/substation3";
+		return "devices/deviceDataMain";
 	}
 	
 	@ResponseBody
@@ -173,11 +178,39 @@ public class SubstationController {
 	}
 	
 	@GetMapping("/del/{substationId}")
-	public String deleteSubstation(@PathVariable long substationId, Model model) {
+	public String deleteSubstation(@PathVariable long substationId) {
 		Substation substation = substationService.findBySubstationId(substationId);
 		Station station = substation.getStation();
 		substationService.deleteSubstation(substation);
 		station.removeSubstation(substation);
 		return "redirect:/substation/" + station.getId() + "/0";
+	}
+	
+	@GetMapping("/page/place/{substationId}")
+	public String getPlacePage(@PathVariable long substationId, Model model) {
+		Substation substation = substationService.findBySubstationId(substationId);
+		model.addAttribute("substation", substation);
+		model.addAttribute("listPlace", substation.getListPlace());
+		return "devices/place";
+	}
+	
+	@PostMapping("/add/place/{substationId}")
+	public String addPlace(@PathVariable long substationId, @ModelAttribute Place place) {
+		placeService.addPlace(substationId, place);
+		return "redirect:/substation/page/place/" + substationId;
+	}
+	
+	@GetMapping("/del/place/{placeId}")
+	public String delPlace(@PathVariable long placeId) {
+		Place place = placeService.deletePlace(placeId);
+		Substation substation = substationService.findBySubstationId(place.getSubstation().getId());
+		return "redirect:/substation/page/place/" + substation.getId();
+	}
+	
+	@PostMapping("/edit/place/{placeId}")
+	public String editPlace(@PathVariable long placeId, @ModelAttribute Place place) {
+		Place placeDb = placeService.editPlace(placeId, place);
+		Substation substation = substationService.findBySubstationId(placeDb.getSubstation().getId());
+		return "redirect:/substation/page/place/" + substation.getId();
 	}
 }

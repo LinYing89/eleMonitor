@@ -45,6 +45,10 @@ public class Substation {
 	@JsonManagedReference("substation_msgmanager")
 	private List<MsgManager> listMsgManager = new ArrayList<>();
 
+	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference("substation_place")
+	private List<Place> listPlace = new ArrayList<>();
+	
 	// 设备组集合
 	@OneToMany(mappedBy = "substation", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("substation_deviceGroup")
@@ -98,6 +102,14 @@ public class Substation {
 		this.listMsgManager = listMsgManager;
 	}
 
+	public List<Place> getListPlace() {
+		return listPlace;
+	}
+
+	public void setListPlace(List<Place> listPlace) {
+		this.listPlace = listPlace;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -114,6 +126,30 @@ public class Substation {
 	public void removeMsgManager(MsgManager msgManager) {
 		msgManager.setSubstation(null);
 		listMsgManager.remove(msgManager);
+	}
+	
+	public void addPlace(Place place) {
+		place.setSubstation(this);
+		listPlace.add(place);
+	}
+
+	public void removePlaceById(long placeId) {
+		for(Place p : listPlace) {
+			if(p.getId() == placeId) {
+				p.setSubstation(null);
+				listPlace.remove(p);
+				break;
+			}
+		}
+	}
+	
+	public Place findByPlaceId(long placeId) {
+		for(Place p : listPlace) {
+			if(p.getId() == placeId) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	public List<DeviceGroup> getListDeviceGroup() {
@@ -362,6 +398,10 @@ public class Substation {
 	}
 
 	public StationState refreshState() {
+		if(listMsgManager.isEmpty()) {
+			setSubstationState(StationState.UNSET);
+			return StationState.UNSET;
+		}
 		//先判断是否有报警
 		for (MsgManager mm : getListMsgManager()) {
 			if(mm.getMsgManagerState() == MsgManagerState.OFFLINE) {

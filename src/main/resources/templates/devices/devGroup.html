@@ -90,7 +90,7 @@
 							</thead>
 							<tbody>
 								<tr th:each="device : ${devGroup.listDevice}">
-									<td th:text="${device.place}">1号机柜</td>
+									<td th:text="${device.place.name}">1号机柜</td>
 									<td th:text="${device.name}">采集终端</td>
 									<td class="row"><a href="#"
 										th:href="|/devGroup/del/device/${devGroup.id}/${device.id}|">删除

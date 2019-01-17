@@ -97,7 +97,7 @@
 					<tbody>
 						<tr th:each="device : ${collector.listDevice}">
 							<td><span th:classappend="${device.icon}"></span></td>
-							<td th:text="${device.place}">温度</td>
+							<td th:text="${device.place.name}">温度</td>
 							<td th:text="${device.name}">温度</td>
 							<td th:text="${device.beginAddress}">1</td>
 							<td th:text="${device.dataLength}">2</td>
@@ -108,7 +108,7 @@
 							<td th:text="${device.unit}">℃</td>
 							<td><a href="#" data-toggle="modal"
 								data-target="#editDeviceModal" data-option="edit"
-								th:attr="data-id=${device.id}, data-name=${device.name}, data-place=${device.place}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}, data-category=${device.deviceCategory}, data-icon=${device.icon}">编辑
+								th:attr="data-id=${device.id}, data-name=${device.name}, data-place-id=${device.place.id}, data-beginAddress=${device.beginAddress}, data-dataLength=${device.dataLength}, data-byteOrder=${device.byteOrder}, data-valueType=${device.valueType}, data-alarmValue=${device.alarmTriggerValue}, data-valueFormat=${device.valueFormat}, data-coefficient=${device.coefficient}, data-unit=${device.unit}, data-category=${device.deviceCategory}, data-icon=${device.icon}">编辑
 							</a> <a href="#" th:href="|/linkage/${device.id}/0|">设置阈值 </a><a
 								href="#" class="del-device" th:href="|/device/del/${device.id}|">删除</a></td>
 						</tr>
@@ -158,8 +158,10 @@
 									class="form-control" name="name" id="name" required="required">
 							</div>
 							<div class="form-group col-6">
-								<label class="col-form-label">设备位置</label> <input type="text"
-									class="form-control" name="place" id="place">
+								<label class="col-form-label">设备位置</label> 
+								<select class="form-control" id="place-id" name="place.id">
+								    <option th:each="place : ${substation.listPlace}" th:value="${place.id}" th:text="${place.name}">位置</option>
+								</select>
 							</div>
 						</div>
 						<div class="form-row">

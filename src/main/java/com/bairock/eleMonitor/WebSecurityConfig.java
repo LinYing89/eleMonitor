@@ -1,7 +1,5 @@
 package com.bairock.eleMonitor;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,19 +10,28 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.bairock.eleMonitor.service.MyCustomUserService;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+//	@Autowired
+//	private DataSource dataSource;
+	
 	@Autowired
-	private DataSource dataSource;
+	private MyCustomUserService myCustomUserService;
+	
+//	@Autowired
+//	private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/login", "/css/**", "/img/**", "/js/**", "/webjars/**").permitAll()
-				.antMatchers("/map").hasRole("ADMIN").anyRequest().authenticated().and().formLogin().loginPage("/login")
+				.antMatchers("/map").hasRole("MAP").anyRequest().authenticated().and().formLogin().loginPage("/login")
 				.defaultSuccessUrl("/loginSuccess", true).permitAll().and().logout().permitAll();
-
+		
+//		http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
 	}
 
 	@Bean
@@ -34,10 +41,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.jdbcAuthentication().dataSource(dataSource)
-				.usersByUsernameQuery("select username, password, true from User where username=?")
-				.authoritiesByUsernameQuery("select username, authority from user_authority where username=?")
-				.passwordEncoder(passwordEncoder());
+//		auth.jdbcAuthentication().dataSource(dataSource)
+//				.usersByUsernameQuery("select username, password, true from User where username=?")
+//				.authoritiesByUsernameQuery("select username, authority from user_authority where username=?")
+//				.passwordEncoder(passwordEncoder());
+		
+		auth.userDetailsService(myCustomUserService); //user Details Service验证
 	}
 	
 	//忽略静态资源的拦截

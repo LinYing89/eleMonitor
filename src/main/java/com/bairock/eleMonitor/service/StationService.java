@@ -21,6 +21,7 @@ import com.bairock.eleMonitor.data.Effect;
 import com.bairock.eleMonitor.data.Linkage;
 import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.MsgManagerState;
+import com.bairock.eleMonitor.data.Place;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
 import com.bairock.eleMonitor.enums.StationState;
@@ -83,6 +84,10 @@ public class StationService {
 				for (Device dev : dg.getListDevice()) {
 					System.out.println(dev.getId() + " id");
 				}
+			}
+			
+			for(Place place : substation.getListPlace()) {
+				cacheManager.getCache("place").put(place.getId(), place);
 			}
 		}
 		return station;

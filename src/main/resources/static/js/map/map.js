@@ -13,17 +13,19 @@ $(document).ready(function() {
 
 	initWebSocket();
 
-	initStationChart();
-	
-	$("#select_map_style").change(function(){
+	initStationChart2();
+
+	$("#select_map_style").change(function() {
 		var valueType = $(this).val();
-		var mapStyle={ style : valueType }  
+		var mapStyle = {
+			style : valueType
+		}
 		map.setMapStyle(mapStyle);
 	});
 });
 
 // 删除站点
-function delStation(stationId){
+function delStation(stationId) {
 	var r = confirm("确认删除站点吗?");
 	if (r == true) {
 		var url = '/station/del/' + stationId;
@@ -44,8 +46,8 @@ function initMap() {
 	var opts = {
 		anchor : BMAP_ANCHOR_BOTTOM_RIGHT
 	}
-// var mapStyle={ style : "midnight" }
-// map.setMapStyle(mapStyle);
+	// var mapStyle={ style : "midnight" }
+	// map.setMapStyle(mapStyle);
 	// ctrl.anchor = BMAP_ANCHOR_BOTTOM_RIGHT;
 	map.addControl(new BMap.NavigationControl(opts));
 	map.addControl(new BMap.ScaleControl());
@@ -96,7 +98,7 @@ function addMarker(point, state, title) { // 创建图标对象
 	});
 }
 
-function addEngineer(point, title){
+function addEngineer(point, title) {
 	var img = "/img/engineer.png";
 	var myIcon = new BMap.Icon(img, new BMap.Size(32, 32), {
 		anchor : new BMap.Size(32, 32),
@@ -114,9 +116,11 @@ function initImage(state) {
 		img = "/img/marker_green.png";
 	} else if (state == 1) {
 		img = "/img/marker_yellow.png";
-	} else {
-		// img = "img/marker_red.png";
-		img = "/img/alarm.gif";
+	} else if(state == 2){
+		 img = "/img/marker_red.png";
+//		img = "/img/alarm.gif";
+	}else{
+		img = "/img/marker_blue.png";
 	}
 	return img;
 }
@@ -160,27 +164,13 @@ function handlerState(obj) {
 			break;
 		}
 	}
-	$.get("/station/find/stationstateCount").done(function(data){
+	$.get("/station/find/stationstateCount").done(function(data) {
 		var chartData = new Array();
-		for(var i in data){
+		for ( var i in data) {
 			var count = data[i];
-			var valueName;
-			var color;
-			if(i==0){
-				valueName = "正常" + count;
-				color = '#71C671';
-			}else if(i==1){
-				valueName = "离线" + count;
-//				color = '#dc3545';
-				color = '#FF7F00';
-			}else{
-				valueName = "异常" + count;
-//				color = '#FF7F00';
-				color = '#dc3545';
-			}
-			var state = {value:count, name:valueName, itemStyle : {color : color}};
-			chartData.push(state);
+			chartData.push(count);
 		}
+
 		setStationChartData(chartData);
 	});
 }
@@ -219,59 +209,110 @@ $('#editStationModal').on('show.bs.modal', function(event) {
 	}
 });
 
-function initStationChart() {
+function initStationChart2() {
 	// var chart = $('#div-station-chart');
 	var domChart = document.getElementById('div-station-chart');
 	var normalCount = domChart.getAttribute('data-station-normal');
 	var offlineCount = domChart.getAttribute('data-station-offline');
 	var alarmCount = domChart.getAttribute('data-station-alarm');
+	var unset = domChart.getAttribute('data-station-unset');
+
+//	normalCount = 10;
+//	offlineCount = 3;
+//	alarmCount = 1;
+//	unset = 1;
+
 	stationStateChart = echarts.init(domChart);
 	option = {
 		// 全局调色盘。#28a745(success)
-//		color : [ '#71C671', '#dc3545', '#FF7F00' ],
+		color : [ '#dc3545', '#FF7F00', '#5CACEE', '#71C671' ],
 		title : {
-	        subtext: '站点状态'
-	    },
-		tooltip : {
-			trigger : 'item'
+			subtext : '站点状态'
 		},
-
+		legend : {
+			itemWidth : 10,
+			itemHeight : 10,
+			itemGap : 5,
+			y : 'bottom',
+			data : [ '异常', '离线', '正常', '未配置' ]
+		},
+		grid : {
+			top : '20%',
+			bottom : '13%',
+			containLabel : true
+		},
+		xAxis : {
+			type : 'value',
+			minInterval: 1,
+			boundaryGap : [ 0, 0.01 ]
+		},
+		yAxis : {
+			type : 'category'
+		},
 		series : [ {
-			name : '状态',
-			type : 'pie',
-			radius : '60%',
-			center : [ '50%', '50%' ],
-			data : [ {
-				itemStyle : {
-					color : '#71C671'
-				},
-				value : normalCount,
-				name : '正常' + normalCount
-			}, {
-				itemStyle : {
-					color : '#dc3545'
-				},
-				value : alarmCount,
-				name : '异常' + alarmCount
-			}, {
-				itemStyle : {
-					color : '#FF7F00'
-				},
-				value : offlineCount,
-				name : '离线' + offlineCount
-			} ]
+			name : '异常',
+			type : 'bar',
+			label : {
+				normal : {
+					show : true,
+					position : 'inside'
+				}
+			},
+			data : [ alarmCount ]
+		}, {
+			name : '离线',
+			type : 'bar',
+			label : {
+				normal : {
+					show : true,
+					position : 'inside'
+				}
+			},
+			data : [ offlineCount ]
+		}, {
+			name : '未配置',
+			type : 'bar',
+			label : {
+				normal : {
+					show : true,
+					position : 'inside'
+				}
+			},
+			data : [ unset ]
+		}, {
+			name : '正常',
+			type : 'bar',
+			label : {
+				normal : {
+					show : true,
+					position : 'inside'
+				}
+			},
+			data : [ normalCount ]
 		} ]
+
 	};
 	stationStateChart.setOption(option);
 }
 
-function setStationChartData(data) {
+function setStationChartData(dataValue) {
+	// var option = {
+	// series : [ {
+	// data : data
+	// } ]
+	// };
+
 	var option = {
-//			color : [ '#71C671', '#dc3545', '#FF7F00' ],
-			series : [ {
-				data : data
-			} ]
-		};
+		series : [ {
+			data : [ dataValue[0] ]
+		}, {
+			data : [ dataValue[1] ]
+		}, {
+			data : [ dataValue[2] ]
+		}, {
+			data : [ dataValue[3] ]
+		} ]
+	};
 	stationStateChart.setOption(option);
 }
 
@@ -291,7 +332,7 @@ $('#stationInfoModal').on('show.bs.modal', function(event) {
 	modal.find('#modal_lng').text('');
 	modal.find('#modal_tel').text('');
 	modal.find('#modal_remark').text('');
-	
+
 	modal.find('#stationInfoModalTitle').text(title);
 	modal.find('#modal_address').text(address);
 	modal.find('#modal_lat').text(lat);

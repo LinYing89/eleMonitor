@@ -9,8 +9,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import com.bairock.eleMonitor.Util;
@@ -31,7 +33,9 @@ public class Device implements Comparable<Device> {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	private String place = "";
+	@OneToOne
+	@JoinColumn(name = "place_id")
+	private Place place;
 
 	private String name;
 
@@ -61,7 +65,7 @@ public class Device implements Comparable<Device> {
 	private String remark = "";
 
 	private float value;
-	
+
 	private DeviceCategory deviceCategory = DeviceCategory.DEFAULT;
 
 	@ManyToOne
@@ -79,7 +83,7 @@ public class Device implements Comparable<Device> {
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference("device_history")
 	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
-	
+
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JsonManagedReference("device_linkage")
 	private List<Linkage> listLinkage = new ArrayList<>();
@@ -106,14 +110,16 @@ public class Device implements Comparable<Device> {
 		this.id = id;
 	}
 
-	public String getPlace() {
+	public Place getPlace() {
+		if (null == place) {
+			place = new Place();
+			place.setName("无");
+		}
 		return place;
 	}
 
-	public void setPlace(String place) {
-		if (null != place) {
-			this.place = place;
-		}
+	public void setPlace(Place place) {
+		this.place = place;
 	}
 
 	public String getName() {
@@ -251,10 +257,10 @@ public class Device implements Comparable<Device> {
 			this.value = value;
 			changed = true;
 		}
-		//分析连锁, 先连锁, 连锁可能导致报警
-		//不论值有没有改变, 都要检查连锁, 防止有漏掉的没有触发的连锁
+		// 分析连锁, 先连锁, 连锁可能导致报警
+		// 不论值有没有改变, 都要检查连锁, 防止有漏掉的没有触发的连锁
 		analysisLinkage();
-		if(changed) {
+		if (changed) {
 			if (null != onValueListener) {
 				onValueListener.onValueChanged(this, value);
 			}
@@ -319,7 +325,7 @@ public class Device implements Comparable<Device> {
 	public List<Effect> getListTriggedEffect() {
 		return listTriggedEffect;
 	}
-	
+
 	public void clearListTriggedEffect() {
 		listTriggedEffect.clear();
 	}
@@ -352,11 +358,11 @@ public class Device implements Comparable<Device> {
 
 	private void analysisLinkage() {
 		clearListTriggedEffect();
-		//List<Effect> listEffect = new ArrayList<>();
+		// List<Effect> listEffect = new ArrayList<>();
 		boolean alarm = false;
-		for(Linkage linkage : listLinkage) {
-			if(linkage.compareResult()) {
-				if(linkage.isAlarming() && !alarm) {
+		for (Linkage linkage : listLinkage) {
+			if (linkage.compareResult()) {
+				if (linkage.isAlarming() && !alarm) {
 					alarm = true;
 				}
 				listTriggedEffect.addAll(linkage.getListEffect());
@@ -369,18 +375,18 @@ public class Device implements Comparable<Device> {
 //			}
 //		}
 	}
-	
+
 	public void addLinkage(Linkage linkage) {
 		if (null != linkage && !listLinkage.contains(linkage)) {
 			linkage.setDevice(this);
 			listLinkage.add(linkage);
 		}
 	}
-	
+
 	public void removeLinkage(Linkage linkage) {
 		listLinkage.remove(linkage);
 	}
-	
+
 	public void addEventMessage(DeviceEventMessage event) {
 		if (null != event && !listEventMessage.contains(event)) {
 			event.setDevice(this);
@@ -454,7 +460,7 @@ public class Device implements Comparable<Device> {
 		 */
 		void onValueReceived(Device device, float value);
 	}
-	
+
 	public interface OnLinkageTriggeredListener {
 		/**
 		 * 设备值改变

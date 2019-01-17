@@ -20,6 +20,11 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	@Cacheable(value="user", key="#name")
+	public User findByUsername(String name) {
+		return userRepository.findByUsername(name);
+	}
+	
+	@Cacheable(value="user", key="#name")
 	public User findByNameAndPassword(String name, String password) {
 		return userRepository.findByUsernameAndPassword(name, password);
 	}

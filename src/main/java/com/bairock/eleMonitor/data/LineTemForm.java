@@ -8,16 +8,17 @@ package com.bairock.eleMonitor.data;
  */
 public class LineTemForm implements Comparable<LineTemForm> {
 
-	private String place = "";
+	private Place place;
+	
 	private Device deviceA;
 	private Device deviceB;
 	private Device deviceC;
 
-	public String getPlace() {
+	public Place getPlace() {
 		return place;
 	}
 
-	public void setPlace(String place) {
+	public void setPlace(Place place) {
 		if (null != place) {
 			this.place = place;
 		}
@@ -53,7 +54,7 @@ public class LineTemForm implements Comparable<LineTemForm> {
 			return -1;
 		}
 
-		return this.place.compareTo(o.place);
+		return this.place.getName().compareTo(o.place.getName());
 	}
 
 }

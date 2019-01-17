@@ -129,6 +129,7 @@ public class Station {
 		//substation有一个报警, 则station为报警
 		//否则substation有一个离线, 则station为离线
 		//否则station为正常
+		boolean setted = false;
 		for(Substation substation : listSubstation) {
 			StationState ss = substation.refreshState();
 			
@@ -138,8 +139,16 @@ public class Station {
 			}else if(ss == StationState.OFFLINE) {
 				setState(StationState.OFFLINE);
 				return;
+			}else if(ss != StationState.UNSET && !setted) {
+				//如果不是报警和离线, 也不是未配置, 则为已配置状态, 如果有一个变电站配置了, 则站点为配置状态
+				setted = true;
 			}
 			
+		}
+		//如果所有变电站都没有配置, 则站点为未配置状态
+		if(!setted) {
+			setState(StationState.UNSET);
+			return;
 		}
 		setState(StationState.NORMAL);
 	}
