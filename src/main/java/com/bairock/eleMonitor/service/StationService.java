@@ -92,18 +92,24 @@ public class StationService {
 		}
 		return station;
 	}
-
-	public List<Station> findAllByUserId(long userId) {
-		List<Station> listDb = stationRepository.findAllByUserId(userId);
-		List<Station> list = new ArrayList<Station>();
-		for (Station station : listDb) {
-			Station s = self.findStation(station.getId());
-			if (null != s) {
-				list.add(s);
-			}
-		}
-		return list;
+	
+	public Station findByIdNoCache(long id) {
+		Optional<Station> option = stationRepository.findById(id);
+		Station station = option.orElse(null);
+		return station;
 	}
+
+//	public List<Station> findAllByUserId(long userId) {
+//		List<Station> listDb = stationRepository.findAllByUserId(userId);
+//		List<Station> list = new ArrayList<Station>();
+//		for (Station station : listDb) {
+//			Station s = self.findStation(station.getId());
+//			if (null != s) {
+//				list.add(s);
+//			}
+//		}
+//		return list;
+//	}
 
 	public List<Station> findAll() {
 		List<Station> listDb = stationRepository.findAll();

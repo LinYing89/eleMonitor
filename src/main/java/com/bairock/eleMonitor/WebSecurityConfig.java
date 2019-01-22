@@ -27,9 +27,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/login", "/css/**", "/img/**", "/js/**", "/webjars/**").permitAll()
-				.antMatchers("/map").hasRole("MAP").anyRequest().authenticated().and().formLogin().loginPage("/login")
-				.defaultSuccessUrl("/loginSuccess", true).permitAll().and().logout().permitAll();
+		http.authorizeRequests()
+				.antMatchers("/map").hasRole("MAP")
+				.antMatchers("/login", "/css/**", "/img/**", "/js/**", "/webjars/**").permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.formLogin().loginPage("/login").defaultSuccessUrl("/loginSuccess", true).permitAll()
+				.and().rememberMe().key("eleMonitorKey");
+//				.and().csrf().disable();
+//		http.authorizeRequests().antMatchers("/login", "/css/**", "/img/**", "/js/**", "/webjars/**").permitAll()
+//		.antMatchers("/map").hasRole("MAP").anyRequest().authenticated().and().formLogin().loginPage("/login")
+//		.defaultSuccessUrl("/loginSuccess", true).permitAll().and().rememberMe().key("eleMonitorKey").and().csrf().disable().logout().permitAll();
 		
 //		http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
 	}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- 传值 -->
+<!-- listUser:List<User>-->
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<!-- <link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.css" /> -->
+<link href="/bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/devices/deviceRoot.css" />
+<link rel="stylesheet" href="/css/devices/substation3.css" />
+
+<title>用户</title>
+
+</head>
+
+<body>
+	<nav
+		class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-sm">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">电站智能辅助监控系统</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<div class="w-100">
+				<ul class="navbar-nav px-3">
+					<li class="nav-item"><a class="nav-link" href="/map">地图</a></li>
+				</ul>
+			</div>
+			<ul class="navbar-nav px-3">
+				<li class="nav-item dropdown text-nowrap"><a
+					class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+					role="button" data-toggle="dropdown" aria-haspopup="true"
+					aria-expanded="false"> admin </a>
+					<div class="dropdown-menu dropdown-menu-right"
+						aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="#">个人资料</a> <a
+							class="dropdown-item" href="#">退出</a>
+					</div></li>
+			</ul>
+		</div>
+
+	</nav>
+
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<div class="col-2 d-none d-md-block bg-light sidebar">
+				<div class="sidebar-sticky">
+					<div class="nav flex-column nav-pills">
+						<a class="nav-link active" href="#">系统用户管理</a> <a class="nav-link"
+							href="#">权限管理</a>
+					</div>
+				</div>
+			</div>
+
+			<div role="main" class="col-10 ml-sm-auto pl-4">
+				<div class="row">
+					<button type="button" class="btn btn-info" data-toggle="modal"
+						data-option="add" data-target="#addUserModal">添加用户</button>
+				</div>
+				<div class="row">
+					<table class="table table-sm mt-2">
+						<thead class="thead-light">
+							<tr>
+								<th scope="col">账号</th>
+								<th scope="col">姓名</th>
+								<th scope="col">电话</th>
+								<th scope="col">状态</th>
+								<th scope="col">角色</th>
+								<th scope="col">单位</th>
+								<th scope="col">建档时间</th>
+								<th scope="col">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="u : ${listUser}">
+								<td th:text="${u.username}">账号</td>
+								<td th:text="${u.personName}">姓名</td>
+								<td th:text="${u.tel}">电话</td>
+								<td th:text="${u.enable ? '启用' : '禁用'}">状态</td>
+								<td th:text="${u.roles[0].description}">角色</td>
+								<td>
+<!-- 									<span th:if="${!#lists.isEmpty(u.listStation)}"  -->
+<!-- 										th:text="${u.roles[0].name != 'ROLE_ADMIN' ? u.listStation[0].name}"></span> -->
+<!-- 										<span th:if="${!#lists.isEmpty(u.listStation)}"  -->
+<!-- 										th:text="${#strings.equals('ROLE_ADMIN', 'ROLE_ADMIN') ? '123'}"></span> -->
+									<span th:if="${!#strings.equals(u.roles[0].name, 'ROLE_ADMIN')} and ${!#lists.isEmpty(u.listStation)}" th:text="${u.listStation[0].name}">123</span>
+<!-- 									<div th:if="${!#lists.isEmpty(u.listStation)}"> -->
+<!-- 									<span th:if="${!#strings.equals(u.roles[0].name, 'ROLE_ADMIN')}" th:text="${u.listStation[0].name}">123</span> -->
+<!-- 									</div> -->
+								</td>
+								<td th:text="${u.createTime}">建档时间</td>
+								<td><a href="#" data-toggle="modal"
+									data-target="#editUserModal" data-option="edit"
+									th:attr="data-username=${u.username}, data-person-name=${u.personName}, data-tel=${u.tel}, data-role-id=${u.roles[0].id}, data-enable=${u.enable}, data-remark=${u.remark}">编辑
+								</a><a class="del-msg-manager" href="#"
+									th:href="|/user/del/${u.id}|">删除</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 添加用户 -->
+	<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editUserModalTitle">添加用户</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/user/add|" method="post" onsubmit="return checkUser()">
+						<div class="form-group">
+							<label>登录账号</label> <input type="text" class="form-control"
+								name="username" required="required">
+						</div>
+						<div class="form-group">
+							<label>姓名</label> <input type="text" class="form-control"
+								name="personName" required="required">
+						</div>
+						<div class="form-group">
+							<label>密码</label> <input type="password" class="form-control"
+								name="password" required="required">
+						</div>
+						<div class="form-group">
+							<label>确认密码</label> <input type="password" class="form-control"
+								required="required">
+						</div>
+						<div class="form-group">
+							<label>手机号码</label> <input type="text" class="form-control"
+								name="tel" required="required">
+						</div>
+						<div class="form-group">
+							<label>角色</label> 
+							<select name="user.roles[0].id" class="form-control" id="select-roles-add">
+								<option value="1">系统管理员</option>
+								<option value="3">单位管理员</option>
+								<option value="2">客户</option>
+							</select>
+						</div>
+						<div class="form-group" id="div-user-station-select-add">
+							<label>单位</label> 
+							<select id="select-stations-add" name="listStation[0].id" class="form-control">
+								<option th:each="station : ${listStation}" th:value="${station.id}" th:text="${station.name}">单位</option>
+							</select>
+						</div>
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input"
+								name="enable" checked="checked"> <label class="form-check-label">启用</label>
+						</div>
+						<div class="form-group">
+							<label>备注</label> <input type="text" class="form-control"
+								name="remark">
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal 编辑用户 -->
+	<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editUserModalTitle">编辑用户</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="|/user/edit|" method="post">
+						<div class="form-group">
+							<label>登录账号</label> <input type="text" class="form-control"
+								id="input-username" name="username" required="required">
+						</div>
+						<div class="form-group">
+							<label>姓名</label> <input type="text" class="form-control"
+								id="input-person-name" name="personName" required="required">
+						</div>
+						<div class="form-group">
+							<label>手机号码</label> <input type="text" class="form-control"
+								id="input-tel" name="tel" required="required">
+						</div>
+						<div class="form-group">
+							<label>角色</label> 
+							<select id="select-roles-edit" name="roles[0].id" class="form-control">
+								<option value="1">系统管理员</option>
+								<option value="3">单位管理员</option>
+								<option value="2">客户</option>
+							</select>
+						</div>
+						<div class="form-group" id="div-user-station-select-edit">
+							<label>单位</label> 
+							<select id="select-stations-edit" name="listStation[0].id" class="form-control">
+								<option th:each="station : ${listStation}" th:value="${station.id}" th:text="${station.name}">单位</option>
+							</select>
+						</div>
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input"
+								id="check-enable" name="enable"> <label for="check-enable" class="form-check-label">启用</label>
+						</div>
+						<div class="form-group">
+							<label>备注</label> <input type="text" class="form-control"
+								id="input-remark" name="remark">
+						</div>
+						<button type="submit" class="btn btn-primary">提交</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.3.1/jquery.js"></script>
+	<script src="/webjars/popper.js/1.14.3/umd/popper.js"></script>
+	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/js/user/users.js"></script>
+
+</body>
+</html>

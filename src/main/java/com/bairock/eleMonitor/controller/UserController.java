@@ -1,27 +1,35 @@
 package com.bairock.eleMonitor.controller;
 
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.User;
 import com.bairock.eleMonitor.data.webData.UserLoginForm;
-import com.bairock.eleMonitor.repository.UserRepository;
+import com.bairock.eleMonitor.service.StationService;
+import com.bairock.eleMonitor.service.UserService;
 
 @Controller
 public class UserController {
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
+	@Autowired
+	private StationService stationService;
 	
 	@PostMapping("/login")
 	public String login(HttpServletResponse httpServletResponse, @ModelAttribute UserLoginForm userLoginForm, Model model) {
-		User user = userRepository.findByUsernameAndPassword(userLoginForm.getUserName(), userLoginForm.getPassword());
+		User user = userService.findByNameAndPassword(userLoginForm.getUserName(), userLoginForm.getPassword());
 		if(null != user) {
 			
 			//保存名称cookie
@@ -55,5 +63,32 @@ public class UserController {
 			model.addAttribute("error", "用户名或密码错误");
 			return "login";
 		}
+	}
+	
+	@GetMapping("/user/page/all")
+	public String getUsers(Model model) {
+		List<Station> listStation = stationService.findAll();
+		List<User> list = userService.findAll();
+		model.addAttribute("listUser", list);
+		model.addAttribute("listStation", listStation);
+		return "sysset/users";
+	}
+	
+	@PostMapping("/user/add")
+	public String addUser(@ModelAttribute User user) {
+		userService.addUser(user);
+		return "redirect:/user/page/all";
+	}
+	
+	@GetMapping("/user/del/{userId}")
+	public String delUser(@PathVariable long userId) {
+		userService.deleteUser(userId);
+		return "redirect:/user/page/all";
+	}
+	
+	@PostMapping("/user/edit")
+	public String editUser(@ModelAttribute User user) {
+		userService.editUser(user);
+		return "redirect:/user/page/all";
 	}
 }

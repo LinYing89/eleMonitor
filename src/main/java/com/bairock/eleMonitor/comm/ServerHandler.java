@@ -115,29 +115,28 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		errResult.setHead(Util.bytesToHexString(byHead));
 		int managerNum = Util.bytesToInt(new byte[] {byOne[2], byOne[3], byOne[4], byOne[5]});
 //		int managerNum = (byOne[2] << 24) | (byOne[3] << 16) | (byOne[4] << 8) | byOne[5];
-		if(msgManager == null) {
-			MsgManager mm = msgManagerService.findByMsgManagerCode(managerNum);
+		MsgManager mm = msgManagerService.findByMsgManagerCode(managerNum);
 
-			if (mm == null) {
-				errResult.setCode(NetMessageResultEnum.UNKNOW_MANAGER.getCode());
-				errResult.setMessage(NetMessageResultEnum.UNKNOW_MANAGER.getMessage() + managerNum);
-				logger.error(errResult.getMessage());
-				List<byte[]> list;
-				try {
-					list = MsgManager.analysisEveryOrder(by);
-					for(byte[] by1 : list) {
-						errResult.getListOne().add(Util.bytesToHexString(by1));
-					}
-				} catch (Exception e) {
-					errResult.setCode(NetMessageResultEnum.UNKNOW.getCode());
-					errResult.setMessage(e.getMessage());
-//					e.printStackTrace();
+		if (mm == null) {
+			errResult.setCode(NetMessageResultEnum.UNKNOW_MANAGER.getCode());
+			errResult.setMessage(NetMessageResultEnum.UNKNOW_MANAGER.getMessage() + managerNum);
+			logger.error(errResult.getMessage());
+			List<byte[]> list;
+			try {
+				list = MsgManager.analysisEveryOrder(by);
+				for(byte[] by1 : list) {
+					errResult.getListOne().add(Util.bytesToHexString(by1));
 				}
-				//testService.broadcastReceived(result);
-				return errResult;
-			}else {
+			} catch (Exception e) {
+				errResult.setCode(NetMessageResultEnum.UNKNOW.getCode());
+				errResult.setMessage(e.getMessage());
+//					e.printStackTrace();
+			}
+			//testService.broadcastReceived(result);
+			return errResult;
+		}else {
+			if(msgManager != mm) {
 				msgManager = mm;
-//				msgManager.setMsgManagerState(MsgManagerState.SUCCESS);
 				//添加状态监听器
 				msgManager.addMsgManagerStateChangedListener(onMsgManagerStateChangedListener);
 				msgManager.setMsgManagerState(MsgManagerState.SUCCESS);

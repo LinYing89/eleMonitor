@@ -2,6 +2,8 @@ package com.bairock.eleMonitor;
 
 import java.math.BigDecimal;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 public class Util {
 
 	public static String bytesToHexString(byte[] src) {
@@ -37,5 +39,11 @@ public class Util {
 			value = value << 8 | (by[i] & 0xff);
 		}
 		return value;
+	}
+	
+	public static String encodePassword(String password) {
+		BCryptPasswordEncoder bcry = new BCryptPasswordEncoder();
+		String hashpw = bcry.encode(password);
+		return hashpw;
 	}
 }

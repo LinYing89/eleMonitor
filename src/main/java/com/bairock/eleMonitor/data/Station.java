@@ -10,7 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -46,9 +46,9 @@ public class Station {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date registerTime;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy="listStation")
 	@JsonBackReference("user_station")
-	private User user;
+	private List<User> listUser = new ArrayList<>();
 	
 	@OneToMany(mappedBy="station", cascade=CascadeType.ALL, orphanRemoval=true)
 	@JsonManagedReference("station_substation")
@@ -153,18 +153,36 @@ public class Station {
 		setState(StationState.NORMAL);
 	}
 	
-	public User getUser() {
-		return user;
+	public List<User> getListUser() {
+		return listUser;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setListUser(List<User> listUser) {
+		this.listUser = listUser;
 	}
-	
 	public OnStateChangedListener getOnStateChangedListener() {
 		return onStateChangedListener;
 	}
 	public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
 		this.onStateChangedListener = onStateChangedListener;
+	}
+	
+	public void addUser(User user) {
+		if(null != user) {
+			boolean haved = false;
+			for(User u : listUser) {
+				if(u.getId() == user.getId()) {
+					haved = true;
+					break;
+				}
+			}
+			if(!haved) {
+				listUser.add(user);
+			}
+		}
+	}
+	
+	public void removeUser(User user) {
+		listUser.remove(user);
 	}
 	
 	public Substation addSubstation(Substation substation) {

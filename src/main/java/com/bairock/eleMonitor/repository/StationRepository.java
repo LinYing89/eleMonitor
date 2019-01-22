@@ -1,7 +1,5 @@
 package com.bairock.eleMonitor.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.bairock.eleMonitor.data.Station;
@@ -13,5 +11,5 @@ import com.bairock.eleMonitor.data.Station;
  */
 public interface StationRepository extends JpaRepository<Station, Long> {
 
-	List<Station> findAllByUserId(long id);
+//	List<Station> findAllByUserId(long id);
 }
