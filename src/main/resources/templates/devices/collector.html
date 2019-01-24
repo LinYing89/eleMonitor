@@ -88,6 +88,7 @@
 							<th scope="col">数据宽度</th>
 							<th scope="col">字节顺序</th>
 							<th scope="col">数据类型</th>
+							<th scope="col">数据分类</th>
 							<th scope="col">数据格式</th>
 							<th scope="col">系数</th>
 							<th scope="col">单位</th>
@@ -103,6 +104,7 @@
 							<td th:text="${device.dataLength}">2</td>
 							<td th:text="${device.byteOrder}">12</td>
 							<td th:text="${device.valueType.info}">浮点数</td>
+							<td th:text="${device.deviceCategory.name}">数据分类</td>
 							<td th:text="${device.valueFormat.info}">绝对值</td>
 							<td th:text="${device.coefficient}">0.01</td>
 							<td th:text="${device.unit}">℃</td>
@@ -172,6 +174,7 @@
 									<option value="SWITCH">开关量</option>
 									<option value="ALARM">报警</option>
 									<option value="VALUE">数值量</option>
+									<option value="ELE">电力</option>
 								</select>
 							</div>
 							<div class="form-group col-6">
@@ -209,6 +212,10 @@
 								<label class="col-form-label">设备类别</label> <select
 									class="form-control" name="deviceCategory" id="deviceCategory">
 									<option value="DEFAULT">无</option>
+									<option value="VOLTAGE">电压</option>
+									<option value="CURRENT">电流</option>
+									<option value="FACTOR">功率因数</option>
+									<option value="RESIDUE_ELE">剩余电流</option>
 									<option value="DOOR">门控</option>
 								</select>
 							</div>

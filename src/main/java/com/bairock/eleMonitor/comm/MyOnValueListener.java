@@ -9,7 +9,9 @@ import com.bairock.eleMonitor.data.Device.OnValueListener;
 import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.DeviceValueHistory;
 import com.bairock.eleMonitor.data.ValueType;
+import com.bairock.eleMonitor.data.webData.DevWebClimateData;
 import com.bairock.eleMonitor.data.webData.DevWebData;
+import com.bairock.eleMonitor.data.webData.DevWebEleData;
 import com.bairock.eleMonitor.service.DeviceEventMessageService;
 import com.bairock.eleMonitor.service.DeviceService;
 import com.bairock.eleMonitor.service.DeviceValueHistoryService;
@@ -22,10 +24,33 @@ public class MyOnValueListener implements OnValueListener {
 
 	@Override
 	public void onValueChanged(Device device, float value) {
-		DevWebData data = new DevWebData();
-		data.setDevId(device.getId());
-		data.setValue(device.getValue());
-		data.setValueString(device.getValueString());
+		DevWebData webData = null;
+		if(device.getValueType() == ValueType.ELE) {
+			webData = new DevWebEleData();
+		}else {
+			webData = new DevWebClimateData();
+		}
+		webData.setDevId(device.getId());
+		webData.setValue(device.getValue());
+		webData.setValueString(device.getValueString());
+		long substationId = device.getCollector().getMsgManager().getSubstation().getId();
+		webData.setValueType(device.getValueType());
+		//是电力数据
+		if (device.getValueType() == ValueType.ELE) {
+			String phaseNum = "";
+			if(device.getName().contains("A")) {
+				phaseNum = "a";
+			}else if(device.getName().contains("B")) {
+				phaseNum = "b";
+			}else{
+				phaseNum = "c";
+			}
+			((DevWebEleData)webData).setPhaseNum(phaseNum);
+			deviceService.broadcastValueChanged(substationId, webData);
+			return;
+		}
+		
+		DevWebClimateData data = (DevWebClimateData)webData;
 		if (device.getDeviceGroup() != null) {
 			data.setHaveDevGroup(device.getDeviceGroup() != null);
 			data.setDevGroupId(device.getDeviceGroup().getId());
@@ -48,7 +73,6 @@ public class MyOnValueListener implements OnValueListener {
 			}
 		}
 		data.setNormal(true);
-		long substationId = device.getCollector().getMsgManager().getSubstation().getId();
 		deviceService.broadcastValueChanged(substationId, data);
 
 		try {

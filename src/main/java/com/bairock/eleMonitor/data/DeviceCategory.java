@@ -8,7 +8,11 @@ package com.bairock.eleMonitor.data;
 public enum DeviceCategory {
 
 	DEFAULT(0, "无"),
-	DOOR(1, "门控");
+	VOLTAGE(1, "电压"),
+	CURRENT(2, "电流"),
+	FACTOR(3, "功率因数"),
+	RESIDUE_ELE(4, "剩余电流"),
+	DOOR(10, "门控");
 	
 	private int code;
 	private String name;

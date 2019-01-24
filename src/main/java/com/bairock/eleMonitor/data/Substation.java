@@ -284,7 +284,7 @@ public class Substation {
 		for (MsgManager manager : listMsgManager) {
 			for (Collector collector : manager.getListCollector()) {
 				for (Device dev : collector.getListDevice()) {
-					if (dev.getValueType() != ValueType.SWITCH) {
+					if (dev.getValueType() == ValueType.VALUE || dev.getValueType() == ValueType.ALARM) {
 						listDevices.add(dev);
 					}
 				}
@@ -298,7 +298,7 @@ public class Substation {
 		for (MsgManager manager : listMsgManager) {
 			for (Collector collector : manager.getListCollector()) {
 				for (Device dev : collector.getListDevice()) {
-					if (dev.getValueType() != ValueType.SWITCH && dev.getDeviceGroup() == null) {
+					if ((dev.getValueType() == ValueType.VALUE || dev.getValueType() == ValueType.ALARM) && dev.getDeviceGroup() == null) {
 						listDevices.add(dev);
 					}
 				}
@@ -310,7 +310,7 @@ public class Substation {
 	public List<DeviceGroup> findValueDeviceGroup() {
 		List<DeviceGroup> listGroup = new ArrayList<>();
 		for (DeviceGroup group : listDeviceGroup) {
-			if (group.getValueType() != ValueType.SWITCH && !group.isLineTem()) {
+			if ((group.getValueType() == ValueType.VALUE || group.getValueType() == ValueType.ALARM) && !group.isLineTem()) {
 				listGroup.add(group);
 			}
 		}
@@ -321,6 +321,20 @@ public class Substation {
 		List<DeviceGroup> listGroup = new ArrayList<>();
 		for (DeviceGroup group : listDeviceGroup) {
 			if (group.isLineTem()) {
+				listGroup.add(group);
+			}
+		}
+		return listGroup;
+	}
+	
+	/**
+	 * 获取所有电力数据组
+	 * @return
+	 */
+	public List<DeviceGroup> findEleDeviceGroup(){
+		List<DeviceGroup> listGroup = new ArrayList<>();
+		for (DeviceGroup group : listDeviceGroup) {
+			if (group.getValueType() == ValueType.ELE) {
 				listGroup.add(group);
 			}
 		}

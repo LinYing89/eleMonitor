@@ -9,7 +9,8 @@ public enum ValueType {
 
 	SWITCH(1, "开关量"),
 	ALARM(2, "报警"),
-	VALUE(3, "数值量");
+	VALUE(3, "数值量"),
+	ELE(4, "电力");
 	
 	private int code;
 	private String info;

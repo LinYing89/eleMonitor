@@ -173,14 +173,41 @@ function initWebSocket() {
 		console.info("stompClient connected");
 		var topicDevState = "/topic/" + substationId + "/devState";
 		stompClient.subscribe(topicDevState, handlerDevState);
+		//订阅电力数据
+//		var topicDevState = "/topic/" + substationId + "/devEle";
+//		stompClient.subscribe(topicDevState, handlerDevEle);
 		var topicDevEvent = "/topic/" + substationId + "/devEvent";
 		stompClient.subscribe(topicDevEvent, handlerDevEvent);
 	});
 
 }
 
+//function handlerDevEle(message){
+//	var devEle = JSON.parse(message.body);
+//	
+//}
+
 function handlerDevState(message) {
 	var devState = JSON.parse(message.body);
+	if(devState.valueType == 'ELE'){
+		var phaseNum = devState.phaseNum;
+		$("#" + devState.devId).text(devState.valueString);
+		//找到tr父元素
+		var tr = $("#" + devState.devId).parent().parent().parent();
+		//找到tr元素下的对应相的电压电流因数值
+//		var className = ".p" + phaseNum + "-u";
+////		var dpu = tr.children(className);
+//		var dpu = tr.children().children(".pa-u");
+//		var txt = dpu.text();
+		var pu = tr.find(".p" + phaseNum + "-u").text();
+		var pi = tr.find(".p" + phaseNum + "-i").text();
+		var pf = tr.find(".p" + phaseNum + "-f").text();
+		var power = pu * pi * pf/ 1000;
+		//保留两位小数, 四舍五入
+		tr.find(".p" + phaseNum + "-p").text(power.toFixed(2));
+		return;
+	}
+	
 	var card = null;
 	if (devState.haveDevGroup) {
 		card = $("#card-group-" + devState.devGroupId);

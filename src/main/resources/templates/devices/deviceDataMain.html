@@ -367,24 +367,76 @@
 						<table class="table table-sm">
 							<thead>
 								<tr>
-									<th scope="col">设备名</th>
-									<th scope="col">1#</th>
-									<th scope="col">1#</th>
-									<th scope="col">1#</th>
+									<th scope="col">组名</th>
+									<th scope="col">相号</th>
+									<th scope="col">电压</th>
+									<th scope="col">电流</th>
+									<th scope="col">有功功率</th>
+									<th scope="col">功率因数</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<th scope="row">1</th>
-									<td>Mark</td>
-									<td>Otto</td>
-									<td>@mdo</td>
-								</tr>
-								<tr>
-									<th scope="row">1</th>
-									<td>Mark</td>
-									<td>Otto</td>
-									<td>@mdo</td>
+								<tr th:each="cable : ${listCable}">
+									<td th:text="${cable.groupName}">组名</td>
+									<td>
+										<div>A相</div>
+										<div>B相</div>
+										<div>C相</div>
+									</td>
+									<td>
+										<div>
+											<span class="pa-u" th:id="${cable.phaseA.voltageId}" th:text="${cable.phaseA.voltage}">A相电压</span>
+											<span>V</span>
+										</div>
+										<div>
+											<span class="pb-u" th:id="${cable.phaseB.voltageId}" th:text="${cable.phaseB.voltage}">B相电压</span>
+											<span>V</span>
+										</div>
+										<div>
+											<span class="pc-u" th:id="${cable.phaseC.voltageId}" th:text="${cable.phaseC.voltage}">C相电压</span>
+											<span>V</span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<span class="pa-i" th:id="${cable.phaseA.currentId}" th:text="${cable.phaseA.current}">A相电流</span>
+											<span>A</span>
+										</div>
+										<div>
+											<span class="pb-i" th:id="${cable.phaseB.currentId}" th:text="${cable.phaseB.current}">B相电流</span>
+											<span>A</span>
+										</div>
+										<div>
+											<span class="pc-i" th:id="${cable.phaseC.currentId}" th:text="${cable.phaseC.current}">C相电流</span>
+											<span>A</span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<span class="pa-p" th:text="${cable.phaseA.power}">A相有功功率</span>
+											<span>kW</span>
+										</div>
+										<div>
+											<span class="pb-p" th:text="${cable.phaseB.power}">B相有功功率</span>
+											<span>kW</span>
+										</div>
+										<div>
+											<span class="pc-p" th:text="${cable.phaseC.power}">C相有功功率</span>
+											<span>kW</span>
+										</div>
+									</td>
+									<td>
+										<div>
+											<span class="pa-f" th:id="${cable.phaseA.factorId}" th:text="${cable.phaseA.factor}">A相功率因数</span>
+										</div>
+										<div>
+											<span class="pb-f" th:id="${cable.phaseB.factorId}" th:text="${cable.phaseB.factor}">B相功率因数</span>
+										</div>
+										<div>
+											<span class="pc-f" th:id="${cable.phaseC.factorId}" th:text="${cable.phaseC.factor}">C相功率因数</span>
+										</div>
+									</td>
+									
 								</tr>
 							</tbody>
 						</table>

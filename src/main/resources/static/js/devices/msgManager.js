@@ -39,7 +39,7 @@ $('#editCollectorModal').on('show.bs.modal', function(event) {
 	if (target.data('option') == 'add') {
 		title.text("添加采集终端");
 		var msgManagerId = target.data('msg-manager-id')
-		modal.find('form').attr('action', '/collector/' + msgManagerId)
+		modal.find('form').attr('action', '/collector/add/' + msgManagerId)
 	} else {
 		title.text("编辑采集终端");
 		var id = target.data('id')

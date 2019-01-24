@@ -178,10 +178,10 @@ public class Collector {
 			break;
 		case 3:
 		case 4:
-			// 数值量, 温度等, 按字节计算, 配置的数据长度位寄存器长度, 一个寄存器2个字节
+			// 数值/电力量, 温度等, 按字节计算, 配置的数据长度位寄存器长度, 一个寄存器2个字节
 			// 返回的数据为字节的长度, 返回的长度应为dataLength*2
 			for (Device device : listDevice) {
-				if (device.getValueType() == ValueType.VALUE) {
+				if (device.getValueType() == ValueType.VALUE || device.getValueType() == ValueType.ELE) {
 					// 地址为寄存器的地址, *2为字节的起始地址
 					int from = (device.getBeginAddress() - this.beginAddress) * 2;
 					if (from >= 0 && from < byData.length) {

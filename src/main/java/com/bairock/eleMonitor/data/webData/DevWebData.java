@@ -1,5 +1,7 @@
 package com.bairock.eleMonitor.data.webData;
 
+import com.bairock.eleMonitor.data.ValueType;
+
 /**
  * 发往网页的bean
  * @author 44489
@@ -13,17 +15,8 @@ public class DevWebData {
 	private float value;
 	//值字符串
 	private String valueString;
-	//是否有组
-	private boolean haveDevGroup;
-	//组id
-	private long devGroupId;
-	//是否正常
-	private boolean normal;
-	//是否告警
-	private boolean alarm;
-	//是否是开关量
-	private boolean onOff;
-	
+	private ValueType valueType = ValueType.VALUE;
+
 	public long getDevId() {
 		return devId;
 	}
@@ -36,41 +29,18 @@ public class DevWebData {
 	public void setValue(float value) {
 		this.value = value;
 	}
-	public boolean isHaveDevGroup() {
-		return haveDevGroup;
+	public ValueType getValueType() {
+		return valueType;
 	}
-	public void setHaveDevGroup(boolean haveDevGroup) {
-		this.haveDevGroup = haveDevGroup;
+	public void setValueType(ValueType valueType) {
+		this.valueType = valueType;
 	}
-	public long getDevGroupId() {
-		return devGroupId;
-	}
-	public void setDevGroupId(long devGroupId) {
-		this.devGroupId = devGroupId;
-	}
-	public boolean isNormal() {
-		return normal;
-	}
-	public void setNormal(boolean normal) {
-		this.normal = normal;
-	}
-	public boolean isAlarm() {
-		return alarm;
-	}
-	public void setAlarm(boolean alarm) {
-		this.alarm = alarm;
-	}
+	
 	public String getValueString() {
 		return valueString;
 	}
 	public void setValueString(String valueString) {
 		this.valueString = valueString;
-	}
-	public boolean isOnOff() {
-		return onOff;
-	}
-	public void setOnOff(boolean onOff) {
-		this.onOff = onOff;
 	}
 	
 }

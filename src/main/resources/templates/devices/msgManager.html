@@ -124,7 +124,7 @@
 				</div>
 				<div class="modal-body">
 					<form class="p-2" th:if="${msgManager}"
-						th:action="|/collector/${msgManager.id}|" method="post">
+						th:action="|/collector/add/${msgManager.id}|" method="post">
 						<div class="form-group row">
 							<label for="substationName" class="col-sm-3 col-form-label">总线号</label>
 							<input type="text" class="form-control col-sm-9" name="busCode"

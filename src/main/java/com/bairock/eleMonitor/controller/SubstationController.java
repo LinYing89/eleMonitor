@@ -22,6 +22,8 @@ import com.bairock.eleMonitor.data.MsgManager;
 import com.bairock.eleMonitor.data.Place;
 import com.bairock.eleMonitor.data.Station;
 import com.bairock.eleMonitor.data.Substation;
+import com.bairock.eleMonitor.data.cable.EleCable;
+import com.bairock.eleMonitor.data.cable.Phase;
 import com.bairock.eleMonitor.data.webData.DeviceTreeNode;
 import com.bairock.eleMonitor.service.PlaceService;
 import com.bairock.eleMonitor.service.StationService;
@@ -78,9 +80,9 @@ public class SubstationController {
 			List<DeviceGroup> listValueGroup = substation.findValueDeviceGroup();
 			List<Device> listCtrlDevice = substation.findCtrlDeviceNoGroup();
 			List<DeviceGroup> listCtrlGroup = substation.findCtrlDeviceGroup();
+			
 			//电缆测温组, 需特殊处理
 			List<DeviceGroup> listLineTemGroup = substation.findLineTemGroup();
-			
 			//将电缆测温的组转为LineTemFormGroup组
 			List<LineTemFormGroup> listLineTemFormGroup = new ArrayList<>();
 			for(DeviceGroup devGroup : listLineTemGroup) {
@@ -94,23 +96,73 @@ public class SubstationController {
 				lineGroup.sort();
 				listLineTemFormGroup.add(lineGroup);
 			}
+			
+			//电力组特殊处理
+			List<DeviceGroup> listEleGroup = substation.findEleDeviceGroup();
+			//将电力设备组转为线缆组
+			List<EleCable> listCable = changeEleGroupToEleCableGroup(listEleGroup);
+			
 			model.addAttribute("listValueDevice", listValueDevice);
 			model.addAttribute("listValueGroup", listValueGroup);
 			model.addAttribute("listCtrlDevice", listCtrlDevice);
 			model.addAttribute("listCtrlGroup", listCtrlGroup);
 			model.addAttribute("listLineTemFormGroup", listLineTemFormGroup);
+			model.addAttribute("listCable", listCable);
 			
 //			List<DeviceEventMessage> listEvent = substation.findDeviceEventMessages();
 			List<DeviceEventMessage> listEvent = substationService.findAllEvent(substation);
 			model.addAttribute("listEvent", listEvent);
-//			List<DeviceEventMessage> list = deviceEventMessageService.findTodayEvent();
-//			for(DeviceEventMessage d : list) {
-//				System.out.println(d.getMessage());
-//			}
 		}
 		
-//		return "substation/substation3";
 		return "devices/deviceDataMain";
+	}
+	
+	//将电力设备组转为线缆组
+	private List<EleCable> changeEleGroupToEleCableGroup(List<DeviceGroup> listEleGroup) {
+		List<EleCable> listCable = new ArrayList<>();
+		//一个电力组一条线缆
+		for(DeviceGroup group : listEleGroup) {
+			EleCable cable = new EleCable();
+			cable.setGroupName(group.getName());
+			listCable.add(cable);
+			//一条线缆3相
+			Phase pa = new Phase();
+			Phase pb = new Phase();
+			Phase pc = new Phase();
+			cable.setPhaseA(pa);
+			cable.setPhaseB(pb);
+			cable.setPhaseC(pc);
+			//一相采集3个值, 电压, 电流, 功率因数
+			for(Device dev : group.getListDevice()) {
+				if(dev.getName().contains("A")) {
+					setPhaseValue(pa, dev);
+				}else if(dev.getName().contains("B")) {
+					setPhaseValue(pb, dev);
+				}else if(dev.getName().contains("C")) {
+					setPhaseValue(pc, dev);
+				}
+			}
+		}
+		return listCable;
+	}
+	
+	private void setPhaseValue(Phase phase, Device dev) {
+		switch(dev.getDeviceCategory()) {
+		case VOLTAGE:
+			phase.setVoltage(dev.getValue());
+			phase.setVoltageId(dev.getId());
+			break;
+		case CURRENT:
+			phase.setCurrent(dev.getValue());
+			phase.setCurrentId(dev.getId());
+			break;
+		case FACTOR:
+			phase.setFactor(dev.getValue());
+			phase.setFactorId(dev.getId());
+			break;
+		default:
+			break;
+		}
 	}
 	
 	@ResponseBody
