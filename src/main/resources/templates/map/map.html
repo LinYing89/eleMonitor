@@ -44,8 +44,10 @@
 					aria-expanded="false"> admin </a>
 					<div class="dropdown-menu dropdown-menu-right"
 						aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="#">个人资料</a> <a
-							class="dropdown-item" href="#" th:href="@{/logout}">退出</a>
+						<a class="dropdown-item" href="#">个人资料</a>
+						<form action="#" th:action="@{/logout}" method="post">
+							<button type="submit" class="dropdown-item btn btn-link">退出</button>
+						</form>
 					</div></li>
 			</ul>
 		</div>

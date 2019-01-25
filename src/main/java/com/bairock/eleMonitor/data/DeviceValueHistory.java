@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 设备历史纪录
@@ -27,7 +28,8 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 	private long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonBackReference("device_history")
+//	@JsonBackReference("device_history")
+	@JsonIgnore
 	private Device device;
 	
 	@Temporal(TemporalType.TIMESTAMP)

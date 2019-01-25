@@ -77,11 +77,13 @@ public class Device implements Comparable<Device> {
 	private Collector collector;
 
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference("device_event")
+//	@JsonManagedReference("device_event")
+	@JsonIgnore
 	private List<DeviceEventMessage> listEventMessage = new ArrayList<>();
 
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-	@JsonManagedReference("device_history")
+//	@JsonManagedReference("device_history")
+	@JsonIgnore
 	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
 
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -98,8 +100,10 @@ public class Device implements Comparable<Device> {
 	private boolean alarming;
 
 	@Transient
+	@JsonIgnore
 	private OnValueListener onValueListener;
 	@Transient
+	@JsonIgnore
 	private OnLinkageTriggeredListener onLinkageTriggeredListener;
 
 	public long getId() {

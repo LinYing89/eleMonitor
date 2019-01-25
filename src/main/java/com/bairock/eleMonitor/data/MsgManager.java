@@ -199,9 +199,9 @@ public class MsgManager {
 				throw new NetMessageException(NetMessageResultEnum.DATA_LENGTH_ZERO);
 			}
 			index += 2;
-			// 数据,索引6, 长度dataLen
+			// 数据,索引6, 长度dataLen, -1是去掉功能吗
 			byte[] byteData = Arrays.copyOfRange(byAllData, index, index + dataLen - 1);
-			//值类型
+			//值类型, 获取功能吗
 			byte[] byValueType = Arrays.copyOfRange(byAllData, index + dataLen - 1, index + dataLen);
 			index += dataLen;
 //			index += 1;

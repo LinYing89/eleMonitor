@@ -29,7 +29,8 @@ public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 	private long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonBackReference("device_event")
+//	@JsonBackReference("device_event")
+	@JsonIgnore
 	private Device device;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -38,9 +39,11 @@ public class DeviceEventMessage implements Comparable<DeviceEventMessage>{
 	private String message;
 	
 	@Transient
+	@JsonIgnore
 	private boolean alarm;
 
 	@Transient
+	@JsonIgnore
 	private String timeFormat;
 	
 	@Transient
