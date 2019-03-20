@@ -12,6 +12,7 @@ public enum DeviceCategory {
 	CURRENT(2, "电流"),
 	FACTOR(3, "功率因数"),
 	RESIDUE_ELE(4, "剩余电流"),
+	PHASE_TEM(5, "线缆温度"),
 	DOOR(10, "门控");
 	
 	private int code;

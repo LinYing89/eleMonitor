@@ -6,11 +6,6 @@ var stationStateChart
 
 $(document).ready(function() {
 
-	try {
-		initMap();
-	} catch (e) {
-	}
-
 	initWebSocket();
 
 	initStationChart2();
@@ -222,7 +217,7 @@ function initStationChart2() {
 //	alarmCount = 1;
 //	unset = 1;
 
-	stationStateChart = echarts.init(domChart);
+	stationStateChart = echarts.init(domChart, 'dark');
 	option = {
 		// 全局调色盘。#28a745(success)
 		color : [ '#dc3545', '#FF7F00', '#5CACEE', '#71C671' ],

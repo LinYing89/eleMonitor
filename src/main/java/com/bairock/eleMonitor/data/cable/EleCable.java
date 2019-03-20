@@ -16,6 +16,10 @@ public class EleCable {
 	//C相
 	private Phase phaseC;
 	
+	//剩余电流
+	private float residueCurrent;
+	private long residueCurrentId;
+	
 	public String getGroupName() {
 		return groupName;
 	}
@@ -40,4 +44,17 @@ public class EleCable {
 	public void setPhaseC(Phase phaseC) {
 		this.phaseC = phaseC;
 	}
+	public float getResidueCurrent() {
+		return residueCurrent;
+	}
+	public void setResidueCurrent(float residueCurrent) {
+		this.residueCurrent = residueCurrent;
+	}
+	public long getResidueCurrentId() {
+		return residueCurrentId;
+	}
+	public void setResidueCurrentId(long residueCurrentId) {
+		this.residueCurrentId = residueCurrentId;
+	}
+	
 }

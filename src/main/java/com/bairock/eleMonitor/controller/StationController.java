@@ -47,9 +47,6 @@ public class StationController {
 				if(!station.getListSubstation().isEmpty()) {
 					Substation substation = station.getListSubstation().get(0);
 					model.addAttribute("substation", substation);
-					int[] stateCount = substation.findMsgManagerStateCount();
-					model.addAttribute("msgSuccessCount", stateCount[0]);
-					model.addAttribute("msgOfflineCount", stateCount[1]);
 				}
 			}
 		}

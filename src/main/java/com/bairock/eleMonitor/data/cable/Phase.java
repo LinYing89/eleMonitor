@@ -22,6 +22,10 @@ public class Phase {
 	private float factor;
 	// 因数数据Id, 在网页中标识, 方便更新
 	private long factorId;
+	//线缆温度
+	private float tem;
+	// 温度ID
+	private long temId;
 
 	public float getVoltage() {
 		return voltage;
@@ -69,6 +73,22 @@ public class Phase {
 
 	public void setFactorId(long factorId) {
 		this.factorId = factorId;
+	}
+
+	public float getTem() {
+		return tem;
+	}
+
+	public void setTem(float tem) {
+		this.tem = tem;
+	}
+
+	public long getTemId() {
+		return temId;
+	}
+
+	public void setTemId(long temId) {
+		this.temId = temId;
 	}
 
 	public float getPower() {

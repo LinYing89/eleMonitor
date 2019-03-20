@@ -190,21 +190,8 @@ function initWebSocket() {
 function handlerDevState(message) {
 	var devState = JSON.parse(message.body);
 	if(devState.valueType == 'ELE'){
-		var phaseNum = devState.phaseNum;
-		$("#" + devState.devId).text(devState.valueString);
-		//找到tr父元素
-		var tr = $("#" + devState.devId).parent().parent().parent();
-		//找到tr元素下的对应相的电压电流因数值
-//		var className = ".p" + phaseNum + "-u";
-////		var dpu = tr.children(className);
-//		var dpu = tr.children().children(".pa-u");
-//		var txt = dpu.text();
-		var pu = tr.find(".p" + phaseNum + "-u").text();
-		var pi = tr.find(".p" + phaseNum + "-i").text();
-		var pf = tr.find(".p" + phaseNum + "-f").text();
-		var power = pu * pi * pf/ 1000;
-		//保留两位小数, 四舍五入
-		tr.find(".p" + phaseNum + "-p").text(power.toFixed(2));
+		//电力数据
+		handlerEleValue(devState);
 		return;
 	}
 	
@@ -230,6 +217,21 @@ function handlerDevState(message) {
 	}
 
 	$("#value-dev-" + devState.devId).text(devState.valueString);
+}
+
+//电力数据处理
+function handlerEleValue(devState){
+	$("#" + devState.devId).text(devState.valueString);
+	var phaseNum = devState.phaseNum;
+	//找到tr父元素
+	var tr = $("#" + devState.devId).parent().parent().parent();
+	//找到tr元素下的对应相的电压电流因数值
+	var pu = tr.find(".p" + phaseNum + "-u").text();
+	var pi = tr.find(".p" + phaseNum + "-i").text();
+	var pf = tr.find(".p" + phaseNum + "-f").text();
+	var power = pu * pi * pf/ 1000;
+	//保留两位小数, 四舍五入
+	tr.find(".p" + phaseNum + "-p").text(power.toFixed(2));
 }
 
 function handlerDevEvent(message) {

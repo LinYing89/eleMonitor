@@ -25,9 +25,9 @@ public class MyOnValueListener implements OnValueListener {
 	@Override
 	public void onValueChanged(Device device, float value) {
 		DevWebData webData = null;
-		if(device.getValueType() == ValueType.ELE) {
+		if (device.getValueType() == ValueType.ELE) {
 			webData = new DevWebEleData();
-		}else {
+		} else {
 			webData = new DevWebClimateData();
 		}
 		webData.setDevId(device.getId());
@@ -35,29 +35,30 @@ public class MyOnValueListener implements OnValueListener {
 		webData.setValueString(device.getValueString());
 		long substationId = device.getCollector().getMsgManager().getSubstation().getId();
 		webData.setValueType(device.getValueType());
-		//是电力数据
+		webData.setDeviceCategory(device.getDeviceCategory());
+		// 是电力数据
 		if (device.getValueType() == ValueType.ELE) {
 			String phaseNum = "";
-			if(device.getName().contains("A")) {
+			if (device.getName().contains("A")) {
 				phaseNum = "a";
-			}else if(device.getName().contains("B")) {
+			} else if (device.getName().contains("B")) {
 				phaseNum = "b";
-			}else{
+			} else if (device.getName().contains("C")) {
 				phaseNum = "c";
 			}
-			((DevWebEleData)webData).setPhaseNum(phaseNum);
+			((DevWebEleData) webData).setPhaseNum(phaseNum);
 			deviceService.broadcastValueChanged(substationId, webData);
 			return;
 		}
-		
-		DevWebClimateData data = (DevWebClimateData)webData;
+
+		DevWebClimateData data = (DevWebClimateData) webData;
 		if (device.getDeviceGroup() != null) {
 			data.setHaveDevGroup(device.getDeviceGroup() != null);
 			data.setDevGroupId(device.getDeviceGroup().getId());
 		}
 		String message = null;
 
-		if(device.isAlarming()) {
+		if (device.isAlarming()) {
 			data.setAlarm(true);
 			message = device.getName();
 			message += " 报警";
@@ -96,13 +97,13 @@ public class MyOnValueListener implements OnValueListener {
 	@Override
 	public void onValueReceived(Device device, float value) {
 		DeviceValueHistory devHistory = new DeviceValueHistory();
-		devHistory.setDevice(device);
+		devHistory.setDeviceId(device.getId());
 		devHistory.setTime(new Date());
 		devHistory.setValue(value);
 		devHistory.setDeviceName(device.getName());
 //		device.addValueHistory(devHistory);
 		historyService.add(devHistory);
-		
+
 	}
 
 }

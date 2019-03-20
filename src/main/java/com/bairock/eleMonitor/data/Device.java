@@ -81,11 +81,6 @@ public class Device implements Comparable<Device> {
 	@JsonIgnore
 	private List<DeviceEventMessage> listEventMessage = new ArrayList<>();
 
-	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-//	@JsonManagedReference("device_history")
-	@JsonIgnore
-	private List<DeviceValueHistory> listValueHistory = new ArrayList<>();
-
 	@OneToMany(mappedBy = "device", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	@JsonManagedReference("device_linkage")
 	private List<Linkage> listLinkage = new ArrayList<>();
@@ -289,16 +284,6 @@ public class Device implements Comparable<Device> {
 		}
 	}
 
-	public List<DeviceValueHistory> getListValueHistory() {
-		return listValueHistory;
-	}
-
-	public void setListValueHistory(List<DeviceValueHistory> listValueHistory) {
-		if (null != listValueHistory) {
-			this.listValueHistory = listValueHistory;
-		}
-	}
-
 	public OnLinkageTriggeredListener getOnLinkageTriggeredListener() {
 		return onLinkageTriggeredListener;
 	}
@@ -400,17 +385,6 @@ public class Device implements Comparable<Device> {
 
 	public void removeEventMessage(DeviceEventMessage event) {
 		listEventMessage.remove(event);
-	}
-
-	public void addValueHistory(DeviceValueHistory history) {
-		if (null != history && !listValueHistory.contains(history)) {
-			history.setDevice(this);
-			listValueHistory.add(history);
-		}
-	}
-
-	public void removeValueHistoru(DeviceValueHistory history) {
-		listValueHistory.remove(history);
 	}
 
 	public void handler(byte[] byData) {

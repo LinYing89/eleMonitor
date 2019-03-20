@@ -56,7 +56,7 @@
 
 	<div class="container-fluid" role="main">
 		<div class="row no-gutters">
-			<div class="col-2 d-none d-md-block bg-light sidebar">
+			<div class="col-2 d-none d-md-block bg-dark sidebar">
 				<div class="sidebar-sticky">
 					<button type="button" class="btn btn-sm btn-primary ml-2 mb-2"
 						data-toggle="modal" data-target="#editStationModal"
@@ -109,38 +109,6 @@
 										data-target="#stationInfoModal" th:attr="data-name=${station.name}, data-address=${station.address}, data-lat=${station.lat}, data-lng=${station.lng}, data-tel=${station.tel}, data-remark=${station.remark}">详细信息</a>
 								</div>
 							</form>
-						</div>
-						<div id="div_substation_info"
-							class="shadow-sm rounded bg-light ml-2 mt-2 p-2">
-							<div id="substation_info" th:fragment="substation_info">
-								<form th:if="${substation}">
-									<div class="form-group row mb-1">
-										<label class="col-4 pr-0 text-muted">变电站名:</label> <label
-											class="col" th:text="${substation.name}">名称</label>
-									</div>
-									<hr class="mt-0 mb-2">
-									<div class="form-group row mb-1">
-										<div class="col-4 pr-0">
-											<label class="text-muted">通信机数:</label> <label
-												th:text="${#lists.size(substation.listMsgManager)}">1</label>
-										</div>
-										<div class="col-4 pr-0 text-success">
-											<label>正常:</label> <label th:text="${msgSuccessCount}">1</label>
-										</div>
-										<div class="col-4 pr-0 text-warning">
-											<label>离线:</label> <label th:text="${msgOfflineCount}">1</label>
-										</div>
-									</div>
-								</form>
-								<table th:if="${substation}" class="table-sm w-100">
-									<tr th:each="mm : ${substation.listMsgManager}"
-										th:classappend="${mm.msgManagerState.code == 0} ? text-success : text-warning">
-										<td th:text="${mm.name}">名称</td>
-										<td th:text="${mm.code}">编号</td>
-										<td th:text="${mm.msgManagerState.text}">状态</td>
-									</tr>
-								</table>
-							</div>
 						</div>
 						<div class="shadow-sm rounded bg-light ml-2 mt-2 p-2 h-50">
 							<h6 class="text-muted">维护人员信息</h6>
@@ -252,8 +220,10 @@
 
 	<script src="/js/echarts.js"></script>
 
+<!-- 	<script type="text/javascript" -->
+<!-- 		src="http://api.map.baidu.com/api?v=2.0&ak=NKchMp8WcewEGsfQTk904IR4ndH917r4"></script> -->
 	<script type="text/javascript"
-		src="http://api.map.baidu.com/api?v=2.0&ak=NKchMp8WcewEGsfQTk904IR4ndH917r4"></script>
+		src="http://api.map.baidu.com/getscript?v=2.0&ak=NKchMp8WcewEGsfQTk904IR4ndH917r4&services=&t=20190123111209"></script>
 	<script src="/js/treeNode.js"></script>
 	<script src="/js/map/mapTreeView.js"></script>
 	<script src="/js/map/map.js"></script>

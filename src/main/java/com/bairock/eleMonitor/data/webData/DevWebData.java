@@ -1,5 +1,6 @@
 package com.bairock.eleMonitor.data.webData;
 
+import com.bairock.eleMonitor.data.DeviceCategory;
 import com.bairock.eleMonitor.data.ValueType;
 
 /**
@@ -16,6 +17,7 @@ public class DevWebData {
 	//值字符串
 	private String valueString;
 	private ValueType valueType = ValueType.VALUE;
+	private DeviceCategory deviceCategory = DeviceCategory.DEFAULT;
 
 	public long getDevId() {
 		return devId;
@@ -36,6 +38,12 @@ public class DevWebData {
 		this.valueType = valueType;
 	}
 	
+	public DeviceCategory getDeviceCategory() {
+		return deviceCategory;
+	}
+	public void setDeviceCategory(DeviceCategory deviceCategory) {
+		this.deviceCategory = deviceCategory;
+	}
 	public String getValueString() {
 		return valueString;
 	}

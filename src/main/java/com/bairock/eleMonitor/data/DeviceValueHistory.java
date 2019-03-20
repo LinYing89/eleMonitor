@@ -3,17 +3,13 @@ package com.bairock.eleMonitor.data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * 设备历史纪录
@@ -27,16 +23,13 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-//	@JsonBackReference("device_history")
-	@JsonIgnore
-	private Device device;
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date time;
 	
 	private float value;
 	
+	@Column(name="device_id")
+	private Long deviceId;
 	private String deviceName = "";
 
 	public long getId() {
@@ -47,14 +40,6 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 		this.id = id;
 	}
 
-	public Device getDevice() {
-		return device;
-	}
-
-	public void setDevice(Device device) {
-		this.device = device;
-	}
-	
 	public Date getTime() {
 		return time;
 	}
@@ -73,6 +58,14 @@ public class DeviceValueHistory implements Comparable<DeviceValueHistory>{
 
 	public void setValue(float value) {
 		this.value = value;
+	}
+
+	public Long getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(Long deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public String getDeviceName() {

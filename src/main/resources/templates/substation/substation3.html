@@ -110,6 +110,7 @@
 								th:href="'/substation/del/' + ${substation.id}"
 								data-stationid="">删除</a>
 								<a href="#" class="ml-2" th:href="|/msgManager/${substation.id}|">设备管理</a>
+								<a href="#" class="ml-2" href="#" th:href="|/card/add/${substation.id}|">卡管理</a>
 						</div>
 						<div class="shadow-sm p-2 mt-3 bg-white rounded row">
 							<div th:each="valueDevice : ${listValueDevice}" class="col-auto pl-2 pr-2">

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bairock.eleMonitor.data.Collector;
 import com.bairock.eleMonitor.data.Device;
+import com.bairock.eleMonitor.data.DeviceCategory;
 import com.bairock.eleMonitor.data.DeviceEventMessage;
 import com.bairock.eleMonitor.data.DeviceGroup;
 import com.bairock.eleMonitor.data.LineTemFormGroup;
@@ -140,6 +141,9 @@ public class SubstationController {
 					setPhaseValue(pb, dev);
 				}else if(dev.getName().contains("C")) {
 					setPhaseValue(pc, dev);
+				}else if(dev.getDeviceCategory() == DeviceCategory.RESIDUE_ELE) {
+					cable.setResidueCurrent(dev.getValue());
+					cable.setResidueCurrentId(dev.getId());
 				}
 			}
 		}
@@ -159,6 +163,10 @@ public class SubstationController {
 		case FACTOR:
 			phase.setFactor(dev.getValue());
 			phase.setFactorId(dev.getId());
+			break;
+		case PHASE_TEM:
+			phase.setTem(dev.getValue());
+			phase.setTemId(dev.getId());
 			break;
 		default:
 			break;

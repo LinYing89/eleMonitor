@@ -60,10 +60,10 @@ public class DeviceGroupController {
 
 		return "devices/devGroup";
 	}
-	
+
 	@ResponseBody
 	@GetMapping("/{substationId}")
-	public List<Device> findDeviceNoGroup(@PathVariable long substationId){
+	public List<Device> findDeviceNoGroup(@PathVariable long substationId) {
 		Substation substation = substationService.findBySubstationId(substationId);
 		List<Device> listDevice = substation.findDeviceNoGroup();
 		return listDevice;
@@ -86,7 +86,7 @@ public class DeviceGroupController {
 		DeviceGroup res = deviceGroupService.findById(devGroupId);
 		List<Device> listDev = new ArrayList<>(res.getListDevice());
 		res.removeAllDevice();
-		for(Device dev : listDev) {
+		for (Device dev : listDev) {
 			deviceService.update(dev);
 		}
 		Substation station = res.getSubstation();
@@ -109,9 +109,11 @@ public class DeviceGroupController {
 	public String deleteDevice(@PathVariable long devGroupId, @PathVariable long deviceId) {
 		DeviceGroup res = deviceGroupService.findById(devGroupId);
 		Device dev = res.findDeviceById(deviceId);
-		res.removeDevice(dev);
-		deviceGroupService.update(res);
-		deviceService.update(dev);
+		if (null != dev) {
+			res.removeDevice(dev);
+			deviceGroupService.update(res);
+			deviceService.update(dev);
+		}
 		return "redirect:/devGroup/" + res.getSubstation().getId() + "/" + res.getId();
 	}
 

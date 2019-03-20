@@ -3,7 +3,6 @@ package com.bairock.eleMonitor.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -73,25 +72,6 @@ public class DeviceValueHistoryController {
 //		return listChartData;
 //		
 //	}
-
-	@ResponseBody
-	@GetMapping("/dev/{deviceId}")
-	public Object[][] getValueHistory(@PathVariable long deviceId) {
-		List<DeviceValueHistory> list = deviceValueHistoryService.findTodayByDeviceId(deviceId);
-		if (null == list || list.isEmpty()) {
-			return new Object[0][0];
-		}
-		Collections.sort(list);
-		Object[][] values = new Object[2][list.size() + 1];
-		values[0][0] = "device";
-		values[1][0] = list.get(0).getDevice().getName();
-		for (int i = 0; i < list.size(); i++) {
-			DeviceValueHistory history = list.get(i);
-			values[0][i + 1] = history.timeStr();
-			values[1][i + 1] = history.getValue();
-		}
-		return values;
-	}
 
 	/**
 	 * 获取多个设备的历史数据
