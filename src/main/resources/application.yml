@@ -15,7 +15,7 @@ spring:
       hibernate: 
         enable_lazy_load_no_trans: true
 logging:
-  file: ~/logs/eleMonitor/eleMonitor.log
+  file: c:/logs/eleMonitor/eleMonitor.log
   
 management: 
   endpoints: 
