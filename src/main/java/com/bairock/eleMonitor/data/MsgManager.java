@@ -187,7 +187,7 @@ public class MsgManager {
 			// 总线号,索引0,长度1
 			index += 1;
 			// 采集终端号,索引1,长度1
-			byte collectorCode = byAllData[index];
+			int collectorCode = Util.bytesToInt(new byte[] {byAllData[index]});
 			index += 1;
 			// 起始编号(地址),索引2,长度2
 			//int beginAddress = byAllData[index] << 8 | byAllData[index + 1];
