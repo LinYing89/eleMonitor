@@ -36,7 +36,9 @@ public class UserService {
 	
 	@Cacheable(value="user", key="#username")
 	public User findByUsername(String username) {
-		return userRepository.findByUsername(username);
+		User user = userRepository.findByUsername(username);
+		
+		return user;
 	}
 	
 	@Cacheable(value="user", key="#username")

@@ -44,7 +44,7 @@ $('#editUserModal').on('show.bs.modal', function(event) {
 
 function checkUser(){
 	var password = $("#input-password").val();
-	var ensurePassword = $("input-ensure-password").val();
+	var ensurePassword = $("#input-ensure-password").val();
 	if(password != ensurePassword){
 		return false;
 	}
